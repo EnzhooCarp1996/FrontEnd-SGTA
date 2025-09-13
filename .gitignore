@@ -23,3 +23,6 @@ dist-ssr
 *.sln
 *.sw?
 .env
+
+# Ignorar la carpeta de configuración de Bolt
+.bolt/
