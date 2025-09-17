@@ -1,12 +1,13 @@
 import React from 'react';
-import { Menu, Bell, User } from 'lucide-react';
+import { Menu, User, LogOut } from 'lucide-react';
 
 interface HeaderProps {
   onMenuToggle: () => void;
   vistaActual: string;
+  onLogout: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ onMenuToggle, vistaActual}) => {
+const Header: React.FC<HeaderProps> = ({ onMenuToggle, vistaActual, onLogout}) => {
   const getViewTitle = (view: string) => {
     const titles = {
       panelDeControl: 'Panel de Control',
@@ -33,13 +34,17 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, vistaActual}) => {
         </div>
 
         <div className="flex items-center space-x-4">
-          <button className="p-2 rounded-lg hover:bg-gray-100 transition-colors relative">
+          {/* <button className="p-2 rounded-lg hover:bg-gray-100 transition-colors relative">
             <Bell className="w-6 h-6 text-gray-600" />
             <span className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full"></span>
-          </button>
+          </button> */}
           <button className="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100 transition-colors">
             <User className="w-6 h-6 text-gray-600" />
             <span className="text-gray-700 font-medium">Admin</span>
+          </button>
+          <button onClick={onLogout} className="flex items-center space-x-2 p-2 rounded-lg hover:bg-red-600 transition-colors">
+            <LogOut className="w-6 h-6 text-gray-600" />
+            {/* <span className="text-gray-700 font-medium">Cerrar Sesion</span> */}
           </button>
         </div>
       </div>

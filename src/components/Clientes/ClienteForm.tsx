@@ -47,14 +47,14 @@ const ClienteForm: React.FC<ClienteFormProps> = ({ cliente, onSave, onCancel }) 
         ...baseData,
         nombre: formData.nombre,
         apellido: formData.apellido,
-        idCliente: cliente?.idCliente || Date.now().toString(),
+        idCliente: cliente?.idCliente || Date.now(),
       });
     } else {
       onSave({
         ...baseData,
         razonSocial: formData.razonSocial,
         nombreDeFantasia: formData.nombreFantasia,
-        idCliente: cliente?.idCliente || Date.now().toString(),
+        idCliente: cliente?.idCliente || Date.now(),
       });
     }
 
@@ -235,7 +235,7 @@ const ClienteForm: React.FC<ClienteFormProps> = ({ cliente, onSave, onCancel }) 
 
           {/* Botones */}
           <BotonesForm
-            //onGuardar={handleGuardar}
+            // onGuardar={handleGuardar}
             onCancel={onCancel}
           />
 

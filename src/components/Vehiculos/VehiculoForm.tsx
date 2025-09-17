@@ -25,15 +25,16 @@ const VehiculoForm: React.FC<VehiculoFormProps> = ({ vehiculo, onSave, onCancel 
     descripcion_trabajos: vehiculo?.descripcionTrabajos || '',
     id_cliente: vehiculo?.idCliente || '',
   });
+  
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+const handleSubmit = (e?: React.FormEvent) => {
+  if (e) e.preventDefault();
 
-    onSave({
-      ...formData,
-      idVehiculo: vehiculo?.idVehiculo || Date.now().toString(),
-    });
-  };
+  onSave({
+    ...formData,
+    idVehiculo: vehiculo?.idVehiculo || Date.now(),
+  });
+};
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const value = e.target.type === 'number' ? parseInt(e.target.value) : e.target.value;
@@ -55,7 +56,7 @@ const VehiculoForm: React.FC<VehiculoFormProps> = ({ vehiculo, onSave, onCancel 
           onCancel={onCancel}
         />
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-6">
+        <form className="p-6 space-y-6">
           {/* Información del Vehículo */}
           <div className="space-y-4">
             <h3 className="text-lg font-medium text-gray-900 border-b border-gray-200 pb-2">
@@ -149,7 +150,7 @@ const VehiculoForm: React.FC<VehiculoFormProps> = ({ vehiculo, onSave, onCancel 
 
           {/* Botones */}
           <BotonesForm
-            //onGuardar={handleGuardar}
+            onGuardar={handleSubmit}
             onCancel={onCancel}
           />
 

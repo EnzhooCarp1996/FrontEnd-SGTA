@@ -1,38 +1,53 @@
+export interface Usuario {
+  idUsuario: number;
+  nombreUsuario: string;
+  correo: string;
+  contrasenia: string;
+  rol: "Admin" | "Encargado" | "Empleado";
+}
+
 export interface Cliente {
-  idCliente: string;
+  idCliente: number;
   telefono: string;
   celular: string;
-  responsabilidad: 'Consumidor Final' | 'Monotributista' | 'Responsable Inscripto';
-  tipoDocumento: 'DNI' | 'CUIL' | 'CUIT';
+  responsabilidad:
+    | "Consumidor Final"
+    | "Monotributista"
+    | "Responsable Inscripto";
+  tipoDocumento: "DNI" | "CUIL" | "CUIT";
   documento: string;
-  tipoCliente: 'Persona' | 'Empresa';
+  tipoCliente: "Persona" | "Empresa";
   nombre: string;
   apellido: string;
   razonSocial: string;
   nombreDeFantasia: string;
 }
 
-export interface Presupuesto {
-  idPresupuesto: string;
-  fecha: string;
-  manoDeObraChapa: number;
-  manoDeObraPintura: number;
-  totalRepuestos: number;
-  idCliente: number
-}
-
 export interface Vehiculo {
-  idVehiculo: string;
+  idVehiculo: number;
   patente: string;
   marca: string;
   modelo: string;
   anio: number;
   nroDeChasis: string;
-  estado: 'Recibido' | 'No Recibido' | 'Proceso' | 'Entregado';
+  estado: "Recibido" | "No Recibido" | "Proceso" | "Entregado";
   fechaRecibido?: string;
   fechaEsperada?: string;
   fechaEntrega?: string;
   descripcionTrabajos: string;
+  idCliente?: number;
+}
+
+export interface Presupuesto {
+  idPresupuesto: number;
+  fecha: string;
+  manoDeObraChapa: number;
+  manoDeObraPintura: number;
+  totalRepuestos: number;
   idCliente: number;
 }
 
+export type NewUsuario = Omit<Usuario, "idUsuario">;
+export type NewVehiculo = Omit<Vehiculo, "idVehiculo">;
+export type NewCliente = Omit<Cliente, "idCliente">;
+export type NewPresupuesto = Omit<Presupuesto, "idPresupuesto">;

@@ -18,6 +18,18 @@ export interface LoginResponse {
 }
 
 // -------------------------
+// LOGOUT
+// -------------------------
+export function logout(setToken?: (token: string | null) => void): void {
+  localStorage.removeItem("token");
+  localStorage.removeItem("refreshToken");
+
+  if (setToken) {
+    setToken(null);
+  }
+}
+
+// -------------------------
 // LOGIN
 // -------------------------
 export async function login(
@@ -43,14 +55,6 @@ export async function login(
   if (data.refreshToken) localStorage.setItem("refreshToken", data.refreshToken);
 
   return data;
-}
-
-// -------------------------
-// LOGOUT
-// -------------------------
-export function logout(): void {
-  localStorage.removeItem("token");
-  localStorage.removeItem("refreshToken");
 }
 
 // -------------------------
@@ -84,10 +88,13 @@ export function getCurrentUser(): JwtPayload | null {
 // -------------------------
 // FETCH CON AUTH
 // -------------------------
-export async function getWithAuth<T>(url: string): Promise<T> {
+export async function getWithAuth<T>(
+  url: string,
+  setToken?: (token: string | null) => void
+): Promise<T> {
   const token = getToken();
   if (!token || isTokenExpired(token)) {
-    logout();
+    logout(setToken);
     throw new Error("Sesión expirada, vuelva a iniciar sesión");
   }
 
@@ -96,7 +103,7 @@ export async function getWithAuth<T>(url: string): Promise<T> {
   });
 
   if (response.status === 401) {
-    logout();
+    logout(setToken);
     throw new Error("No autorizado");
   }
 
@@ -105,11 +112,12 @@ export async function getWithAuth<T>(url: string): Promise<T> {
 
 export async function postWithAuth<T, B = unknown>(
   url: string,
-  body: B
+  body: B,
+  setToken?: (token: string | null) => void
 ): Promise<T> {
   const token = getToken();
   if (!token || isTokenExpired(token)) {
-    logout();
+    logout(setToken);
     throw new Error("Sesión expirada, vuelva a iniciar sesión");
   }
 
@@ -123,7 +131,7 @@ export async function postWithAuth<T, B = unknown>(
   });
 
   if (response.status === 401) {
-    logout();
+    logout(setToken);
     throw new Error("No autorizado");
   }
 

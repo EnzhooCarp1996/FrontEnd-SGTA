@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
-import { Search, FileText, Calendar } from 'lucide-react';
-import { Presupuesto } from '../../types';
+import React, { useEffect, useState } from 'react';
+import { Search, FileText, Calendar, User } from 'lucide-react';
+import { Cliente, Presupuesto } from '../../types';
 import { HeaderEntidad } from '../HeaderEntidad/HeaderEntidad';
 import { EntidadNotFound } from '../EntidadNotFound/EntidadNotFound';
 import { FiltrosEntidad } from '../FiltrosEntidad/FiltrosEntidad';
 import { BotonesTarjeta } from '../BotonesTarjeta/BotonesTarjeta';
+import { TarjetaSpan } from '../Clientes/TarjetaSpan/TarjetaSpan';
+import { deletePresupuesto, getPresupuestos } from '../../Services/PresupuestoService';
+import { getClientes } from '../../Services/ClienteService';
 
 interface PresupuestosListProps {
   onAddPresupuesto: () => void;
@@ -12,56 +15,41 @@ interface PresupuestosListProps {
 }
 
 const PresupuestosList: React.FC<PresupuestosListProps> = ({ onAddPresupuesto: onAddPresupuesto, onEditPresupuesto: onEditPresupuesto }) => {
+  const [presupuestos, setPresupuestos] = useState<Presupuesto[]>([]);
+  const [clientes, setClientes] = useState<Cliente[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterMonth, setFilterMonth] = useState<string>('all');
 
-  // Mock data
-  const presupuestos: Presupuesto[] = [
-    {
-      idPresupuesto: '001-00000001',
-      fecha: '2024-01-15',
-      manoDeObraChapa: 20000,
-      manoDeObraPintura: 50000,
-      totalRepuestos: 25000,
-      idCliente: 1
-    },
-    {
-      idPresupuesto: '001-00000002',
-      fecha: '2024-01-18',
-      manoDeObraChapa: 20000,
-      manoDeObraPintura: 50000,
-      totalRepuestos: 25000,
-      idCliente: 2
-    },
-    {
-      idPresupuesto: '001-00000003',
-      fecha: '2024-01-20',
-      manoDeObraChapa: 20000,
-      manoDeObraPintura: 50000,
-      totalRepuestos: 25000,
-      idCliente: 3
-    },
-    {
-      idPresupuesto: '001-00000004',
-      fecha: '2024-01-22',
-      manoDeObraChapa: 20000,
-      manoDeObraPintura: 50000,
-      totalRepuestos: 25000,
-      idCliente: 4
-    },
-    {
-      idPresupuesto: '001-00000005',
-      fecha: '2024-01-25',
-      manoDeObraChapa: 20000,
-      manoDeObraPintura: 50000,
-      totalRepuestos: 25000,
-      idCliente: 5
+  const token = localStorage.getItem("token");
+
+  useEffect(() => {
+    if (!token) return;
+
+    getPresupuestos(token)
+      .then((data) => setPresupuestos(data))
+      .catch((err) => console.error(err));
+
+    getClientes(token)
+      .then(data => setClientes(data))
+      .catch(err => console.error(err));
+  }, [token]);
+
+  // -------------------------------
+  // HANDLERS CRUD
+  // -------------------------------
+  const handleDeletePresupuesto = async (id: number) => {
+    if (!token) return;
+    try {
+      await deletePresupuesto(token, id);
+      setPresupuestos(prev => prev.filter(c => c.idCliente !== id));
+    } catch (err) {
+      console.error(err);
     }
-  ];
+  };
 
 
   const filteredPresupuestos = presupuestos.filter(presupuesto => {
-    const matchesSearch = presupuesto.idPresupuesto.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = presupuesto.idPresupuesto.toString().includes(searchTerm);
 
     const presupuestoMonth = new Date(presupuesto.fecha).getMonth();
     const currentMonth = new Date().getMonth();
@@ -71,6 +59,15 @@ const PresupuestosList: React.FC<PresupuestosListProps> = ({ onAddPresupuesto: o
 
     return matchesSearch && matchesFilter;
   });
+
+  const getClienteNombre = (idCliente?: number) => {
+    if (!idCliente) return "Sin Cliente";
+    const cliente = clientes.find(c => c.idCliente === idCliente);
+    if (!cliente) return "Sin Cliente";
+    return cliente.tipoCliente === 'Empresa'
+      ? cliente.nombreDeFantasia
+      : `${cliente.nombre} ${cliente.apellido}`;
+  };
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('es-AR');
@@ -95,12 +92,12 @@ const PresupuestosList: React.FC<PresupuestosListProps> = ({ onAddPresupuesto: o
       {/* Header */}
       <HeaderEntidad
         titulo="Presupuestos"
-        textoGestion="el presupuesto del taller"
+        textoGestion="los presupuestos del taller"
         onClick={onAddPresupuesto}
         textoBoton="Nuevo Presupuesto"
       />
 
-      {/* Filters */}
+      {/* Filtros */}
       <FiltrosEntidad
         buscadorIcon={Search}
         buscadorPlaceholder="Buscar por número de presupuesto..."
@@ -111,69 +108,64 @@ const PresupuestosList: React.FC<PresupuestosListProps> = ({ onAddPresupuesto: o
         selectOptions={opcionesMeses}
       />
 
+      {/* Presupuestos Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-6">
+        {filteredPresupuestos.map((presupuesto) => {
 
-      {/* Presupuesto Table */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-400 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gray-50 border-b border-gray-400">
-              <tr>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Número
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Fecha
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Total
-                </th>
-                <th className="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Acciones
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-400">
-              {filteredPresupuestos.map((presupuesto) => (
-                <tr key={presupuesto.idPresupuesto} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center">
-                      <div className="bg-green-100 p-2 rounded-lg mr-3">
-                        <FileText className="w-5 h-5 text-green-600" />
-                      </div>
-                      <div>
-                        <div className="text-sm font-medium text-gray-900">
-                          {presupuesto.idPresupuesto}
-                        </div>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center text-sm text-gray-600">
-                      <Calendar className="w-4 h-4 mr-2" />
-                      {formatDate(presupuesto.fecha)}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-semibold text-gray-900">
-                      {formatCurrency(presupuesto.totalRepuestos)}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+          return (
+            <div key={presupuesto.idPresupuesto} className="bg-white rounded-lg shadow-sm border border-gray-400 p-6 hover:shadow-md 
+                                                       hover:border-green-500 transform hover:-translate-y-1 transition-all">
+              <div className="flex items-start justify-between mb-4">
+                <div className="flex items-center space-x-3">
+                  <div className="bg-green-100 p-2 rounded-lg">
+                    <FileText className="w-5 h-5 text-green-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-900 text-lg">{presupuesto.idPresupuesto}</h3>
+                  </div>
+                </div>
 
-                    <div className="flex justify-end space-x-2">
-                      <BotonesTarjeta
-                        onEdit={() => onEditPresupuesto(presupuesto)}
-                      //onDelete={() => onDeletePresupuesto(presupuesto)}
-                      />
-                    </div>
+                <BotonesTarjeta
+                  onEdit={() => onEditPresupuesto(presupuesto)}
+                  onDelete={() => handleDeletePresupuesto(presupuesto.idPresupuesto)}
+                />
 
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </div>
+
+              <div className="space-y-2 mb-4">
+                <div className="flex items-center space-x-2 text-sm text-gray-600">
+                  <Calendar className="w-4 h-4" />
+                  <span>Fecha: {formatDate(presupuesto.fecha)}</span>
+                </div>
+
+                <TarjetaSpan >
+                  <span className="font-medium">Mano de obra Pintura: </span>
+                  <span>{formatCurrency(presupuesto.manoDeObraPintura)}</span>
+                </TarjetaSpan>
+                <TarjetaSpan >
+                  <span className="font-medium">Mano de obra Chapa: </span>
+                  <span>{formatCurrency(presupuesto.manoDeObraChapa)}</span>
+                </TarjetaSpan>
+                <TarjetaSpan >
+                  <span className="font-medium">Total Repuestos: </span>
+                  <span>{formatCurrency(presupuesto.totalRepuestos)}</span>
+                </TarjetaSpan>
+                <TarjetaSpan >
+                  <span className="font-medium">Total: </span>
+                  <span>{formatCurrency(presupuesto.manoDeObraChapa + presupuesto.manoDeObraPintura + presupuesto.totalRepuestos)}</span>
+                </TarjetaSpan>
+
+              </div>
+
+              <div className="flex items-center space-x-2 text-xs text-gray-500">
+                <User className="w-4 h-4" />
+                <span>Cliente: {getClienteNombre(presupuesto.idCliente)}</span>
+              </div>
+            </div>
+          );
+        })}
       </div>
+
 
       {filteredPresupuestos.length === 0 && (
         <EntidadNotFound
