@@ -1,8 +1,8 @@
 import { Search, User } from 'lucide-react';
 import { Cliente } from '../../types';
-import { HeaderEntidad } from '../HeaderEntidad';
-import { EntidadNotFound } from '../EntidadNotFound';
-import { FiltrosEntidad } from '../FiltrosEntidad';
+import { HeaderEntidad } from '../Shared/HeaderEntidad';
+import { EntidadNotFound } from '../Shared/EntidadNotFound';
+import { FiltrosEntidad } from '../Shared/FiltrosEntidad';
 import { useClientes, useClienteFilters } from '../../hooks/useClientes';
 import { ClienteCard } from './ClienteCard';
 

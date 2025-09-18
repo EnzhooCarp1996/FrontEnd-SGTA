@@ -1,13 +1,11 @@
 import { useState } from "react";
 import { Eye, EyeOff, PaintBucket } from "lucide-react";
-import { login } from "../../Services/AuthService";
+import { login as loginService } from "../../Services/AuthService";
+import { useAuth } from "../../hooks/useAuth";
 
+export default function LoginForm() {
+  const { login } = useAuth();
 
-interface LoginFormProps {
-  onLoginSuccess: (token: string) => void;
-}
-
-export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
   const [showContrasenia, setShowContrasenia] = useState(false);
   const [formData, setFormData] = useState({
     nombreUsuario: "",
@@ -31,16 +29,11 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
     setError(null);
 
     try {
-      // Llamada al authService tipado
-      const data = await login(formData.nombreUsuario, formData.contrasenia);
+      const data = await loginService(formData.nombreUsuario, formData.contrasenia);
 
-      // Guardar token si se marca "Recordarme"
-      if (formData.recordar) {
-        localStorage.setItem("token", data.token);
-      }
+      login(data.token);
+      
 
-      // Devolver token al padre
-      onLoginSuccess(data.token);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Error inesperado");
     } finally {
@@ -82,7 +75,7 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
               <label htmlFor="contrasenia" className="block text-gray-300 mb-2">Contraseña</label>
               <div className="relative">
                 <input
-                id="contrasenia"
+                  id="contrasenia"
                   type={showContrasenia ? "text" : "password"}
                   name="contrasenia"
                   value={formData.contrasenia}

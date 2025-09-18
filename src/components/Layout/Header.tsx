@@ -1,13 +1,14 @@
 import React from 'react';
 import { Menu, User, LogOut } from 'lucide-react';
+import { useAuth } from '../../hooks/useAuth';
 
 interface HeaderProps {
   onMenuToggle: () => void;
   vistaActual: string;
-  onLogout: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ onMenuToggle, vistaActual, onLogout}) => {
+const Header: React.FC<HeaderProps> = ({ onMenuToggle, vistaActual }) => {
+  const { logout } = useAuth();
   const getViewTitle = (view: string) => {
     const titles = {
       panelDeControl: 'Panel de Control',
@@ -42,7 +43,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, vistaActual, onLogout}) =
             <User className="w-6 h-6 text-gray-600" />
             <span className="text-gray-700 font-medium">Admin</span>
           </button>
-          <button onClick={onLogout} className="flex items-center space-x-2 p-2 rounded-lg hover:bg-red-600 transition-colors">
+          <button onClick={logout} className="flex items-center space-x-2 p-2 rounded-lg hover:bg-red-600 transition-colors">
             <LogOut className="w-6 h-6 text-gray-600" />
             {/* <span className="text-gray-700 font-medium">Cerrar Sesion</span> */}
           </button>

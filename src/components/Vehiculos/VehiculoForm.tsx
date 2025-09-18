@@ -1,24 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { Car } from 'lucide-react';
-import { Vehiculo } from '../../types';
-import { BotonesForm } from '../BotonesForm';
-import { InputForm } from '../InputForm';
-import { HeaderForm } from '../HeaderForm';
+import { Vehiculo, Cliente } from '../../types';
+import { BotonesForm } from '../Shared/BotonesForm';
+import { InputForm } from '../Shared/InputForm';
+import { HeaderForm } from '../Shared/HeaderForm';
 import { useVehiculos } from '../../hooks/useVehiculos';
+import { useAuth } from '../../hooks/useAuth';
 
 
 interface VehiculoFormProps {
   vehiculo?: Vehiculo;
   onSave: (vehiculo: Partial<Vehiculo>) => void;
   onCancel: () => void;
+  clientes: Cliente[];
 }
 
-const VehiculoForm: React.FC<VehiculoFormProps> = ({ vehiculo, onSave, onCancel }) => {
-  const token = localStorage.getItem("token");
+const VehiculoForm: React.FC<VehiculoFormProps> = ({ vehiculo, clientes, onSave, onCancel }) => {
+  const { token } = useAuth();
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
-  const { marcas, modelos, cargarMarcasYModelos } = useVehiculos(token);
-
-
+  const { marcas, modelos, cargarMarcasYModelos } = useVehiculos();
   const [formData, setFormData] = useState({
     patente: vehiculo?.patente || '',
     marca: vehiculo?.marca || '',
@@ -33,7 +33,6 @@ const VehiculoForm: React.FC<VehiculoFormProps> = ({ vehiculo, onSave, onCancel 
     idCliente: vehiculo?.idCliente,
   });
 
-
   const handleSubmit = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
 
@@ -42,23 +41,18 @@ const VehiculoForm: React.FC<VehiculoFormProps> = ({ vehiculo, onSave, onCancel 
     if (formData.patente.length < 6 || formData.patente.length > 10) {
       newErrors.patente = "debe tener entre 6 y 10 caracteres.";
     }
-
     if (!formData.nroDeChasis || formData.nroDeChasis.length < 11 || formData.nroDeChasis.length > 20) {
       newErrors.nroDeChasis = "debe tener entre 11 y 20 caracteres.";
     }
-
     if (!formData.marca.trim()) {
       newErrors.marca = "es obligatoria.";
     }
-
     if (!formData.modelo.trim()) {
       newErrors.modelo = "es obligatorio.";
     }
-
     if (!formData.anio || isNaN(formData.anio) || formData.anio <= 0) {
       newErrors.anio = "es obligatorio.";
     }
-
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
@@ -89,9 +83,6 @@ const VehiculoForm: React.FC<VehiculoFormProps> = ({ vehiculo, onSave, onCancel 
   }, [token, vehiculo]);
 
 
-
-
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     let value: string | number = e.target.value;
 
@@ -115,8 +106,6 @@ const VehiculoForm: React.FC<VehiculoFormProps> = ({ vehiculo, onSave, onCancel 
     }
   };
 
-
-
   const formatearFecha = (fecha?: string) => fecha?.split("T")[0] || "";
 
   return (
@@ -135,7 +124,7 @@ const VehiculoForm: React.FC<VehiculoFormProps> = ({ vehiculo, onSave, onCancel 
           {/* Información del Vehículo */}
           <div className="space-y-4">
             <h3 className="text-lg font-medium text-gray-900 border-b border-gray-200 pb-2">
-              Información del Vehículo
+              Información del Vehículo (obligatorio: <span className="text-red-500">*</span>) 
             </h3>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -146,7 +135,7 @@ const VehiculoForm: React.FC<VehiculoFormProps> = ({ vehiculo, onSave, onCancel 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {/* Marca */}
               <div>
-                <label htmlFor="marca" className="block text-sm font-medium text-gray-700 mb-2">Marca *</label>
+                <label htmlFor="marca" className="block text-sm font-medium text-gray-700 mb-2">Marca <span className="text-red-500">*</span></label>
                 <select
                   id="marca"
                   name="marca"
@@ -154,7 +143,7 @@ const VehiculoForm: React.FC<VehiculoFormProps> = ({ vehiculo, onSave, onCancel 
                   onChange={handleChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                 >
-                  <option value="">--Selecciona una marca--</option>
+                  <option value="">Seleccione</option>
                   {marcas.map((m) => (
                     <option key={`${m.id}-${m.brand}`} value={m.brand}>
                       {m.brand}
@@ -166,7 +155,7 @@ const VehiculoForm: React.FC<VehiculoFormProps> = ({ vehiculo, onSave, onCancel 
 
               {/* Modelo */}
               <div>
-                <label htmlFor="modelo" className="block text-sm font-medium text-gray-700 mb-2">Modelo *</label>
+                <label htmlFor="modelo" className="block text-sm font-medium text-gray-700 mb-2">Modelo <span className="text-red-500">*</span></label>
                 <select
                   id="modelo"
                   name="modelo"
@@ -174,7 +163,7 @@ const VehiculoForm: React.FC<VehiculoFormProps> = ({ vehiculo, onSave, onCancel 
                   onChange={handleChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                 >
-                  <option value="">--Selecciona un modelo--</option>
+                  <option value="">Seleccione</option>
                   {modelos.map((m) => (
                     <option key={`${m.id}-${m.model}`} value={m.model}>
                       {m.model}
@@ -186,7 +175,7 @@ const VehiculoForm: React.FC<VehiculoFormProps> = ({ vehiculo, onSave, onCancel 
               <div>
                 <div className="grid grid-cols-1 md:grid-cols-1">
                   <label htmlFor="anio" className="block text-sm font-medium text-gray-700 mb-2">
-                    Año *
+                    Año <span className="text-red-500">*</span>
                   </label>
                   <input
                     id="anio"
@@ -214,7 +203,7 @@ const VehiculoForm: React.FC<VehiculoFormProps> = ({ vehiculo, onSave, onCancel 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label htmlFor="estado" className="block text-sm font-medium text-gray-700 mb-2">
-                  Estado *
+                  Estado
                 </label>
                 <select
                   id="estado"
@@ -229,7 +218,28 @@ const VehiculoForm: React.FC<VehiculoFormProps> = ({ vehiculo, onSave, onCancel 
                   <option value="Entregado">Entregado</option>
                 </select>
               </div>
-              <InputForm label="Cliente ID " name="idCliente" value={formData.idCliente || ""} onChange={handleChange} placeholder="ID del cliente" />
+              <div className="grid grid-cols-1 md:grid-cols-1">
+                <label htmlFor="idCliente" className="block text-sm font-medium text-gray-700 mb-2">
+                  Cliente
+                </label>
+                <select
+                  id="idCliente"
+                  name="idCliente"
+                  value={formData.idCliente || ""}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                >
+                  <option value="">Seleccione</option>
+                  {clientes.map((c) => (
+                    <option key={c.idCliente} value={c.idCliente}>
+                      {c.nombre} {c.apellido}
+                    </option>
+                  ))}
+                </select>
+                {errors.idCliente && <p className="text-red-500 text-sm">{errors.idCliente}</p>}
+              </div>
+
 
             </div>
           </div>
@@ -250,7 +260,7 @@ const VehiculoForm: React.FC<VehiculoFormProps> = ({ vehiculo, onSave, onCancel 
           {/* Descripción de Trabajos */}
           <div>
             <label htmlFor="descripcionTrabajos" className="block text-sm font-medium text-gray-700 mb-2">
-              Descripción de Trabajos *
+              Descripción de Trabajos
             </label>
             <textarea
               id="descripcionTrabajos"

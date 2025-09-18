@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Eye, FileText } from 'lucide-react';
 import VistaPrevia from './VistaPrevia';
 import { TablaRow } from "./TablaRow";
-import { HeaderForm } from '../HeaderForm';
-import { InputForm } from '../InputForm';
+import { HeaderForm } from '../Shared/HeaderForm';
+import { InputForm } from '../Shared/InputForm';
 
 interface PresupuestoItem {
   id: string;

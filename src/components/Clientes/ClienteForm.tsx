@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Building, User } from 'lucide-react';
 import { Cliente } from '../../types';
-import { InputForm } from '../InputForm';
-import { BotonesForm } from '../BotonesForm';
-import { HeaderForm } from '../HeaderForm';
+import { InputForm } from '../Shared/InputForm';
+import { BotonesForm } from '../Shared/BotonesForm';
+import { HeaderForm } from '../Shared/HeaderForm';
 
 interface ClienteFormProps {
   cliente?: Cliente;
@@ -118,7 +118,7 @@ const ClienteForm: React.FC<ClienteFormProps> = ({ cliente, onSave, onCancel }) 
           {/* Tipo de Cliente */}
           <div>
             <span className="block text-sm font-medium text-gray-700 mb-3">
-              Tipo de Cliente
+              Tipo de Cliente (obligatorio: <span className="text-red-500">*</span>) 
             </span>
             <div className="flex space-x-4">
               <label className={`flex items-center space-x-2 px-4 py-2 rounded-lg border cursor-pointer transition-colors ${tipoCliente === 'persona'
@@ -183,7 +183,7 @@ const ClienteForm: React.FC<ClienteFormProps> = ({ cliente, onSave, onCancel }) 
           {/* Responsabilidad */}
           <div>
             <label htmlFor="responsabilidad" className="block text-sm font-medium text-gray-700 mb-2">
-              Responsabilidad Fiscal *
+              Responsabilidad Fiscal <span className="text-red-500">*</span>
             </label>
             <select
               id="responsabilidad"

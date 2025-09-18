@@ -1,9 +1,9 @@
 import { Search, Car } from "lucide-react";
 import { useVehiculos, filtrarVehiculos } from "../../hooks/useVehiculos";
 import { VehiculoCard } from "./VehiculoCard";
-import { HeaderEntidad } from "../HeaderEntidad";
-import { FiltrosEntidad } from "../FiltrosEntidad";
-import { EntidadNotFound } from "../EntidadNotFound";
+import { HeaderEntidad } from "../Shared/HeaderEntidad";
+import { FiltrosEntidad } from "../Shared/FiltrosEntidad";
+import { EntidadNotFound } from "../Shared/EntidadNotFound";
 import { useState } from "react";
 import { Cliente, Vehiculo } from "../../types";
 
@@ -27,9 +27,7 @@ const estados = [
 ];
 
 const VehiculosList: React.FC<VehiculosListProps> = ({ onAddVehiculo, onEditVehiculo }) => {
-  const token = localStorage.getItem("token");
-
-  const { vehiculos, clientes, error, eliminarVehiculo } = useVehiculos(token);
+  const { vehiculos, clientes, error, eliminarVehiculo } = useVehiculos();
   const [searchTerm, setSearchTerm] = useState("");
   const [filterEstado, setFilterEstado] = useState("all");
   const filteredVehiculos = filtrarVehiculos(vehiculos, searchTerm, filterEstado);

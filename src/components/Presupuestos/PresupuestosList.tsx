@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Search, FileText, Calendar, User } from 'lucide-react';
 import { Cliente, Presupuesto } from '../../types';
-import { HeaderEntidad } from '../HeaderEntidad';
-import { EntidadNotFound } from '../EntidadNotFound';
-import { FiltrosEntidad } from '../FiltrosEntidad';
-import { BotonesTarjeta } from '../BotonesTarjeta';
+import { HeaderEntidad } from '../Shared/HeaderEntidad';
+import { EntidadNotFound } from '../Shared/EntidadNotFound';
+import { FiltrosEntidad } from '../Shared/FiltrosEntidad';
+import { BotonesTarjeta } from '../Shared/BotonesTarjeta';
 import { TarjetaSpan } from '../Clientes/TarjetaSpan';
 import { deletePresupuesto, getPresupuestos } from '../../Services/PresupuestoService';
 import { getClientes } from '../../Services/ClienteService';
