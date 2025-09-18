@@ -66,10 +66,10 @@ const AppContent: React.FC<AppContentProps> = ({ onLogout }) => {
   const handleSaveVehiculo = async (vehiculo: Partial<Vehiculo>) => {
     try {
       if (editarVehiculo) {
-        // Editar
-        await modificarVehiculo(editarVehiculo.idVehiculo, vehiculo as Vehiculo);
+        // Aseguramos que el id se mantenga
+        const vehiculoCompleto: Vehiculo = { ...editarVehiculo, ...vehiculo };
+        await modificarVehiculo(vehiculoCompleto);
       } else {
-        // Crear
         await agregarVehiculo(vehiculo as NewVehiculo);
       }
       setMostrarVehiculoForm(false);
@@ -78,6 +78,7 @@ const AppContent: React.FC<AppContentProps> = ({ onLogout }) => {
       console.error(err);
     }
   };
+
   const handleCancelVehiculoForm = () => { setEditarVehiculo(undefined); setMostrarVehiculoForm(false); };
 
   // Handlers de Presupuesto

@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Search, FileText, Calendar, User } from 'lucide-react';
 import { Cliente, Presupuesto } from '../../types';
-import { HeaderEntidad } from '../HeaderEntidad/HeaderEntidad';
-import { EntidadNotFound } from '../EntidadNotFound/EntidadNotFound';
-import { FiltrosEntidad } from '../FiltrosEntidad/FiltrosEntidad';
-import { BotonesTarjeta } from '../BotonesTarjeta/BotonesTarjeta';
-import { TarjetaSpan } from '../Clientes/TarjetaSpan/TarjetaSpan';
+import { HeaderEntidad } from '../HeaderEntidad';
+import { EntidadNotFound } from '../EntidadNotFound';
+import { FiltrosEntidad } from '../FiltrosEntidad';
+import { BotonesTarjeta } from '../BotonesTarjeta';
+import { TarjetaSpan } from '../Clientes/TarjetaSpan';
 import { deletePresupuesto, getPresupuestos } from '../../Services/PresupuestoService';
 import { getClientes } from '../../Services/ClienteService';
 
@@ -90,12 +90,7 @@ const PresupuestosList: React.FC<PresupuestosListProps> = ({ onAddPresupuesto: o
     <div className="p-6">
 
       {/* Header */}
-      <HeaderEntidad
-        titulo="Presupuestos"
-        textoGestion="los presupuestos del taller"
-        onClick={onAddPresupuesto}
-        textoBoton="Nuevo Presupuesto"
-      />
+      <HeaderEntidad titulo="Presupuestos" textoGestion="los presupuestos del taller" onClick={onAddPresupuesto} textoBoton="Nuevo Presupuesto" />
 
       {/* Filtros */}
       <FiltrosEntidad
@@ -103,9 +98,13 @@ const PresupuestosList: React.FC<PresupuestosListProps> = ({ onAddPresupuesto: o
         buscadorPlaceholder="Buscar por número de presupuesto..."
         buscadorValue={searchTerm}
         onBuscadorChange={(e) => setSearchTerm(e.target.value)}
+        buscadorName="buscadorPresupuesto"
+        buscadorId="buscadorPresupuesto"
         selectValue={filterMonth}
         onSelectChange={(e) => setFilterMonth(e.target.value)}
         selectOptions={opcionesMeses}
+        selectName="estadoPresupuesto"
+        selectId="estadoPresupuesto"
       />
 
       {/* Presupuestos Grid */}

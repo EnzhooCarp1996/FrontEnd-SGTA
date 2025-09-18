@@ -70,7 +70,7 @@ export async function createVehiculo(token: string, vehiculo: NewVehiculo) {
 // -------------------------
 // PUT: Actualizar vehiculo
 // -------------------------
-export async function updateVehiculo(token: string, id: number, vehiculo: Vehiculo) {
+export async function updateVehiculo(token: string, vehiculo: Vehiculo) {
   if (!token || isTokenExpired(token)) {
     logout();
     toast.error("Sesión expirada, vuelva a iniciar sesión");
@@ -78,7 +78,7 @@ export async function updateVehiculo(token: string, id: number, vehiculo: Vehicu
   }
 
   try {
-    const response = await fetch(`${API_BASE_URL}/vehiculo/${id}`, {
+    const response = await fetch(`${API_BASE_URL}/vehiculo/${vehiculo.idVehiculo}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -91,12 +91,15 @@ export async function updateVehiculo(token: string, id: number, vehiculo: Vehicu
       throw new Error(`Error HTTP: ${response.status}`);
     }
 
-    return await response.json();
+    // Solo parsear si hay contenido
+    const text = await response.text();
+    return text ? JSON.parse(text) : vehiculo; // devolvemos el vehiculo actualizado localmente si no hay body
   } catch (error) {
     console.error("Error actualizando vehiculo:", error);
     throw error;
   }
 }
+
 
 // -------------------------
 // DELETE: Eliminar vehiculo

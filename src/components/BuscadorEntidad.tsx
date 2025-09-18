@@ -5,14 +5,18 @@ interface BuscadorEntidadProps {
   icon: LucideIcon; // Icono de lucide-react
   placeholder?: string;
   value: string;
+  name: string;
+  id?: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-export const BuscadorEntidad: React.FC<BuscadorEntidadProps> = ({ icon: Icon, placeholder, value, onChange }) => {
+export const BuscadorEntidad: React.FC<BuscadorEntidadProps> = ({ icon: Icon, placeholder, value, id, name, onChange }) => {
   return (
     <div className="flex-1 relative">
       <Icon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
       <input
+        id={id || name}
+        name={name}
         type="text"
         placeholder={placeholder}
         value={value}

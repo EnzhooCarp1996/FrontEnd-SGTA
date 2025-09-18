@@ -1,8 +1,8 @@
 import { Building, User } from "lucide-react";
 import { Cliente } from "../../types";
-import { TarjetaSpan } from "./TarjetaSpan/TarjetaSpan";
-import { Contacto } from "./Contacto/Contacto";
-import { BotonesTarjeta } from "../BotonesTarjeta/BotonesTarjeta";
+import { TarjetaSpan } from "./TarjetaSpan";
+import { Contacto } from "./Contacto";
+import { BotonesTarjeta } from "../BotonesTarjeta";
 import { getResponsabilidadColor } from "../../helpers/utilsClientes";
 
 interface ClienteCardProps {

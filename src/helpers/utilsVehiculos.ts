@@ -1,9 +1,9 @@
-export const formatDate = (dateString?: string) => {
+export const formatDate = (dateString?: string | null) => {
   if (!dateString) return "No definida";
   return new Date(dateString).toLocaleDateString("es-AR");
 };
 
-export const getDaysFromNow = (dateString?: string) => {
+export const getDaysFromNow = (dateString?: string | null) => {
   if (!dateString) return null;
   const date = new Date(dateString);
   const now = new Date();

@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Eye, FileText } from 'lucide-react';
 import VistaPrevia from './VistaPrevia';
 import { TablaRow } from "./TablaRow";
-import { HeaderForm } from '../HeaderForm/HeaderForm';
-import { InputField } from '../InputForm/InputForm';
+import { HeaderForm } from '../HeaderForm';
+import { InputForm } from '../InputForm';
 
 interface PresupuestoItem {
   id: string;
@@ -200,18 +200,18 @@ const PresupuestoForm: React.FC<{
               </h3>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <InputField label="Fecha " type="date" name="fecha" value={formData.fecha} onChange={handleChange} required />
-                <InputField label="Póliza N° " name="poliza" value={formData.poliza} onChange={handleChange} required />
-                <InputField label="Cliente " name="cliente" value={formData.cliente} onChange={handleChange} placeholder="Cesar Diaz" required />
-                <InputField label="Domicilio " name="domicilio" value={formData.domicilio} onChange={handleChange} placeholder="Avenida/Calle SiempreViva 123" required />
-                <InputField label="Vehículo " name="vehiculo" value={formData.vehiculo} onChange={handleChange} placeholder="Toyota Corolla" required />
-                <InputField label="Patente " name="patente" value={formData.patente} onChange={handleChange} placeholder="ABC123" required />
-                <InputField label="Siniestro N° " name="siniestro" value={formData.siniestro} onChange={handleChange} />
-                <InputField label="M.O. CHAPA " type="number" name="chapa" value={formData.chapa} onChange={handleChange} step="0.01" required />
-                <InputField label="M.O. PINTURA " type="number" name="pintura" value={formData.pintura} onChange={handleChange} step="0.01" required />
-                <InputField label="M.O. ELECTRICIDAD " type="number" name="electricidad" value={formData.electricidad} onChange={handleChange} step="0.01" />
-                <InputField label="M.O. MECANICA " type="number" name="mecanica" value={formData.mecanica} onChange={handleChange} step="0.01" />
-                <InputField label="Firma " name="firma_responsable" value={formData.firma_responsable} onChange={handleChange} required />
+                <InputForm label="Fecha " type="date" name="fecha" value={formData.fecha} onChange={handleChange} required />
+                <InputForm label="Póliza N° " name="poliza" value={formData.poliza} onChange={handleChange} required />
+                <InputForm label="Cliente " name="cliente" value={formData.cliente} onChange={handleChange} placeholder="Cesar Diaz" required />
+                <InputForm label="Domicilio " name="domicilio" value={formData.domicilio} onChange={handleChange} placeholder="Avenida/Calle SiempreViva 123" required />
+                <InputForm label="Vehículo " name="vehiculo" value={formData.vehiculo} onChange={handleChange} placeholder="Toyota Corolla" required />
+                <InputForm label="Patente " name="patente" value={formData.patente} onChange={handleChange} placeholder="ABC123" required />
+                <InputForm label="Siniestro N° " name="siniestro" value={formData.siniestro} onChange={handleChange} />
+                <InputForm label="M.O. CHAPA " type="number" name="chapa" value={formData.chapa} onChange={handleChange} step="0.01" required />
+                <InputForm label="M.O. PINTURA " type="number" name="pintura" value={formData.pintura} onChange={handleChange} step="0.01" required />
+                <InputForm label="M.O. ELECTRICIDAD " type="number" name="electricidad" value={formData.electricidad} onChange={handleChange} step="0.01" />
+                <InputForm label="M.O. MECANICA " type="number" name="mecanica" value={formData.mecanica} onChange={handleChange} step="0.01" />
+                <InputForm label="Firma " name="firma_responsable" value={formData.firma_responsable} onChange={handleChange} required />
 
               </div>
 
@@ -272,10 +272,11 @@ const PresupuestoForm: React.FC<{
 
             {/* Observaciones */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="observaciones" className="block text-sm font-medium text-gray-700 mb-2">
                 Observaciones
               </label>
               <textarea
+                id="observaciones"
                 name="observaciones"
                 value={formData.observaciones}
                 onChange={handleChange}

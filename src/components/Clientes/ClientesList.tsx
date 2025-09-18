@@ -1,8 +1,8 @@
 import { Search, User } from 'lucide-react';
 import { Cliente } from '../../types';
-import { HeaderEntidad } from '../HeaderEntidad/HeaderEntidad';
-import { EntidadNotFound } from '../EntidadNotFound/EntidadNotFound';
-import { FiltrosEntidad } from '../FiltrosEntidad/FiltrosEntidad';
+import { HeaderEntidad } from '../HeaderEntidad';
+import { EntidadNotFound } from '../EntidadNotFound';
+import { FiltrosEntidad } from '../FiltrosEntidad';
 import { useClientes, useClienteFilters } from '../../hooks/useClientes';
 import { ClienteCard } from './ClienteCard';
 
@@ -36,9 +36,13 @@ const ClientesList: React.FC<ClientesListProps> = ({ onAddCliente, onEditCliente
         buscadorPlaceholder="Buscar por nombre o apellido..."
         buscadorValue={searchTerm}
         onBuscadorChange={(e) => setSearchTerm(e.target.value)}
+        buscadorName="buscadorCliente"
+        buscadorId="buscadorCliente"
         selectValue={filterType}
         onSelectChange={(e) => setFilterType(e.target.value as 'all' | 'persona' | 'empresa')}
         selectOptions={tipos}
+        selectName="estadoCliente"
+        selectId="estadoCliente"
       />
 
       {/* Clientes Grid */}

@@ -1,9 +1,9 @@
 import { Search, Car } from "lucide-react";
 import { useVehiculos, filtrarVehiculos } from "../../hooks/useVehiculos";
 import { VehiculoCard } from "./VehiculoCard";
-import { HeaderEntidad } from "../HeaderEntidad/HeaderEntidad";
-import { FiltrosEntidad } from "../FiltrosEntidad/FiltrosEntidad";
-import { EntidadNotFound } from "../EntidadNotFound/EntidadNotFound";
+import { HeaderEntidad } from "../HeaderEntidad";
+import { FiltrosEntidad } from "../FiltrosEntidad";
+import { EntidadNotFound } from "../EntidadNotFound";
 import { useState } from "react";
 import { Cliente, Vehiculo } from "../../types";
 
@@ -38,21 +38,21 @@ const VehiculosList: React.FC<VehiculosListProps> = ({ onAddVehiculo, onEditVehi
 
   return (
     <div className="p-6">
-      <HeaderEntidad
-        titulo="Vehículos"
-        textoGestion="los vehículos en el taller"
-        onClick={onAddVehiculo}
-        textoBoton="Agregar Vehículo"
-      />
+      <HeaderEntidad titulo="Vehículos" textoGestion="los vehículos en el taller" onClick={onAddVehiculo} textoBoton="Agregar Vehículo" />
 
       <FiltrosEntidad
         buscadorIcon={Search}
         buscadorPlaceholder="Buscar por patente, marca o modelo..."
         buscadorValue={searchTerm}
         onBuscadorChange={e => setSearchTerm(e.target.value)}
+        buscadorName="buscadorVehiculo"
+        buscadorId="buscadorVehiculo"
+
         selectValue={filterEstado}
         onSelectChange={e => setFilterEstado(e.target.value)}
         selectOptions={estados}
+        selectName="estadoVehiculo"
+        selectId="estadoVehiculo"
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-6">

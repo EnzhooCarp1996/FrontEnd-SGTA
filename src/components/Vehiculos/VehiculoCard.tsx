@@ -1,6 +1,6 @@
 import { Calendar, Car, User } from "lucide-react";
 import { Vehiculo, Cliente } from "../../types";
-import { BotonesTarjeta } from "../BotonesTarjeta/BotonesTarjeta";
+import { BotonesTarjeta } from "../BotonesTarjeta";
 import { formatDate, getDaysFromNow, getStatusColor } from "../../helpers/utilsVehiculos";
 
 interface VehiculoCardProps {
@@ -14,7 +14,7 @@ export const VehiculoCard: React.FC<VehiculoCardProps> = ({ vehiculo, clientes, 
     const daysToExpected = getDaysFromNow(vehiculo.fechaEsperada);
     const isOverdue = daysToExpected !== null && daysToExpected < 0 && vehiculo.estado !== "Entregado";
 
-    const getClienteNombre = (idCliente?: number) => {
+    const getClienteNombre = (idCliente?: number | null) => {
         if (!idCliente) return "Sin Cliente";
         const cliente = clientes.find(c => c.idCliente === idCliente);
         if (!cliente) return "Sin Cliente";

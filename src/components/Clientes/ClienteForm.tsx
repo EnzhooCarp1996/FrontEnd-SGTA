@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Building, User } from 'lucide-react';
 import { Cliente } from '../../types';
-import { InputField } from '../InputForm/InputForm';
-import { BotonesForm } from '../BotonesForm/BotonesForm';
-import { HeaderForm } from '../HeaderForm/HeaderForm';
+import { InputForm } from '../InputForm';
+import { BotonesForm } from '../BotonesForm';
+import { HeaderForm } from '../HeaderForm';
 
 interface ClienteFormProps {
   cliente?: Cliente;
@@ -117,32 +117,41 @@ const ClienteForm: React.FC<ClienteFormProps> = ({ cliente, onSave, onCancel }) 
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
           {/* Tipo de Cliente */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-3">
+            <span className="block text-sm font-medium text-gray-700 mb-3">
               Tipo de Cliente
-            </label>
+            </span>
             <div className="flex space-x-4">
-              <button
-                type="button"
-                onClick={() => setTipoCliente('persona')}
-                className={`flex items-center space-x-2 px-4 py-2 rounded-lg border transition-colors ${tipoCliente === 'persona'
-                  ? 'bg-green-50 border-green-300 text-green-700'
-                  : 'bg-gray-50 border-gray-300 text-gray-700 hover:bg-gray-100'
-                  }`}
-              >
+              <label className={`flex items-center space-x-2 px-4 py-2 rounded-lg border cursor-pointer transition-colors ${tipoCliente === 'persona'
+                ? 'bg-green-50 border-green-300 text-green-700'
+                : 'bg-gray-50 border-gray-300 text-gray-700 hover:bg-gray-100'
+                }`}>
+                <input
+                  type="radio"
+                  name="tipoCliente"
+                  value="persona"
+                  checked={tipoCliente === 'persona'}
+                  onChange={() => setTipoCliente('persona')}
+                  className="hidden"
+                />
                 <User className="w-5 h-5" />
                 <span>Persona</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setTipoCliente('empresa')}
-                className={`flex items-center space-x-2 px-4 py-2 rounded-lg border transition-colors ${tipoCliente === 'empresa'
-                  ? 'bg-green-50 border-green-300 text-green-700'
-                  : 'bg-gray-50 border-gray-300 text-gray-700 hover:bg-gray-100'
-                  }`}
-              >
+              </label>
+
+              <label className={`flex items-center space-x-2 px-4 py-2 rounded-lg border cursor-pointer transition-colors ${tipoCliente === 'empresa'
+                ? 'bg-green-50 border-green-300 text-green-700'
+                : 'bg-gray-50 border-gray-300 text-gray-700 hover:bg-gray-100'
+                }`}>
+                <input
+                  type="radio"
+                  name="tipoCliente"
+                  value="empresa"
+                  checked={tipoCliente === 'empresa'}
+                  onChange={() => setTipoCliente('empresa')}
+                  className="hidden"
+                />
                 <Building className="w-5 h-5" />
                 <span>Empresa</span>
-              </button>
+              </label>
             </div>
           </div>
 
@@ -150,15 +159,15 @@ const ClienteForm: React.FC<ClienteFormProps> = ({ cliente, onSave, onCancel }) 
           {tipoCliente === 'persona' ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-              <InputField label="Nombre " name="nombre" value={formData.nombre} onChange={handleChange} required />
-              <InputField label="Apellido " name="apellido" value={formData.apellido} onChange={handleChange} required />
+              <InputForm label="Nombre " name="nombre" value={formData.nombre} onChange={handleChange} required />
+              <InputForm label="Apellido " name="apellido" value={formData.apellido} onChange={handleChange} required />
 
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-              <InputField label="Razón Social " name="razonSocial" value={formData.razonSocial} onChange={handleChange} required />
-              <InputField label="Nombre de Fantasía " name="nombreFantasia" value={formData.nombreFantasia} onChange={handleChange} />
+              <InputForm label="Razón Social " name="razonSocial" value={formData.razonSocial} onChange={handleChange} required />
+              <InputForm label="Nombre de Fantasía " name="nombreFantasia" value={formData.nombreFantasia} onChange={handleChange} />
 
             </div>
           )}
@@ -166,17 +175,18 @@ const ClienteForm: React.FC<ClienteFormProps> = ({ cliente, onSave, onCancel }) 
           {/* Contacto */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-            <InputField label="Teléfono " type="tel" name="telefono" value={formData.telefono} onChange={handleChange} required />
-            <InputField label="Celular " type="tel" name="celular" value={formData.celular} onChange={handleChange} />
+            <InputForm label="Teléfono " type="tel" name="telefono" value={formData.telefono} onChange={handleChange} required />
+            <InputForm label="Celular " type="tel" name="celular" value={formData.celular} onChange={handleChange} />
 
           </div>
 
           {/* Responsabilidad */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="responsabilidad" className="block text-sm font-medium text-gray-700 mb-2">
               Responsabilidad Fiscal *
             </label>
             <select
+              id="responsabilidad"
               name="responsabilidad"
               value={formData.responsabilidad}
               onChange={handleChange}
@@ -203,10 +213,11 @@ const ClienteForm: React.FC<ClienteFormProps> = ({ cliente, onSave, onCancel }) 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="tipoDocumento" className="block text-sm font-medium text-gray-700 mb-2">
                 Tipo de Documento <span className="text-red-500">*</span>
               </label>
               <select
+                id="tipoDocumento"
                 name="tipoDocumento"
                 value={formData.tipoDocumento}
                 onChange={handleChange}
@@ -227,7 +238,7 @@ const ClienteForm: React.FC<ClienteFormProps> = ({ cliente, onSave, onCancel }) 
               </select>
             </div>
 
-            <InputField label="Número de Documento " name="documento" value={formData.documento} onChange={handleChange} required />
+            <InputForm label="Número de Documento " name="documento" value={formData.documento} onChange={handleChange} required />
 
           </div>
 

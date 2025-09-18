@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useId } from "react";
 
-interface InputFieldProps {
+interface InputFormProps {
   label: string;
   name: string;
   value: string | number;
@@ -9,9 +9,10 @@ interface InputFieldProps {
   type?: string;
   placeholder?: string
   step?: string
+  error?: string;
 }
 
-export const InputField: React.FC<InputFieldProps> = ({
+export const InputForm: React.FC<InputFormProps> = ({
   label,
   name,
   value,
@@ -19,14 +20,19 @@ export const InputField: React.FC<InputFieldProps> = ({
   required = false,
   type = "text",
   placeholder = "",
-  step = ""
+  step = "",
+  error,
 }) => {
+
+  const id = useId();
+
   return (
-    <div>
-      <label className="block text-sm font-medium text-gray-700 mb-2">
+    <div className="grid grid-cols-1 md:grid-cols-1">
+      <label htmlFor={id} className="block text-sm font-medium text-gray-700 mb-2">
         {label} {required && <span className="text-red-500">*</span>}
       </label>
       <input
+        id={id}
         type={type}
         name={name}
         value={value}
@@ -36,6 +42,7 @@ export const InputField: React.FC<InputFieldProps> = ({
         placeholder={placeholder}
         step={step}
       />
+      {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
     </div>
   );
 };

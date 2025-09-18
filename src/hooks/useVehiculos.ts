@@ -50,11 +50,11 @@ export function useVehiculos(token: string | null) {
   // -------------------------------
   // UPDATE
   // -------------------------------
-  const modificarVehiculo = async (id: number, vehiculoActualizado: Vehiculo) => {
+  const modificarVehiculo = async (vehiculoActualizado: Vehiculo) => {
     if (!token) return;
 
     try {
-      const vehiculo = await updateVehiculo(token, id, vehiculoActualizado);
+      const vehiculo = await updateVehiculo(token, vehiculoActualizado);
       setVehiculos((prev) =>
         prev.map((v) => (v.idVehiculo === vehiculo.idVehiculo ? vehiculo : v))
       );
@@ -64,7 +64,7 @@ export function useVehiculos(token: string | null) {
       return vehiculo;
     } catch (err: unknown) {
       if (err instanceof Error) {
-        alert("❌E Error al actualizar el vehículo: " + err.message);
+        alert("❌ Error al actualizar el vehículo: " + err.message);
       } else {
         alert("❌ Error desconocido al actualizar el vehículo");
       }

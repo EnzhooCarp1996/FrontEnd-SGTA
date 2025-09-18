@@ -65,8 +65,9 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Usuario */}
             <div>
-              <label className="block text-gray-300 mb-2">Nombre de Usuario</label>
+              <label htmlFor="nombreUsuario" className="block text-gray-300 mb-2">Nombre de Usuario</label>
               <input
+                id="nombreUsuario"
                 type="text"
                 name="nombreUsuario"
                 value={formData.nombreUsuario}
@@ -78,9 +79,10 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
 
             {/* Contraseña */}
             <div>
-              <label className="block text-gray-300 mb-2">Contraseña</label>
+              <label htmlFor="contrasenia" className="block text-gray-300 mb-2">Contraseña</label>
               <div className="relative">
                 <input
+                id="contrasenia"
                   type={showContrasenia ? "text" : "password"}
                   name="contrasenia"
                   value={formData.contrasenia}

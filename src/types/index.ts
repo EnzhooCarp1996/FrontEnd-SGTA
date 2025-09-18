@@ -31,11 +31,11 @@ export interface Vehiculo {
   anio: number;
   nroDeChasis: string;
   estado: "Recibido" | "No Recibido" | "Proceso" | "Entregado";
-  fechaRecibido?: string;
-  fechaEsperada?: string;
-  fechaEntrega?: string;
+  fechaRecibido?: string | null;
+  fechaEsperada?: string | null;
+  fechaEntrega?: string | null;
   descripcionTrabajos: string;
-  idCliente?: number;
+  idCliente: number | null;
 }
 
 export interface Presupuesto {
