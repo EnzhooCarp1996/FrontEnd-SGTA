@@ -4,6 +4,8 @@ import {
   getVehiculos,
   updateVehiculo,
   deleteVehiculo,
+  getMarcas,
+  getModelos,
 } from "../Services/VehiculoService";
 import { getClientes } from "../Services/ClienteService";
 import { Vehiculo, Cliente, NewVehiculo } from "../types";
@@ -12,6 +14,8 @@ export function useVehiculos(token: string | null) {
   const [vehiculos, setVehiculos] = useState<Vehiculo[]>([]);
   const [clientes, setClientes] = useState<Cliente[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [marcas, setMarcas] = useState<{ id: number; brand: string }[]>([]);
+  const [modelos, setModelos] = useState<{ id: number; model: string }[]>([]);
 
   useEffect(() => {
     if (!token) return;
@@ -35,7 +39,11 @@ export function useVehiculos(token: string | null) {
     try {
       const vehiculoCreado = await createVehiculo(token, nuevoVehiculo);
       setVehiculos((prev) => [...prev, vehiculoCreado]);
-      alert("🚗 Vehículo agregado correctamente ✅");
+      alert(`🚗 ¡Agregado correctamente!\n ✅Vehiculo:
+        ${nuevoVehiculo.marca}
+        ${nuevoVehiculo.modelo}
+        ${nuevoVehiculo.nroDeChasis}
+        ${nuevoVehiculo.patente}`);
       return vehiculoCreado;
     } catch (err: unknown) {
       if (err instanceof Error) {
@@ -93,7 +101,59 @@ export function useVehiculos(token: string | null) {
     }
   };
 
-  return { vehiculos, clientes, error, agregarVehiculo, modificarVehiculo, eliminarVehiculo };
+const cargarMarcasYModelos = async (marcaSeleccionada?: string) => {
+  if (!token) return;
+
+  try {
+    // Traigo marcas
+    const data: any = await getMarcas(token);
+
+    if (!Array.isArray(data.Makes)) {
+      console.error("getMarcas.Makes no es un array:", data);
+      return;
+    }
+
+    const marcasMapeadas = data.Makes.map((m: any, i: number) => ({
+      id: m.make_id || i,
+      brand: m.make_display || m.make_name || m,
+    }));
+    setMarcas(marcasMapeadas);
+
+    // Si hay marca seleccionada, traigo modelos
+    if (marcaSeleccionada) {
+      const modelosData: any = await getModelos(token, marcaSeleccionada);
+
+      if (!Array.isArray(modelosData.Models)) {
+        console.error("getModelos.Models no es un array:", modelosData);
+        return;
+      }
+
+      const modelosMapeados = modelosData.Models.map((m: any) => ({
+        id: m.model_id,
+        model: m.model_name || m.model_display,
+      }));
+      setModelos(modelosMapeados);
+    } else {
+      setModelos([]); // limpio modelos si no hay marca
+    }
+  } catch (err) {
+    console.error("Error cargando marcas o modelos:", err);
+  }
+};
+
+
+
+  return {
+    vehiculos,
+    clientes,
+    error,
+    marcas,
+    modelos,
+    agregarVehiculo,
+    modificarVehiculo,
+    eliminarVehiculo,
+    cargarMarcasYModelos,
+  };
 }
 
 export function filtrarVehiculos(

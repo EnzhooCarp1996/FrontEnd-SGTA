@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Car } from 'lucide-react';
 import { Vehiculo } from '../../types';
 import { BotonesForm } from '../BotonesForm';
 import { InputForm } from '../InputForm';
 import { HeaderForm } from '../HeaderForm';
+import { useVehiculos } from '../../hooks/useVehiculos';
+
 
 interface VehiculoFormProps {
   vehiculo?: Vehiculo;
@@ -12,7 +14,10 @@ interface VehiculoFormProps {
 }
 
 const VehiculoForm: React.FC<VehiculoFormProps> = ({ vehiculo, onSave, onCancel }) => {
+  const token = localStorage.getItem("token");
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const { marcas, modelos, cargarMarcasYModelos } = useVehiculos(token);
+
 
   const [formData, setFormData] = useState({
     patente: vehiculo?.patente || '',
@@ -77,6 +82,15 @@ const VehiculoForm: React.FC<VehiculoFormProps> = ({ vehiculo, onSave, onCancel 
     });
   };
 
+  useEffect(() => {
+    if (!token) return;
+
+    cargarMarcasYModelos(vehiculo?.marca); // si es edición, pasar la marca
+  }, [token, vehiculo]);
+
+
+
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     let value: string | number = e.target.value;
@@ -85,11 +99,22 @@ const VehiculoForm: React.FC<VehiculoFormProps> = ({ vehiculo, onSave, onCancel 
       value = e.target.value ? Number(e.target.value) : 0; // O null si tu backend lo acepta
     }
 
-    setFormData({
-      ...formData,
+    setFormData(prev => ({
+      ...prev,
       [e.target.name]: value
-    });
+    }));
+
+    // Si cambió la marca, recargo los modelos
+    if (e.target.name === "marca") {
+      cargarMarcasYModelos(value as string);
+      // También limpio el modelo seleccionado previamente
+      setFormData(prev => ({
+        ...prev,
+        modelo: ''
+      }));
+    }
   };
+
 
 
   const formatearFecha = (fecha?: string) => fecha?.split("T")[0] || "";
@@ -114,31 +139,67 @@ const VehiculoForm: React.FC<VehiculoFormProps> = ({ vehiculo, onSave, onCancel 
             </h3>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <InputForm label="Patente " name="patente" value={formData.patente} onChange={handleChange} placeholder="ABC123" required error={errors.patente}/>
-                <InputForm label="Número de Chasis " name="nroDeChasis" value={formData.nroDeChasis} onChange={handleChange} placeholder="JTDBU4DK4KJ123456" required error={errors.nroDeChasis}/>
+              <InputForm label="Patente " name="patente" value={formData.patente} onChange={handleChange} placeholder="ABC123" required error={errors.patente} />
+              <InputForm label="Número de Chasis " name="nroDeChasis" value={formData.nroDeChasis} onChange={handleChange} placeholder="JTDBU4DK4KJ123456" required error={errors.nroDeChasis} />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <InputForm label="Marca " name="marca" value={formData.marca} onChange={handleChange} placeholder="Toyota" required error={errors.marca}/>
-                <InputForm label="Modelo " name="modelo" value={formData.modelo} onChange={handleChange} placeholder="Corolla" required error={errors.modelo}/>
+              {/* Marca */}
+              <div>
+                <label htmlFor="marca" className="block text-sm font-medium text-gray-700 mb-2">Marca *</label>
+                <select
+                  id="marca"
+                  name="marca"
+                  value={formData.marca}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                >
+                  <option value="">--Selecciona una marca--</option>
+                  {marcas.map((m) => (
+                    <option key={`${m.id}-${m.brand}`} value={m.brand}>
+                      {m.brand}
+                    </option>
+                  ))}
+                </select>
+                {errors.marca && <p className="text-red-500 text-sm">{errors.marca}</p>}
+              </div>
 
+              {/* Modelo */}
+              <div>
+                <label htmlFor="modelo" className="block text-sm font-medium text-gray-700 mb-2">Modelo *</label>
+                <select
+                  id="modelo"
+                  name="modelo"
+                  value={formData.modelo}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                >
+                  <option value="">--Selecciona un modelo--</option>
+                  {modelos.map((m) => (
+                    <option key={`${m.id}-${m.model}`} value={m.model}>
+                      {m.model}
+                    </option>
+                  ))}
+                </select>
+                {errors.modelo && <p className="text-red-500 text-sm">{errors.modelo}</p>}
+              </div>
               <div>
                 <div className="grid grid-cols-1 md:grid-cols-1">
-                <label htmlFor="anio" className="block text-sm font-medium text-gray-700 mb-2">
-                  Año *
-                </label>
-                <input
-                  id="anio"
-                  type="number"
-                  name="anio"
-                  value={formData.anio}
-                  onChange={handleChange}
-                  required
-                  min="1900"
-                  max={new Date().getFullYear() + 1}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                />
-                {errors.anio && <p className="text-red-500 text-sm">{errors.anio}</p>}
+                  <label htmlFor="anio" className="block text-sm font-medium text-gray-700 mb-2">
+                    Año *
+                  </label>
+                  <input
+                    id="anio"
+                    type="number"
+                    name="anio"
+                    value={formData.anio}
+                    onChange={handleChange}
+                    required
+                    min="1900"
+                    max={new Date().getFullYear() + 1}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  />
+                  {errors.anio && <p className="text-red-500 text-sm">{errors.anio}</p>}
                 </div>
               </div>
             </div>
