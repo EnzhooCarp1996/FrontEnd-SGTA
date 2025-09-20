@@ -1,3 +1,31 @@
+import { Cliente } from "../types";
+
+export const filtrarClientes = (
+  clientes: Cliente[],
+  searchTerm: string,
+  filterTipo: "all" | "persona" | "empresa"
+) => {
+  return clientes.filter((cliente) => {
+    const isEmpresa = cliente.tipoCliente === "Empresa";
+
+    const matchesSearch = isEmpresa
+      ? cliente.razonSocial.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        cliente.nombreDeFantasia.toLowerCase().includes(searchTerm.toLowerCase())
+      : `${cliente.nombre} ${cliente.apellido}`
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase());
+
+    const matchesFilter =
+      filterTipo === "all" ||
+      (filterTipo === "empresa" && isEmpresa) ||
+      (filterTipo === "persona" && !isEmpresa);
+
+    return matchesSearch && matchesFilter;
+  });
+};
+
+
+
 export function getResponsabilidadColor(responsabilidad: string) {
   switch (responsabilidad) {
     case 'Consumidor Final': return 'bg-blue-100 text-blue-800';

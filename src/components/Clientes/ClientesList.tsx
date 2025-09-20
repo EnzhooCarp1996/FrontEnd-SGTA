@@ -1,29 +1,35 @@
-import { Search, User } from 'lucide-react';
-import { Cliente } from '../../types';
-import { HeaderEntidad } from '../Shared/HeaderEntidad';
+import { filtrarClientes } from '../../helpers/utilsClientes';
 import { EntidadNotFound } from '../Shared/EntidadNotFound';
 import { FiltrosEntidad } from '../Shared/FiltrosEntidad';
-import { useClientes, useClienteFilters } from '../../hooks/useClientes';
+import { HeaderEntidad } from '../Shared/HeaderEntidad';
+import { useClientes } from '../../hooks/useClientes';
+import { Search, User } from 'lucide-react';
 import { ClienteCard } from './ClienteCard';
+import { Cliente } from '../../types';
+import { useState } from "react";
 
 
 interface ClientesListProps {
   onAddCliente: () => void;
   onEditCliente: (cliente: Cliente) => void;
+  eliminarCliente: (id: number) => void;
+  clientes: Cliente[];
+  error: string | null;
 }
 
+const tipos: { value: 'all' | 'persona' | 'empresa'; label: string }[] = [
+  { value: 'all', label: 'Todos' },
+  { value: 'persona', label: 'Personas' },
+  { value: 'empresa', label: 'Empresas' },
+];
+
 const ClientesList: React.FC<ClientesListProps> = ({ onAddCliente, onEditCliente }) => {
-  const token = localStorage.getItem("token");
-  const { clientes, eliminarCliente, error } = useClientes(token);
-  const { filteredClientes, searchTerm, setSearchTerm, filterType, setFilterType } = useClienteFilters(clientes);
+  const { clientes, error, eliminarCliente } = useClientes();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterTipo, setFilterType] = useState<"all" | "persona" | "empresa">("all");
+  const filteredClientes = filtrarClientes(clientes, searchTerm, filterTipo);
 
   if (error) return <p>{error}</p>;
-
-  const tipos: { value: 'all' | 'persona' | 'empresa'; label: string }[] = [
-    { value: 'all', label: 'Todos' },
-    { value: 'persona', label: 'Personas' },
-    { value: 'empresa', label: 'Empresas' },
-  ];
 
   return (
     <div className="p-6">
@@ -38,7 +44,8 @@ const ClientesList: React.FC<ClientesListProps> = ({ onAddCliente, onEditCliente
         onBuscadorChange={(e) => setSearchTerm(e.target.value)}
         buscadorName="buscadorCliente"
         buscadorId="buscadorCliente"
-        selectValue={filterType}
+
+        selectValue={filterTipo}
         onSelectChange={(e) => setFilterType(e.target.value as 'all' | 'persona' | 'empresa')}
         selectOptions={tipos}
         selectName="estadoCliente"

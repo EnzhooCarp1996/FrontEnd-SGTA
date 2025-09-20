@@ -4,20 +4,14 @@ import {
   getVehiculos,
   updateVehiculo,
   deleteVehiculo,
-  getMarcas,
-  getModelos,
 } from "../Services/VehiculoService";
-import { getClientes } from "../Services/ClienteService";
-import { Vehiculo, Cliente, NewVehiculo } from "../types";
+import { Vehiculo, NewVehiculo } from "../types";
 import { useAuth } from "./useAuth";
 
 export function useVehiculos() {
   const { token } = useAuth();
   const [vehiculos, setVehiculos] = useState<Vehiculo[]>([]);
-  const [clientes, setClientes] = useState<Cliente[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [marcas, setMarcas] = useState<{ id: number; brand: string }[]>([]);
-  const [modelos, setModelos] = useState<{ id: number; model: string }[]>([]);
 
   useEffect(() => {
     if (!token) return;
@@ -25,27 +19,23 @@ export function useVehiculos() {
     getVehiculos(token)
       .then((data) => setVehiculos(data))
       .catch((err) => setError(err.message));
-
-    getClientes(token)
-      .then((data) => setClientes(data))
-      .catch((err) => setError(err.message));
   }, [token]);
 
   // -------------------------------
   // CREATE
   // -------------------------------
 
-  const agregarVehiculo = async (nuevoVehiculo: NewVehiculo) => {
+  const agregarVehiculo = async (newVehiculo: NewVehiculo) => {
     if (!token) return;
 
     try {
-      const vehiculoCreado = await createVehiculo(token, nuevoVehiculo);
+      const vehiculoCreado = await createVehiculo(token, newVehiculo);
       setVehiculos((prev) => [...prev, vehiculoCreado]);
       alert(`🚗 ¡Agregado correctamente!\n ✅Vehiculo:
-        ${nuevoVehiculo.marca}
-        ${nuevoVehiculo.modelo}
-        ${nuevoVehiculo.nroDeChasis}
-        ${nuevoVehiculo.patente}`);
+        ${newVehiculo.marca}
+        ${newVehiculo.modelo}
+        ${newVehiculo.nroDeChasis}
+        ${newVehiculo.patente}`);
       return vehiculoCreado;
     } catch (err: unknown) {
       if (err instanceof Error) {
@@ -103,73 +93,13 @@ export function useVehiculos() {
     }
   };
 
-  const cargarMarcasYModelos = async (marcaSeleccionada?: string) => {
-    if (!token) return;
-
-    try {
-      // Traigo marcas
-      const data: any = await getMarcas(token);
-
-      if (!Array.isArray(data.Makes)) {
-        console.error("getMarcas.Makes no es un array:", data);
-        return;
-      }
-
-      const marcasMapeadas = data.Makes.map((m: any, i: number) => ({
-        id: m.make_id || i,
-        brand: m.make_display || m.make_name || m,
-      }));
-      setMarcas(marcasMapeadas);
-
-      // Si hay marca seleccionada, traigo modelos
-      if (marcaSeleccionada) {
-        const modelosData: any = await getModelos(token, marcaSeleccionada);
-
-        if (!Array.isArray(modelosData.Models)) {
-          console.error("getModelos.Models no es un array:", modelosData);
-          return;
-        }
-
-        const modelosMapeados = modelosData.Models.map((m: any) => ({
-          id: m.model_id,
-          model: m.model_name || m.model_display,
-        }));
-        setModelos(modelosMapeados);
-      } else {
-        setModelos([]); // limpio modelos si no hay marca
-      }
-    } catch (err) {
-      console.error("Error cargando marcas o modelos:", err);
-    }
-  };
-
   return {
     vehiculos,
-    clientes,
     error,
-    marcas,
-    modelos,
     agregarVehiculo,
     modificarVehiculo,
     eliminarVehiculo,
-    cargarMarcasYModelos,
   };
 }
 
-export function filtrarVehiculos(
-  vehiculos: Vehiculo[],
-  searchTerm: string,
-  filterEstado: string
-) {
-  return vehiculos.filter((vehiculo) => {
-    const matchesSearch =
-      vehiculo.patente.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      vehiculo.marca.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      vehiculo.modelo.toLowerCase().includes(searchTerm.toLowerCase());
 
-    const matchesFilter =
-      filterEstado === "all" || vehiculo.estado === filterEstado;
-
-    return matchesSearch && matchesFilter;
-  });
-}

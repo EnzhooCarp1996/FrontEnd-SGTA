@@ -1,11 +1,13 @@
-import { Search, Car } from "lucide-react";
-import { useVehiculos, filtrarVehiculos } from "../../hooks/useVehiculos";
-import { VehiculoCard } from "./VehiculoCard";
-import { HeaderEntidad } from "../Shared/HeaderEntidad";
-import { FiltrosEntidad } from "../Shared/FiltrosEntidad";
+import { filtrarVehiculos } from "../../helpers/utilsVehiculos";
 import { EntidadNotFound } from "../Shared/EntidadNotFound";
-import { useState } from "react";
+import { FiltrosEntidad } from "../Shared/FiltrosEntidad";
+import { HeaderEntidad } from "../Shared/HeaderEntidad";
+import { useVehiculos } from "../../hooks/useVehiculos";
+import { useClientes } from "../../hooks/useClientes";
 import { Cliente, Vehiculo } from "../../types";
+import { VehiculoCard } from "./VehiculoCard";
+import { Search, Car } from "lucide-react";
+import { useState } from "react";
 
 
 interface VehiculosListProps {
@@ -17,7 +19,6 @@ interface VehiculosListProps {
   error: string | null;
 }
 
-
 const estados = [
   { value: "all", label: "Todos los estados" },
   { value: "No Recibido", label: "No Recibido" },
@@ -27,7 +28,8 @@ const estados = [
 ];
 
 const VehiculosList: React.FC<VehiculosListProps> = ({ onAddVehiculo, onEditVehiculo }) => {
-  const { vehiculos, clientes, error, eliminarVehiculo } = useVehiculos();
+  const { vehiculos, error, eliminarVehiculo } = useVehiculos();
+  const { clientes } = useClientes();
   const [searchTerm, setSearchTerm] = useState("");
   const [filterEstado, setFilterEstado] = useState("all");
   const filteredVehiculos = filtrarVehiculos(vehiculos, searchTerm, filterEstado);
@@ -36,8 +38,10 @@ const VehiculosList: React.FC<VehiculosListProps> = ({ onAddVehiculo, onEditVehi
 
   return (
     <div className="p-6">
-      <HeaderEntidad titulo="Vehículos" textoGestion="los vehículos en el taller" onClick={onAddVehiculo} textoBoton="Agregar Vehículo" />
+      {/* Header */}
+      <HeaderEntidad titulo="Vehículos" textoGestion="los vehículos del taller" onClick={onAddVehiculo} textoBoton="Agregar Vehículo" />
 
+      {/* Filtros */}
       <FiltrosEntidad
         buscadorIcon={Search}
         buscadorPlaceholder="Buscar por patente, marca o modelo..."
@@ -53,6 +57,7 @@ const VehiculosList: React.FC<VehiculosListProps> = ({ onAddVehiculo, onEditVehi
         selectId="estadoVehiculo"
       />
 
+      {/* Vehiculos Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-6">
         {filteredVehiculos.map(vehiculo => (
           <VehiculoCard

@@ -1,171 +1,78 @@
 import { isTokenExpired, logout } from "./AuthService";
-import toast from "react-hot-toast";
-import { NewVehiculo, Vehiculo } from "../types";
-import axios from "axios";
+import { Vehiculo, NewVehiculo } from "../types";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-
 // -------------------------
-// GET: Traer vehiculos
+// FUNCION GENÉRICA
 // -------------------------
-export async function getVehiculos(token: string) {
+async function fetchWithAuth<T>(
+  token: string,
+  url: string,
+  options: RequestInit = {}
+): Promise<T> {
   if (!token || isTokenExpired(token)) {
     logout();
-    toast.error("Sesión expirada, vuelva a iniciar sesión");
-    throw new Error("Sesión expirada, vuelva a iniciar sesión");
+    alert("Sesión Expirada, Inicie nuevamente");
+    throw new Error("Sesión expirada");
   }
 
-  try {
-    const response = await fetch(`${API_BASE_URL}/vehiculo`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
-      },
-    });
+  const response = await fetch(url, {
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+      ...(options.headers || {}),
+    },
+  });
 
-    if (!response.ok) {
-      throw new Error(`Error HTTP: ${response.status}`);
-    }
-
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error("Error obteniendo clientes:", error);
-    throw error;
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => null);
+    throw errorData || new Error(`Error HTTP: ${response.status}`);
   }
+
+  const text = await response.text();
+  return text ? (JSON.parse(text) as T) : ({} as T);
 }
 
 // -------------------------
-// POST: Crear vehiculo
+// GET: Traer vehículos
 // -------------------------
-export async function createVehiculo(token: string, vehiculo: NewVehiculo) {
-  if (!token || isTokenExpired(token)) {
-    logout();
-    toast.error("Sesión expirada, vuelva a iniciar sesión");
-    throw new Error("Sesión expirada, vuelva a iniciar sesión");
-  }
-
-  try {
-    const response = await fetch(`${API_BASE_URL}/vehiculo`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
-      },
-      body: JSON.stringify(vehiculo),
-    });
-
-    if (!response.ok) {
-      throw new Error(`Error HTTP: ${response.status}`);
-    }
-
-    return (await response.json()) as Vehiculo;
-  } catch (error) {
-    console.error("Error creando vehiculo:", error);
-    throw error;
-  }
+export function getVehiculos(token: string) {
+  return fetchWithAuth<Vehiculo[]>(token, `${API_BASE_URL}/vehiculo`, {
+    method: "GET",
+  });
 }
 
 // -------------------------
-// PUT: Actualizar vehiculo
+// POST: Crear vehículo
 // -------------------------
-export async function updateVehiculo(token: string, vehiculo: Vehiculo) {
-  if (!token || isTokenExpired(token)) {
-    logout();
-    toast.error("Sesión expirada, vuelva a iniciar sesión");
-    throw new Error("Sesión expirada, vuelva a iniciar sesión");
-  }
+export function createVehiculo(token: string, vehiculo: NewVehiculo) {
+  return fetchWithAuth<Vehiculo>(token, `${API_BASE_URL}/vehiculo`, {
+    method: "POST",
+    body: JSON.stringify(vehiculo),
+  });
+}
 
-  try {
-    const response = await fetch(`${API_BASE_URL}/vehiculo/${vehiculo.idVehiculo}`, {
+// -------------------------
+// PUT: Actualizar vehículo
+// -------------------------
+export function updateVehiculo(token: string, vehiculo: Vehiculo) {
+  return fetchWithAuth<Vehiculo>(
+    token,
+    `${API_BASE_URL}/vehiculo/${vehiculo.idVehiculo}`,
+    {
       method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
-      },
       body: JSON.stringify(vehiculo),
-    });
-
-    if (!response.ok) {
-      throw new Error(`Error HTTP: ${response.status}`);
     }
-
-    // Solo parsear si hay contenido
-    const text = await response.text();
-    return text ? JSON.parse(text) : vehiculo; // devolvemos el vehiculo actualizado localmente si no hay body
-  } catch (error) {
-    console.error("Error actualizando vehiculo:", error);
-    throw error;
-  }
+  );
 }
-
 
 // -------------------------
-// DELETE: Eliminar vehiculo
+// DELETE: Eliminar vehículo
 // -------------------------
-export async function deleteVehiculo(token: string, id: number) {
-  if (!token || isTokenExpired(token)) {
-    logout();
-    toast.error("Sesión expirada, vuelva a iniciar sesión");
-    throw new Error("Sesión expirada, vuelva a iniciar sesión");
-  }
-
-  try {
-    const response = await fetch(`${API_BASE_URL}/vehiculo/${id}`, {
-      method: "DELETE",
-      headers: {
-        "Authorization": `Bearer ${token}`,
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(`Error HTTP: ${response.status}`);
-    }
-
-    return true;
-  } catch (error) {
-    console.error("Error eliminando vehiculo:", error);
-    throw error;
-  }
-}
-
-
-// Obtener marcas ----------------------------------------------------------------------------------
-export async function getMarcas(token: string) {
-  if (!token || isTokenExpired(token)) {
-    logout();
-    toast.error("Sesión expirada, vuelva a iniciar sesión");
-    throw new Error("Sesión expirada");
-  }
-
-  try {
-    const res = await axios.get(`${API_BASE_URL}/vehiculo/marcas`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    return res.data; // Array de strings
-  } catch (err: any) {
-    console.error("Error al cargar marcas:", err);
-    throw err;
-  }
-}
-
-// Obtener modelos por marca
-export async function getModelos(token: string, marca: string) {
-  if (!token || isTokenExpired(token)) {
-    logout();
-    toast.error("Sesión expirada, vuelva a iniciar sesión");
-    throw new Error("Sesión expirada");
-  }
-
-  try {
-    const res = await axios.get(`${API_BASE_URL}/vehiculo/modelos/${marca}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    return res.data; // Array de strings
-  } catch (err: any) {
-    console.error("Error al cargar modelos:", err);
-    throw err;
-  }
+export function deleteVehiculo(token: string, id: number) {
+  return fetchWithAuth<boolean>(token, `${API_BASE_URL}/vehiculo/${id}`, {
+    method: "DELETE",
+  });
 }

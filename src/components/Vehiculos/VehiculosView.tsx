@@ -1,13 +1,14 @@
-import React, { useState } from "react";
+import { useVehiculos } from "../../hooks/useVehiculos";
+import { useClientes } from "../../hooks/useClientes";
+import { Vehiculo, NewVehiculo } from "../../types";
 import VehiculosList from "./VehiculosList";
 import VehiculoForm from "./VehiculoForm";
-import { Vehiculo, NewVehiculo } from "../../types";
-import { useVehiculos } from "../../hooks/useVehiculos";
+import { useState } from "react";
 
 
 const VehiculoView: React.FC = () => {
-  const { vehiculos, clientes, error, agregarVehiculo, modificarVehiculo, eliminarVehiculo } = useVehiculos();
-
+  const { vehiculos, error, agregarVehiculo, modificarVehiculo, eliminarVehiculo } = useVehiculos();
+  const { clientes } = useClientes();
   const [mostrarForm, setMostrarForm] = useState(false);
   const [editarVehiculo, setEditarVehiculo] = useState<Vehiculo | undefined>();
 

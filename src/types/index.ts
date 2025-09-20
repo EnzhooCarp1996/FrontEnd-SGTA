@@ -8,19 +8,19 @@ export interface Usuario {
 
 export interface Cliente {
   idCliente: number;
-  telefono: string;
-  celular: string;
+  telefono?: string;
+  celular?: string;
   responsabilidad:
-    | "Consumidor Final"
+    | "ConsumidorFinal"
     | "Monotributista"
-    | "Responsable Inscripto";
+    | "ResponsableInscripto";
   tipoDocumento: "DNI" | "CUIL" | "CUIT";
   documento: string;
   tipoCliente: "Persona" | "Empresa";
-  nombre: string;
-  apellido: string;
-  razonSocial: string;
-  nombreDeFantasia: string;
+  nombre?: string;
+  apellido?: string;
+  razonSocial?: string;
+  nombreDeFantasia?: string;
 }
 
 export interface Vehiculo {
@@ -34,8 +34,8 @@ export interface Vehiculo {
   fechaRecibido?: string | null;
   fechaEsperada?: string | null;
   fechaEntrega?: string | null;
-  descripcionTrabajos: string;
-  idCliente: number | null;
+  descripcionTrabajos?: string;
+  idCliente?: number;
 }
 
 export interface Presupuesto {

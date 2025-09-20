@@ -1,23 +1,44 @@
-import React, { useState } from "react";
+import { useClientes } from "../../hooks/useClientes";
+import { Cliente, NewCliente } from "../../types";
 import ClientesList from "./ClientesList";
+import { useState } from "react";
 import ClienteForm from "./ClienteForm";
-import { Cliente } from "../../types";
-//import { useAuth } from "../../hooks/useAuth";
 
 
 const ClienteView: React.FC = () => {
-//    const { token } = useAuth(); // 🔹 obtenemos el token del contexto
+    const { clientes, error, agregarCliente, modificarCliente, eliminarCliente } = useClientes();
     const [mostrarForm, setMostrarForm] = useState(false);
     const [editarCliente, setEditarCliente] = useState<Cliente | undefined>();
 
     const handleAdd = () => { setEditarCliente(undefined); setMostrarForm(true); };
     const handleEdit = (cliente: Cliente) => { setEditarCliente(cliente); setMostrarForm(true); };
-    const handleSave = (cliente: Partial<Cliente>) => { console.log(cliente); setMostrarForm(false); setEditarCliente(undefined); };
-    const handleCancel = () => { setMostrarForm(false); setEditarCliente(undefined); };
+
+    const handleSave = async (cliente: Partial<Cliente>) => {
+        try {
+            if (editarCliente) {
+                const clienteCompleto: Cliente = { ...editarCliente, ...cliente };
+                await modificarCliente(clienteCompleto);
+            } else {
+                await agregarCliente(cliente as NewCliente);
+            }
+            setMostrarForm(false);
+            setEditarCliente(undefined);
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    const handleCancel = () => { setEditarCliente(undefined); setMostrarForm(false); };
 
     return (
         <>
-            <ClientesList onAddCliente={handleAdd} onEditCliente={handleEdit} />
+            <ClientesList
+                onAddCliente={handleAdd}
+                onEditCliente={handleEdit}
+                eliminarCliente={eliminarCliente}
+                clientes={clientes}
+                error={error}
+            />
             {mostrarForm && (
                 <ClienteForm
                     cliente={editarCliente}

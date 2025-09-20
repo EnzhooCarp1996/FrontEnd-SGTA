@@ -1,128 +1,75 @@
 import { isTokenExpired, logout } from "./AuthService";
-import toast from "react-hot-toast";
 import { Cliente, NewCliente } from "../types";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
+// ---------------------------------
+// Función genérica para requests
+// ---------------------------------
+async function fetchWithAuth<T>(
+  token: string,
+  url: string,
+  options: RequestInit = {}
+): Promise<T> {
+  if (!token || isTokenExpired(token)) {
+    logout();
+    alert("Sesión Expirada, Inicie nuevamente");
+    throw new Error("Sesión expirada");
+  }
+
+  const response = await fetch(url, {
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+      ...(options.headers || {}),
+    },
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => null);
+    throw errorData || new Error(`Error HTTP: ${response.status}`);
+  }
+
+  // Manejo cuando la respuesta puede estar vacía (ej: DELETE o PUT sin body)
+  const text = await response.text();
+  return text ? (JSON.parse(text) as T) : ({} as T);
+}
 
 // -------------------------
 // GET: Traer clientes
 // -------------------------
-export async function getClientes(token: string) {
-  if (!token || isTokenExpired(token)) {
-    logout();
-    toast.error("Sesión expirada, vuelva a iniciar sesión");
-    throw new Error("Sesión expirada, vuelva a iniciar sesión");
-  }
-
-  try {
-    const response = await fetch(`${API_BASE_URL}/cliente`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(`Error HTTP: ${response.status}`);
-    }
-
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error("Error obteniendo clientes:", error);
-    throw error;
-  }
+export function getClientes(token: string) {
+  return fetchWithAuth<Cliente[]>(token, `${API_BASE_URL}/cliente`, {
+    method: "GET",
+  });
 }
 
 // -------------------------
 // POST: Crear cliente
 // -------------------------
-export async function createCliente(token: string, cliente: NewCliente) {
-  if (!token || isTokenExpired(token)) {
-    logout();
-    toast.error("Sesión expirada, vuelva a iniciar sesión");
-    throw new Error("Sesión expirada, vuelva a iniciar sesión");
-  }
-
-  try {
-    const response = await fetch(`${API_BASE_URL}/cliente`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
-      },
-      body: JSON.stringify(cliente),
-    });
-
-    if (!response.ok) {
-      throw new Error(`Error HTTP: ${response.status}`);
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error("Error creando cliente:", error);
-    throw error;
-  }
+export function createCliente(token: string, cliente: NewCliente) {
+  return fetchWithAuth<Cliente>(token, `${API_BASE_URL}/cliente`, {
+    method: "POST",
+    body: JSON.stringify(cliente),
+  });
 }
 
 // -------------------------
 // PUT: Actualizar cliente
 // -------------------------
-export async function updateCliente(token: string, id: number, cliente: Cliente) {
-  if (!token || isTokenExpired(token)) {
-    logout();
-    toast.error("Sesión expirada, vuelva a iniciar sesión");
-    throw new Error("Sesión expirada, vuelva a iniciar sesión");
-  }
-
-  try {
-    const response = await fetch(`${API_BASE_URL}/cliente/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
-      },
-      body: JSON.stringify(cliente),
-    });
-
-    if (!response.ok) {
-      throw new Error(`Error HTTP: ${response.status}`);
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error("Error actualizando cliente:", error);
-    throw error;
-  }
+export function updateCliente(token: string, cliente: Cliente) {
+  return fetchWithAuth<Cliente>(token, `${API_BASE_URL}/cliente/${cliente.idCliente}`, {
+    method: "PUT",
+    body: JSON.stringify(cliente),
+  });
 }
 
 // -------------------------
 // DELETE: Eliminar cliente
 // -------------------------
-export async function deleteCliente(token: string, id: number) {
-  if (!token || isTokenExpired(token)) {
-    logout();
-    toast.error("Sesión expirada, vuelva a iniciar sesión");
-    throw new Error("Sesión expirada, vuelva a iniciar sesión");
-  }
-
-  try {
-    const response = await fetch(`${API_BASE_URL}/cliente/${id}`, {
-      method: "DELETE",
-      headers: {
-        "Authorization": `Bearer ${token}`,
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(`Error HTTP: ${response.status}`);
-    }
-
-    return true;
-  } catch (error) {
-    console.error("Error eliminando cliente:", error);
-    throw error;
-  }
+export function deleteCliente(token: string, id: number) {
+  return fetchWithAuth<boolean>(token, `${API_BASE_URL}/cliente/${id}`, {
+    method: "DELETE",
+  });
 }

@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
-import { Building, User } from 'lucide-react';
-import { Cliente } from '../../types';
-import { InputForm } from '../Shared/InputForm';
 import { BotonesForm } from '../Shared/BotonesForm';
 import { HeaderForm } from '../Shared/HeaderForm';
+import { InputForm } from '../Shared/InputForm';
+import { Building, User } from 'lucide-react';
+import { useAuth } from '../../hooks/useAuth';
+import { useState, useEffect } from 'react';
+import { Cliente } from '../../types';
+
 
 interface ClienteFormProps {
   cliente?: Cliente;
@@ -12,13 +14,12 @@ interface ClienteFormProps {
 }
 
 const ClienteForm: React.FC<ClienteFormProps> = ({ cliente, onSave, onCancel }) => {
-  const [tipoCliente, setTipoCliente] = useState<'persona' | 'empresa'>(
-    cliente?.tipoCliente === 'Empresa' ? 'empresa' : 'persona'
+  const { token } = useAuth();
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [tipoCliente, setTipoCliente] = useState<'Persona' | 'Empresa'>(
+    cliente?.tipoCliente === 'Empresa' ? 'Empresa' : 'Persona'
   );
-
-
   const [formData, setFormData] = useState({
-    // Datos
     telefono: cliente?.telefono || '',
     celular: cliente?.celular || '',
     responsabilidad: cliente?.responsabilidad || '',
@@ -27,38 +28,68 @@ const ClienteForm: React.FC<ClienteFormProps> = ({ cliente, onSave, onCancel }) 
     nombre: cliente?.nombre || '',
     apellido: cliente?.apellido || '',
     razonSocial: cliente?.razonSocial || '',
-    nombreFantasia: cliente?.nombreDeFantasia || '',
-
+    nombreDeFantasia: cliente?.nombreDeFantasia || '',
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+
+    const newErrors: { [key: string]: string } = {};
+
+    if (tipoCliente === "Persona") {
+      if (!formData.nombre.trim()) newErrors.nombre = "es obligatorio.";
+      if (!formData.apellido.trim()) newErrors.apellido = "es obligatorio.";
+    } else {
+      if (!formData.razonSocial.trim()) newErrors.razonSocial = "es obligatoria.";
+    }
+
+    if (!formData.responsabilidad) newErrors.responsabilidad = "es obligatoria.";
+    if (!formData.tipoDocumento) newErrors.tipoDocumento = "es obligatorio.";
+    if (!formData.documento || formData.documento.length < 7) {
+      newErrors.documento = "debe ser válido.";
+    }
+    if (!formData.telefono || formData.telefono.length < 7) {
+      newErrors.telefono = "debe ser válido.";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+
+
+    setErrors({});
 
     const baseData = {
+      idCliente: cliente?.idCliente,
       telefono: formData.telefono,
       celular: formData.celular,
-      responsabilidad: formData.responsabilidad as 'Consumidor Final' | 'Monotributista' | 'Responsable Inscripto',
-      tipo: formData.tipoDocumento as 'DNI' | 'CUIL' | 'CUIT',
+      responsabilidad: formData.responsabilidad as
+        | "ConsumidorFinal"
+        | "Monotributista"
+        | "ResponsableInscripto",
+      tipoDocumento: formData.tipoDocumento as "DNI" | "CUIL" | "CUIT",
       documento: formData.documento,
     };
 
-    if (tipoCliente === 'persona') {
+    if (tipoCliente === "Persona") {
       onSave({
         ...baseData,
         nombre: formData.nombre,
         apellido: formData.apellido,
-        idCliente: cliente?.idCliente || Date.now(),
+        tipoCliente: "Persona",
       });
     } else {
       onSave({
         ...baseData,
         razonSocial: formData.razonSocial,
-        nombreDeFantasia: formData.nombreFantasia,
-        idCliente: cliente?.idCliente || Date.now(),
+        nombreDeFantasia: formData.nombreDeFantasia,
+        tipoCliente: "Empresa",
       });
     }
-
   };
+
 
   const formatDocumento = (value: string, tipo: string) => {
     // Eliminar todo lo que no sea número
@@ -81,25 +112,29 @@ const ClienteForm: React.FC<ClienteFormProps> = ({ cliente, onSave, onCancel }) 
     return numbers;
   };
 
+  useEffect(() => {
+    if (!token) return;
+
+  }, [token, cliente]);
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
 
-    let newValue = value;
+    let value: string = e.target.value;
 
-    if (name === "documento") {
-      newValue = formatDocumento(value, formData.tipoDocumento);
+    if (e.target.name === "documento") {
+      value = formatDocumento(value, formData.tipoDocumento);
     }
 
     // Filtrar solo números para teléfono y celular
-    if (name === "telefono" || name === "celular") {
-      newValue = value.replace(/\D/g, ""); // elimina todo lo que no sea dígito
+    if (e.target.name === "telefono" || e.target.name === "celular") {
+      value = value.replace(/\D/g, ""); // elimina todo lo que no sea dígito
     }
 
-    setFormData({
-      ...formData,
-      [name]: newValue,
-    });
+    setFormData(prev => ({
+      ...prev,
+      [e.target.name]: value
+    }));
   };
 
   return (
@@ -114,39 +149,39 @@ const ClienteForm: React.FC<ClienteFormProps> = ({ cliente, onSave, onCancel }) 
           onCancel={onCancel}
         />
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-6">
+        <form className="p-6 space-y-6">
           {/* Tipo de Cliente */}
           <div>
             <span className="block text-sm font-medium text-gray-700 mb-3">
-              Tipo de Cliente (obligatorio: <span className="text-red-500">*</span>) 
+              Tipo de Cliente (obligatorio: <span className="text-red-500">*</span>)
             </span>
             <div className="flex space-x-4">
-              <label className={`flex items-center space-x-2 px-4 py-2 rounded-lg border cursor-pointer transition-colors ${tipoCliente === 'persona'
+              <label className={`flex items-center space-x-2 px-4 py-2 rounded-lg border cursor-pointer transition-colors ${tipoCliente === 'Persona'
                 ? 'bg-green-50 border-green-300 text-green-700'
                 : 'bg-gray-50 border-gray-300 text-gray-700 hover:bg-gray-100'
                 }`}>
                 <input
                   type="radio"
                   name="tipoCliente"
-                  value="persona"
-                  checked={tipoCliente === 'persona'}
-                  onChange={() => setTipoCliente('persona')}
+                  value="Persona"
+                  checked={tipoCliente === 'Persona'}
+                  onChange={() => setTipoCliente('Persona')}
                   className="hidden"
                 />
                 <User className="w-5 h-5" />
                 <span>Persona</span>
               </label>
 
-              <label className={`flex items-center space-x-2 px-4 py-2 rounded-lg border cursor-pointer transition-colors ${tipoCliente === 'empresa'
+              <label className={`flex items-center space-x-2 px-4 py-2 rounded-lg border cursor-pointer transition-colors ${tipoCliente === 'Empresa'
                 ? 'bg-green-50 border-green-300 text-green-700'
                 : 'bg-gray-50 border-gray-300 text-gray-700 hover:bg-gray-100'
                 }`}>
                 <input
                   type="radio"
                   name="tipoCliente"
-                  value="empresa"
-                  checked={tipoCliente === 'empresa'}
-                  onChange={() => setTipoCliente('empresa')}
+                  value="Empresa"
+                  checked={tipoCliente === 'Empresa'}
+                  onChange={() => setTipoCliente('Empresa')}
                   className="hidden"
                 />
                 <Building className="w-5 h-5" />
@@ -156,28 +191,30 @@ const ClienteForm: React.FC<ClienteFormProps> = ({ cliente, onSave, onCancel }) 
           </div>
 
           {/* Campos específicos por tipo */}
-          {tipoCliente === 'persona' ? (
+          {tipoCliente === 'Persona' ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-              <InputForm label="Nombre " name="nombre" value={formData.nombre} onChange={handleChange} required />
-              <InputForm label="Apellido " name="apellido" value={formData.apellido} onChange={handleChange} required />
+              <InputForm label="Nombre " name="nombre" value={formData.nombre} onChange={handleChange} required error={errors.nombre} />
+              <InputForm label="Apellido " name="apellido" value={formData.apellido} onChange={handleChange} required error={errors.apellido} />
 
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-              <InputForm label="Razón Social " name="razonSocial" value={formData.razonSocial} onChange={handleChange} required />
-              <InputForm label="Nombre de Fantasía " name="nombreFantasia" value={formData.nombreFantasia} onChange={handleChange} />
-
+              <InputForm label="Razón Social " name="razonSocial" value={formData.razonSocial} onChange={handleChange} required error={errors.razonSocial} />
+              <div>
+                <InputForm label="Nombre de Fantasía " name="nombreDeFantasia" value={formData.nombreDeFantasia} onChange={handleChange} />
+              </div>
             </div>
           )}
 
           {/* Contacto */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-            <InputForm label="Teléfono " type="tel" name="telefono" value={formData.telefono} onChange={handleChange} required />
-            <InputForm label="Celular " type="tel" name="celular" value={formData.celular} onChange={handleChange} />
-
+            <InputForm label="Teléfono " type="tel" name="telefono" value={formData.telefono} onChange={handleChange} required error={errors.telefono} />
+            <div>
+              <InputForm label="Celular " type="tel" name="celular" value={formData.celular} onChange={handleChange} />
+            </div>
           </div>
 
           {/* Responsabilidad */}
@@ -197,16 +234,17 @@ const ClienteForm: React.FC<ClienteFormProps> = ({ cliente, onSave, onCancel }) 
                 Seleccione una opción
               </option>
 
-              {tipoCliente === "empresa" ? (
-                <option value="Responsable Inscripto">Responsable Inscripto</option>
+              {tipoCliente === "Empresa" ? (
+                <option value="ResponsableInscripto">Responsable Inscripto</option>
               ) : (
                 <>
-                  <option value="Consumidor Final">Consumidor Final</option>
+                  <option value="ConsumidorFinal">Consumidor Final</option>
                   <option value="Monotributista">Monotributista</option>
                 </>
               )}
 
             </select>
+            {errors.responsabilidad && <p className="text-red-500 text-sm">{errors.responsabilidad}</p>}
           </div>
 
           {/* Tipo de Documento */}
@@ -228,7 +266,7 @@ const ClienteForm: React.FC<ClienteFormProps> = ({ cliente, onSave, onCancel }) 
                   Seleccione una opción
                 </option>
 
-                {((tipoCliente === 'persona') && (formData.responsabilidad === 'Consumidor Final')) ?
+                {((tipoCliente === 'Persona') && (formData.responsabilidad === 'ConsumidorFinal')) ?
                   (<>
                     <option value="DNI">DNI</option>
                     <option value="CUIL">CUIL</option>
@@ -236,17 +274,16 @@ const ClienteForm: React.FC<ClienteFormProps> = ({ cliente, onSave, onCancel }) 
                   ) : (
                     <option value="CUIT">CUIT</option>)}
               </select>
+              {errors.tipoDocumento && <p className="text-red-500 text-sm">{errors.tipoDocumento}</p>}
             </div>
 
-            <InputForm label="Número de Documento " name="documento" value={formData.documento} onChange={handleChange} required />
+            <InputForm label="Número de Documento " name="documento" value={formData.documento} onChange={handleChange} required error={errors.documento} />
 
           </div>
 
-
-
           {/* Botones */}
           <BotonesForm
-            // onGuardar={handleGuardar}
+            onGuardar={handleSubmit}
             onCancel={onCancel}
           />
 

@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { Car } from 'lucide-react';
-import { Vehiculo, Cliente } from '../../types';
 import { BotonesForm } from '../Shared/BotonesForm';
-import { InputForm } from '../Shared/InputForm';
 import { HeaderForm } from '../Shared/HeaderForm';
-import { useVehiculos } from '../../hooks/useVehiculos';
+import { useApiGit } from '../../hooks/useApiGit';
+import { Vehiculo, Cliente } from '../../types';
+import { InputForm } from '../Shared/InputForm';
 import { useAuth } from '../../hooks/useAuth';
+import { useState, useEffect } from 'react';
+import { Car } from 'lucide-react';
 
 
 interface VehiculoFormProps {
@@ -18,7 +18,7 @@ interface VehiculoFormProps {
 const VehiculoForm: React.FC<VehiculoFormProps> = ({ vehiculo, clientes, onSave, onCancel }) => {
   const { token } = useAuth();
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
-  const { marcas, modelos, cargarMarcasYModelos } = useVehiculos();
+  const { marcas, modelos, cargarMarcasYModelos } = useApiGit();
   const [formData, setFormData] = useState({
     patente: vehiculo?.patente || '',
     marca: vehiculo?.marca || '',
@@ -72,7 +72,7 @@ const VehiculoForm: React.FC<VehiculoFormProps> = ({ vehiculo, clientes, onSave,
       fechaEsperada: formData.fechaEsperada ? formData.fechaEsperada.split("T")[0] : null,
       fechaEntrega: formData.fechaEntrega ? formData.fechaEntrega.split("T")[0] : null,
       descripcionTrabajos: formData.descripcionTrabajos,
-      idCliente: formData.idCliente ? Number(formData.idCliente) : null,
+      idCliente: formData.idCliente ?? Number(formData.idCliente),
     });
   };
 
@@ -172,6 +172,7 @@ const VehiculoForm: React.FC<VehiculoFormProps> = ({ vehiculo, clientes, onSave,
                 </select>
                 {errors.modelo && <p className="text-red-500 text-sm">{errors.modelo}</p>}
               </div>
+              
               <div>
                 <div className="grid grid-cols-1 md:grid-cols-1">
                   <label htmlFor="anio" className="block text-sm font-medium text-gray-700 mb-2">

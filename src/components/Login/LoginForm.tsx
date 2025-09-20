@@ -32,7 +32,7 @@ export default function LoginForm() {
       const data = await loginService(formData.nombreUsuario, formData.contrasenia);
 
       login(data.token);
-      
+
 
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Error inesperado");
@@ -64,6 +64,7 @@ export default function LoginForm() {
                 type="text"
                 name="nombreUsuario"
                 value={formData.nombreUsuario}
+                autoComplete="username"
                 onChange={handleChange}
                 className="w-full px-4 py-2 rounded-md bg-transparent border border-gray-600 text-white focus:outline-none focus:border-green-500"
                 required
@@ -80,6 +81,7 @@ export default function LoginForm() {
                   name="contrasenia"
                   value={formData.contrasenia}
                   onChange={handleChange}
+                  autoComplete="current-password"
                   className="w-full px-4 py-2 rounded-md bg-transparent border border-gray-600 text-white focus:outline-none focus:border-green-500 pr-10"
                   required
                 />

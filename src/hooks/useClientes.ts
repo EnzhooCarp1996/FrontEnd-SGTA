@@ -1,21 +1,95 @@
+import { Cliente, NewCliente } from "../types";
 import { useState, useEffect } from "react";
-import { getClientes, deleteCliente } from "../Services/ClienteService";
-import { Cliente } from "../types";
+import {
+  createCliente,
+  getClientes,
+  updateCliente,
+  deleteCliente,
+} from "../Services/ClienteService";
+import { useAuth } from "./useAuth";
 
-export function useClientes(token: string | null) {
+export function useClientes() {
+  const { token } = useAuth();
   const [clientes, setClientes] = useState<Cliente[]>([]);
   const [error, setError] = useState<string | null>(null);
 
+  // -------------------------------
+  // HELPERS
+  // -------------------------------
+  const getNombreCliente = (cliente: NewCliente | Cliente) =>
+    cliente.tipoCliente === "Persona"
+      ? `${cliente.nombre} ${cliente.apellido}`
+      : cliente.razonSocial;
+
+  const handleError = (action: string, err: unknown) => {
+    if (err instanceof Error) {
+      alert(`❌ Error al ${action} el cliente: ${err.message}`);
+    } else {
+      alert(`❌ Error desconocido al ${action} el cliente`);
+    }
+  };
+
+  // -------------------------------
+  // FETCH INICIAL
+  // -------------------------------
   useEffect(() => {
     if (!token) return;
-    
+
     getClientes(token)
       .then((data) => setClientes(data))
-      .catch((err) => setError(err.message))
+      .catch((err) => setError(err.message));
   }, [token]);
 
+  // -------------------------------
+  // CREATE
+  // -------------------------------
+  const agregarCliente = async (newCliente: NewCliente) => {
+    if (!token) return;
+    try {
+      const clienteCreado = await createCliente(token, newCliente);
+      setClientes((prev) => [...prev, clienteCreado]);
+
+      alert(
+        `👤 ¡Agregado correctamente!\n✅ Cliente: ${getNombreCliente(
+          newCliente
+        )}\n🆔 Documento: ${newCliente.documento}`
+      );
+      return clienteCreado;
+    } catch (err: unknown) {
+      handleError("crear", err);
+      throw err;
+    }
+  };
+
+  // -------------------------------
+  // UPDATE
+  // -------------------------------
+  const modificarCliente = async (clienteActualizado: Cliente) => {
+    if (!token) return;
+    try {
+      const cliente = await updateCliente(token, clienteActualizado);
+      setClientes((prev) =>
+        prev.map((c) => (c.idCliente === cliente.idCliente ? cliente : c))
+      );
+
+      alert(
+        `👤 ¡Actualizado correctamente!\n✅ Cliente: ${getNombreCliente(
+          clienteActualizado
+        )}\n🆔 Documento: ${clienteActualizado.documento}`
+      );
+      return cliente;
+    } catch (err: unknown) {
+      handleError("actualizar", err);
+      throw err;
+    }
+  };
+
+  // -------------------------------
+  // DELETE
+  // -------------------------------
   const eliminarCliente = async (id: number) => {
     if (!token) return;
+
     const confirmar = window.confirm(
       "⚠️ ¿Estás seguro de eliminar este cliente?"
     );
@@ -26,47 +100,9 @@ export function useClientes(token: string | null) {
       setClientes((prev) => prev.filter((c) => c.idCliente !== id));
       alert("Cliente eliminado correctamente ✅");
     } catch (err: unknown) {
-      if (err instanceof Error) {
-        alert("❌ Error al eliminar el cliente: " + err.message);
-      } else {
-        alert("❌ Error desconocido al eliminar el cliente");
-      }
+      handleError("eliminar", err);
     }
   };
 
-  return { clientes, error, eliminarCliente };
-}
-
-export function useClienteFilters(clientes: Cliente[]) {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filterType, setFilterType] = useState<"all" | "persona" | "empresa">(
-    "all"
-  );
-
-  const filteredClientes = clientes.filter((cliente) => {
-    const isEmpresa = cliente.tipoCliente === "Empresa";
-    const matchesSearch = isEmpresa
-      ? cliente.razonSocial.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        cliente.nombreDeFantasia
-          .toLowerCase()
-          .includes(searchTerm.toLowerCase())
-      : `${cliente.nombre} ${cliente.apellido}`
-          .toLowerCase()
-          .includes(searchTerm.toLowerCase());
-
-    const matchesFilter =
-      filterType === "all" ||
-      (filterType === "empresa" && isEmpresa) ||
-      (filterType === "persona" && !isEmpresa);
-
-    return matchesSearch && matchesFilter;
-  });
-
-  return {
-    filteredClientes,
-    searchTerm,
-    setSearchTerm,
-    filterType,
-    setFilterType,
-  };
+  return { clientes, error, agregarCliente, modificarCliente, eliminarCliente };
 }

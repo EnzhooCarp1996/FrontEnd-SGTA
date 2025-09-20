@@ -1,5 +1,5 @@
 import { createContext, useState, useEffect, ReactNode } from "react";
-import {jwtDecode} from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 
 interface AuthContextType {
   token: string | null;
@@ -54,6 +54,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("refreshToken");
     setToken(null);
   };
 

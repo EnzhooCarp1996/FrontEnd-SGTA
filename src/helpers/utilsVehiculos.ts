@@ -1,3 +1,5 @@
+import { Vehiculo } from "../types";
+
 export const formatDate = (dateString?: string | null) => {
   if (!dateString) return "No definida";
   return new Date(dateString).toLocaleDateString("es-AR");
@@ -26,3 +28,20 @@ export const getStatusColor = (estado: string) => {
 };
 
 
+export const filtrarVehiculos = (
+  vehiculos: Vehiculo[],
+  searchTerm: string,
+  filterEstado: string
+) => {
+  return vehiculos.filter((vehiculo) => {
+    const matchesSearch =
+      vehiculo.patente.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      vehiculo.marca.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      vehiculo.modelo.toLowerCase().includes(searchTerm.toLowerCase());
+
+    const matchesFilter =
+      filterEstado === "all" || vehiculo.estado === filterEstado;
+
+    return matchesSearch && matchesFilter;
+  });
+};
