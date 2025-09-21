@@ -1,17 +1,17 @@
-import { Cliente, NewCliente } from "../types";
+import { Cliente, NewCliente } from "../../types";
 import { useState, useEffect } from "react";
 import {
   createCliente,
   getClientes,
   updateCliente,
   deleteCliente,
-} from "../Services/ClienteService";
-import { useAuth } from "./useAuth";
+} from "../../Services/ClienteService";
+import { useAuth } from "../useAuth";
 
 export function useClientes() {
   const { token } = useAuth();
   const [clientes, setClientes] = useState<Cliente[]>([]);
-  const [error, setError] = useState<string | null>(null);
+  const [errorCliente, setError] = useState<string | null>(null);
 
   // -------------------------------
   // HELPERS
@@ -104,5 +104,5 @@ export function useClientes() {
     }
   };
 
-  return { clientes, error, agregarCliente, modificarCliente, eliminarCliente };
+  return { clientes, errorCliente, agregarCliente, modificarCliente, eliminarCliente };
 }

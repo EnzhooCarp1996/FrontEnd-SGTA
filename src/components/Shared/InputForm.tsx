@@ -1,4 +1,4 @@
-import React, { useId } from "react";
+import { useId } from "react";
 
 interface InputFormProps {
   label: string;
@@ -7,9 +7,11 @@ interface InputFormProps {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   required?: boolean;
   type?: string;
-  placeholder?: string
-  step?: string
+  placeholder?: string;
+  step?: string;
   error?: string;
+  readOnly?: boolean;
+  disabled?: boolean;
 }
 
 export const InputForm: React.FC<InputFormProps> = ({
@@ -22,13 +24,17 @@ export const InputForm: React.FC<InputFormProps> = ({
   placeholder = "",
   step = "",
   error,
+  readOnly = false,
+  disabled = false,
 }) => {
-
   const id = useId();
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-1">
-      <label htmlFor={id} className="block text-sm font-medium text-gray-700 mb-2">
+      <label
+        htmlFor={id}
+        className="block text-sm font-medium text-gray-700 mb-2"
+      >
         {label} {required && <span className="text-red-500">*</span>}
       </label>
       <input
@@ -38,7 +44,11 @@ export const InputForm: React.FC<InputFormProps> = ({
         value={value}
         onChange={onChange}
         required={required}
-        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+        readOnly={readOnly}
+        disabled={disabled}
+        className={`w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
+          readOnly || disabled ? "bg-gray-100 cursor-not-allowed" : ""
+        }`}
         placeholder={placeholder}
         step={step}
       />

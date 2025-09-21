@@ -1,36 +1,21 @@
-import { useVehiculos } from "../../hooks/useVehiculos";
-import { useClientes } from "../../hooks/useClientes";
-import { Vehiculo, NewVehiculo } from "../../types";
+import { useVehiculoView } from "../../hooks/Vehiculos/useVehiculosView";
 import VehiculosList from "./VehiculosList";
 import VehiculoForm from "./VehiculoForm";
-import { useState } from "react";
 
 
 const VehiculoView: React.FC = () => {
-  const { vehiculos, error, agregarVehiculo, modificarVehiculo, eliminarVehiculo } = useVehiculos();
-  const { clientes } = useClientes();
-  const [mostrarForm, setMostrarForm] = useState(false);
-  const [editarVehiculo, setEditarVehiculo] = useState<Vehiculo | undefined>();
-
-  const handleAdd = () => { setEditarVehiculo(undefined); setMostrarForm(true); };
-  const handleEdit = (vehiculo: Vehiculo) => { setEditarVehiculo(vehiculo); setMostrarForm(true); };
-
-  const handleSave = async (vehiculo: Partial<Vehiculo>) => {
-    try {
-      if (editarVehiculo) {
-        const vehiculoCompleto: Vehiculo = { ...editarVehiculo, ...vehiculo };
-        await modificarVehiculo(vehiculoCompleto);
-      } else {
-        await agregarVehiculo(vehiculo as NewVehiculo);
-      }
-      setMostrarForm(false);
-      setEditarVehiculo(undefined);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const handleCancel = () => { setEditarVehiculo(undefined); setMostrarForm(false); };
+  const {
+    vehiculos,
+    clientes,
+    error,
+    mostrarForm,
+    editarVehiculo,
+    handleAdd,
+    handleEdit,
+    handleSave,
+    handleCancel,
+    eliminarVehiculo
+  } = useVehiculoView();
 
   return (
     <>

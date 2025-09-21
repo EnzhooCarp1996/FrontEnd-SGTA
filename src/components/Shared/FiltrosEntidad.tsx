@@ -1,7 +1,7 @@
-import React from 'react';
-import { LucideIcon } from 'lucide-react';
 import { BuscadorEntidad } from './BuscadorEntidad';
 import { SelectEntidad } from './SelectEntidad';
+import { LucideIcon } from 'lucide-react';
+
 
 interface Option<T extends string> {
   value: T;

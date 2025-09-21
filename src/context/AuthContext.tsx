@@ -3,15 +3,14 @@ import { jwtDecode } from "jwt-decode";
 
 interface AuthContextType {
   token: string | null;
-  login: (token: string) => void;
+  login: (token: string, recordar: boolean) => void;
   logout: () => void;
   isAuthenticated: boolean;
 }
 
 interface JwtPayload {
-  exp: number; // tiempo de expiración (en segundos desde epoch)
-  sub: string; // identificador del usuario (puede variar según tu backend)
-  // podés agregar más campos según tu backend
+  exp: number; 
+  sub: string; 
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -20,7 +19,7 @@ export const AuthContext = createContext<AuthContextType | undefined>(undefined)
 const isTokenValid = (token: string): boolean => {
   try {
     const decoded: JwtPayload = jwtDecode(token);
-    return decoded.exp * 1000 > Date.now(); // exp viene en segundos
+    return decoded.exp * 1000 > Date.now();
   } catch {
     return false;
   }
@@ -28,24 +27,41 @@ const isTokenValid = (token: string): boolean => {
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [token, setToken] = useState<string | null>(() => {
-    const savedToken = localStorage.getItem("token");
-    return savedToken && isTokenValid(savedToken) ? savedToken : null;
+    const savedLocal = localStorage.getItem("token");
+    const savedSession = sessionStorage.getItem("token");
+
+    if (savedLocal && isTokenValid(savedLocal)) return savedLocal;
+    if (savedSession && isTokenValid(savedSession)) return savedSession;
+
+    return null;
   });
 
   // 🔹 Mantener sincronización entre pestañas
   useEffect(() => {
     const handleStorage = () => {
-      const savedToken = localStorage.getItem("token");
-      setToken(savedToken && isTokenValid(savedToken) ? savedToken : null);
+      const savedLocal = localStorage.getItem("token");
+      const savedSession = sessionStorage.getItem("token");
+
+      if (savedLocal && isTokenValid(savedLocal)) {
+        setToken(savedLocal);
+      } else if (savedSession && isTokenValid(savedSession)) {
+        setToken(savedSession);
+      } else {
+        setToken(null);
+      }
     };
 
     window.addEventListener("storage", handleStorage);
     return () => window.removeEventListener("storage", handleStorage);
   }, []);
 
-  const login = (newToken: string) => {
+  const login = (newToken: string, recordar: boolean) => {
     if (isTokenValid(newToken)) {
-      localStorage.setItem("token", newToken);
+      if (recordar) {
+        localStorage.setItem("token", newToken);
+      } else {
+        sessionStorage.setItem("token", newToken);
+      }
       setToken(newToken);
     } else {
       console.error("Token inválido o expirado");
@@ -54,6 +70,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = () => {
     localStorage.removeItem("token");
+    sessionStorage.removeItem("token");
     localStorage.removeItem("refreshToken");
     setToken(null);
   };

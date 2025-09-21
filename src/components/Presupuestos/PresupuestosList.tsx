@@ -1,90 +1,35 @@
-import React, { useEffect, useState } from 'react';
+import { usePresupuestosList } from '../../hooks/Presupuestos/usePresupuestosList';
 import { Search, FileText, Calendar, User } from 'lucide-react';
-import { Cliente, Presupuesto } from '../../types';
-import { HeaderEntidad } from '../Shared/HeaderEntidad';
 import { EntidadNotFound } from '../Shared/EntidadNotFound';
 import { FiltrosEntidad } from '../Shared/FiltrosEntidad';
 import { BotonesTarjeta } from '../Shared/BotonesTarjeta';
+import { HeaderEntidad } from '../Shared/HeaderEntidad';
 import { TarjetaSpan } from '../Clientes/TarjetaSpan';
-import { deletePresupuesto, getPresupuestos } from '../../Services/PresupuestoService';
-import { getClientes } from '../../Services/ClienteService';
+import { Cliente, Presupuesto } from '../../types';
 
 interface PresupuestosListProps {
   onAddPresupuesto: () => void;
   onEditPresupuesto: (presupuesto: Presupuesto) => void;
+  eliminarPresupuesto: (id: number) => void;
+  presupuestos: Presupuesto[];
+  clientes: Cliente[];
+  error: string | null;
 }
 
-const PresupuestosList: React.FC<PresupuestosListProps> = ({ onAddPresupuesto: onAddPresupuesto, onEditPresupuesto: onEditPresupuesto }) => {
-  const [presupuestos, setPresupuestos] = useState<Presupuesto[]>([]);
-  const [clientes, setClientes] = useState<Cliente[]>([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterMonth, setFilterMonth] = useState<string>('all');
 
-  const token = localStorage.getItem("token");
-
-  useEffect(() => {
-    if (!token) return;
-
-    getPresupuestos(token)
-      .then((data) => setPresupuestos(data))
-      .catch((err) => console.error(err));
-
-    getClientes(token)
-      .then(data => setClientes(data))
-      .catch(err => console.error(err));
-  }, [token]);
-
-  // -------------------------------
-  // HANDLERS CRUD
-  // -------------------------------
-  const handleDeletePresupuesto = async (id: number) => {
-    if (!token) return;
-    try {
-      await deletePresupuesto(token, id);
-      setPresupuestos(prev => prev.filter(c => c.idCliente !== id));
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-
-  const filteredPresupuestos = presupuestos.filter(presupuesto => {
-    const matchesSearch = presupuesto.idPresupuesto.toString().includes(searchTerm);
-
-    const presupuestoMonth = new Date(presupuesto.fecha).getMonth();
-    const currentMonth = new Date().getMonth();
-    const matchesFilter = filterMonth === 'all' ||
-      (filterMonth === 'current' && presupuestoMonth === currentMonth) ||
-      (filterMonth === 'previous' && presupuestoMonth === currentMonth - 1);
-
-    return matchesSearch && matchesFilter;
-  });
-
-  const getClienteNombre = (idCliente?: number) => {
-    if (!idCliente) return "Sin Cliente";
-    const cliente = clientes.find(c => c.idCliente === idCliente);
-    if (!cliente) return "Sin Cliente";
-    return cliente.tipoCliente === 'Empresa'
-      ? cliente.nombreDeFantasia
-      : `${cliente.nombre} ${cliente.apellido}`;
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('es-AR');
-  };
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('es-AR', {
-      style: 'currency',
-      currency: 'ARS'
-    }).format(amount);
-  };
-
-  const opcionesMeses = [
-    { value: "all", label: "Todos los Meses" },
-    { value: "current", label: "Mes actual" },
-    { value: "previous", label: "Mes anterior" },
-  ];
+const PresupuestosList: React.FC<PresupuestosListProps> = ({ onAddPresupuesto, onEditPresupuesto }) => {
+  const {
+    filteredPresupuestos,
+    searchTerm,
+    setSearchTerm,
+    filterMonth,
+    setFilterMonth,
+    getClienteNombre,
+    eliminarPresupuesto,
+    formatDate,
+    formatCurrency,
+    opcionesMeses
+  } = usePresupuestosList();
 
   return (
     <div className="p-6">
@@ -123,10 +68,9 @@ const PresupuestosList: React.FC<PresupuestosListProps> = ({ onAddPresupuesto: o
                     <h3 className="font-semibold text-gray-900 text-lg">{presupuesto.idPresupuesto}</h3>
                   </div>
                 </div>
-
                 <BotonesTarjeta
                   onEdit={() => onEditPresupuesto(presupuesto)}
-                  onDelete={() => handleDeletePresupuesto(presupuesto.idPresupuesto)}
+                  onDelete={() => eliminarPresupuesto(presupuesto.idPresupuesto)}
                 />
 
               </div>
@@ -153,7 +97,6 @@ const PresupuestosList: React.FC<PresupuestosListProps> = ({ onAddPresupuesto: o
                   <span className="font-medium">Total: </span>
                   <span>{formatCurrency(presupuesto.manoDeObraChapa + presupuesto.manoDeObraPintura + presupuesto.totalRepuestos)}</span>
                 </TarjetaSpan>
-
               </div>
 
               <div className="flex items-center space-x-2 text-xs text-gray-500">

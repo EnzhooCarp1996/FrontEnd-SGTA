@@ -1,4 +1,3 @@
-import React from 'react';
 import { Car, Users, FileText, Clock, TrendingUp, AlertCircle } from 'lucide-react';
 
 const PanelDeControl: React.FC = () => {

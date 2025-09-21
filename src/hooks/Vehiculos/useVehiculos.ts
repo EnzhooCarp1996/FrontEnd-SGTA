@@ -1,12 +1,12 @@
+import { Vehiculo, NewVehiculo } from "../../types";
 import { useEffect, useState } from "react";
 import {
   createVehiculo,
   getVehiculos,
   updateVehiculo,
   deleteVehiculo,
-} from "../Services/VehiculoService";
-import { Vehiculo, NewVehiculo } from "../types";
-import { useAuth } from "./useAuth";
+} from "../../Services/VehiculoService";
+import { useAuth } from "../useAuth";
 
 export function useVehiculos() {
   const { token } = useAuth();
@@ -101,5 +101,3 @@ export function useVehiculos() {
     eliminarVehiculo,
   };
 }
-
-

@@ -4,11 +4,11 @@ import {
   getPresupuestos,
   updatePresupuesto,
   deletePresupuesto,
-} from "../Services/PresupuestoService";
-import { Presupuesto, NewPresupuesto } from "../types";
-import { useAuth } from "./useAuth";
+} from "../../Services/PresupuestoService";
+import { Presupuesto, NewPresupuesto } from "../../types";
+import { useAuth } from "../useAuth";
 
-export function usePresupuesto() {
+export function usePresupuestos() {
   const { token } = useAuth();
   const [presupuestos, setPresupuestos] = useState<Presupuesto[]>([]);
   const [error, setError] = useState<string | null>(null);

@@ -1,4 +1,3 @@
-import React from 'react';
 import { Home, Users, Car, FileText, PaintBucket, X } from 'lucide-react';
 
 interface BarraLateralProps {

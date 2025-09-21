@@ -2,8 +2,8 @@ import { filtrarVehiculos } from "../../helpers/utilsVehiculos";
 import { EntidadNotFound } from "../Shared/EntidadNotFound";
 import { FiltrosEntidad } from "../Shared/FiltrosEntidad";
 import { HeaderEntidad } from "../Shared/HeaderEntidad";
-import { useVehiculos } from "../../hooks/useVehiculos";
-import { useClientes } from "../../hooks/useClientes";
+import { useVehiculos } from "../../hooks/Vehiculos/useVehiculos";
+import { useClientes } from "../../hooks/Clientes/useClientes";
 import { Cliente, Vehiculo } from "../../types";
 import { VehiculoCard } from "./VehiculoCard";
 import { Search, Car } from "lucide-react";
@@ -19,13 +19,6 @@ interface VehiculosListProps {
   error: string | null;
 }
 
-const estados = [
-  { value: "all", label: "Todos los estados" },
-  { value: "No Recibido", label: "No Recibido" },
-  { value: "Recibido", label: "Recibido" },
-  { value: "Proceso", label: "En Proceso" },
-  { value: "Entregado", label: "Entregado" },
-];
 
 const VehiculosList: React.FC<VehiculosListProps> = ({ onAddVehiculo, onEditVehiculo }) => {
   const { vehiculos, error, eliminarVehiculo } = useVehiculos();
@@ -33,6 +26,13 @@ const VehiculosList: React.FC<VehiculosListProps> = ({ onAddVehiculo, onEditVehi
   const [searchTerm, setSearchTerm] = useState("");
   const [filterEstado, setFilterEstado] = useState("all");
   const filteredVehiculos = filtrarVehiculos(vehiculos, searchTerm, filterEstado);
+  const estados = [
+    { value: "all", label: "Todos los estados" },
+    { value: "No Recibido", label: "No Recibido" },
+    { value: "Recibido", label: "Recibido" },
+    { value: "Proceso", label: "En Proceso" },
+    { value: "Entregado", label: "Entregado" },
+  ];
 
   if (error) return <p>{error}</p>;
 

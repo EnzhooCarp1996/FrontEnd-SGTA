@@ -1,6 +1,5 @@
-import React from 'react';
-import { BotonAgregar } from './BotonAgregar';
 import { CabeceraEntidad } from './CabeceraEntidad';
+import { BotonAgregar } from './BotonAgregar';
 
 interface HeaderEntidadProps {
   titulo: string;

@@ -1,8 +1,8 @@
-import { Trash2 } from "lucide-react";
 import { DropdownCascada } from "./DropdownCascada";
+import { Trash2 } from "lucide-react";
 
 interface PresupuestoItem {
-  id: string;
+  id: number;
   descripcion: string;
   ubicacion: string;
   a: string;
@@ -16,8 +16,8 @@ interface TablaRowProps {
   items: PresupuestoItem[];
   displayValues: Record<string, string>;
   setDisplayValues: React.Dispatch<React.SetStateAction<Record<string, string>>>;
-  updateItem: (id: string, field: keyof PresupuestoItem, value: string | number, type?: string) => void;
-  removeItem: (id: string) => void;
+  updateItem: (id: number, field: keyof PresupuestoItem, value: string | number, type?: string) => void;
+  removeItem: (id: number) => void;
 }
 
 export const TablaRow: React.FC<TablaRowProps> = ({

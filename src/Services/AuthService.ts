@@ -32,7 +32,7 @@ export function logout(setToken?: (token: string | null) => void): void {
 // -------------------------
 // LOGIN
 // -------------------------
-export async function login(nombreUsuario: string, contrasenia: string): Promise<LoginResponse> {
+export async function logIn( nombreUsuario: string, contrasenia: string ): Promise<LoginResponse> {
   const response = await fetch(`${API_BASE_URL}/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -49,7 +49,8 @@ export async function login(nombreUsuario: string, contrasenia: string): Promise
   const data = (await response.json()) as LoginResponse;
 
   localStorage.setItem("token", data.token);
-  if (data.refreshToken) localStorage.setItem("refreshToken", data.refreshToken);
+  if (data.refreshToken)
+    localStorage.setItem("refreshToken", data.refreshToken);
 
   return data;
 }

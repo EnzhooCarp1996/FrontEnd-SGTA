@@ -1,45 +1,16 @@
-import { useState } from "react";
 import { Eye, EyeOff, PaintBucket } from "lucide-react";
-import { login as loginService } from "../../Services/AuthService";
-import { useAuth } from "../../hooks/useAuth";
+import { useLoginForm } from "../../hooks/useLoginForm";
 
 export default function LoginForm() {
-  const { login } = useAuth();
-
-  const [showContrasenia, setShowContrasenia] = useState(false);
-  const [formData, setFormData] = useState({
-    nombreUsuario: "",
-    contrasenia: "",
-    recordar: false,
-  });
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = e.target;
-    setFormData({
-      ...formData,
-      [name]: type === "checkbox" ? checked : value,
-    });
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-
-    try {
-      const data = await loginService(formData.nombreUsuario, formData.contrasenia);
-
-      login(data.token);
-
-
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Error inesperado");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const {
+    formData,
+    showContrasenia,
+    loading,
+    error,
+    setShowContrasenia,
+    handleChange,
+    handleSubmit,
+  } = useLoginForm();
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-green-900 via-emerald-900 to-green-800 px-4">

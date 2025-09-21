@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import PanelDeControl from "../PanelDeControl/PanelDeControl";
+import PresupuestoView from "../Presupuestos/PresupuestoView";
+import VehiculoView from "../Vehiculos/VehiculosView";
+import ClienteView from "../Clientes/ClienteView";
 import { Toaster } from "react-hot-toast";
 import BarraLateral from "./BarraLateral";
+import { useState } from "react";
 import Header from "./Header";
-import PanelDeControl from "../PanelDeControl/PanelDeControl";
-import ClienteView from "../Clientes/ClienteView";
-import VehiculoView from "../Vehiculos/VehiculosView";
-import PresupuestoView from "../Presupuestos/PresupuestoView";
 
 const AppContent: React.FC = () => {
   const [vistaActual, setVistaActual] = useState("panelDeControl");
@@ -19,9 +19,9 @@ const AppContent: React.FC = () => {
       case "panelDeControl":
         return <PanelDeControl />;
       case "clientes":
-        return <ClienteView />; // ya no necesita token por prop
+        return <ClienteView />;
       case "vehiculos":
-        return <VehiculoView />; // idem
+        return <VehiculoView />; //
       case "presupuestos":
         return <PresupuestoView />;
       default:

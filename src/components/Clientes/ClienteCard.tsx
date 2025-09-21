@@ -1,9 +1,9 @@
+import { getResponsabilidadColor } from "../../helpers/utilsClientes";
+import { BotonesTarjeta } from "../Shared/BotonesTarjeta";
 import { Building, User } from "lucide-react";
-import { Cliente } from "../../types";
 import { TarjetaSpan } from "./TarjetaSpan";
 import { Contacto } from "./Contacto";
-import { BotonesTarjeta } from "../Shared/BotonesTarjeta";
-import { getResponsabilidadColor } from "../../helpers/utilsClientes";
+import { Cliente } from "../../types";
 
 interface ClienteCardProps {
     cliente: Cliente;
@@ -39,7 +39,6 @@ export const ClienteCard: React.FC<ClienteCardProps> = ({ cliente, onEdit, onDel
                         {isEmpresa && <p className="text-sm text-gray-500">{cliente.razonSocial}</p>}
                     </div>
                 </div>
-
                 <BotonesTarjeta
                     onEdit={() => onEdit(cliente)}
                     onDelete={() => onDelete(cliente.idCliente)}
@@ -51,11 +50,9 @@ export const ClienteCard: React.FC<ClienteCardProps> = ({ cliente, onEdit, onDel
                 <TarjetaSpan>
                     <Contacto contacto={cliente.telefono} />
                 </TarjetaSpan>
-
                 <TarjetaSpan>
                     <Contacto contacto={cliente.celular} />
                 </TarjetaSpan>
-
                 <TarjetaSpan>
                     <span className="font-medium">{cliente.tipoDocumento}:</span>
                     <span>{cliente.documento}</span>

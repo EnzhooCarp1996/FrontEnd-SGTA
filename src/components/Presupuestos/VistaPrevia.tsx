@@ -1,9 +1,9 @@
-import React, { useRef } from 'react';
-import { X } from 'lucide-react';
 import html2pdf from 'html2pdf.js';
+import { X } from 'lucide-react';
+import { useRef } from 'react';
 
 interface PresupuestoItem {
-    id: string;
+    id: number;
     descripcion: string;
     ubicacion: string;
     a: string;
@@ -14,12 +14,14 @@ interface PresupuestoItem {
 
 interface VistaPreviaProps {
     presupuesto: {
-        id_presupuesto: string;
+        idPresupuesto: number;
         fecha: string;
         total: number;
+        idCliente?: number,
         cliente: string;
         domicilio: string;
         poliza: string;
+        idVehiculo?: number;
         vehiculo: string;
         patente: string;
         siniestro: string;
@@ -28,11 +30,11 @@ interface VistaPreviaProps {
         mecanica?: number;
         electricidad?: number;
         repuestos?: number;
-        lugar_fecha?: string;
-        firma_cliente?: string;
-        firma_responsable: string;
+        lugarFecha?: string;
+        firmaCliente?: string;
+        firmaResponsable: string;
         observaciones?: string;
-        rueda_auxilio?: string;
+        ruedaAuxilio?: string;
         encendedor?: string;
         cricket?: string;
         herramientas?: string;
@@ -74,33 +76,33 @@ const VistaPrevia: React.FC<VistaPreviaProps> = ({ presupuesto, items, onClose, 
         Number(totalImporte || 0);
 
     const handleDownloadPDF = () => {
-    if (!pdfRef.current) return;
+        if (!pdfRef.current) return;
 
-    const element = pdfRef.current;
+        const element = pdfRef.current;
 
-    const opt = {
-      margin: [10, 10, 10, 10], // pt
-      filename: `Presupuesto_${presupuesto.id_presupuesto}.pdf`,
-      image: { type: "jpeg", quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true, scrollY: 0 },
-      jsPDF: { unit: "pt", format: "legal", orientation: "portrait" },
-      pagebreak: { mode: ["css", "legacy", "avoid-all"] },
+        const opt = {
+            margin: [10, 10, 10, 10], // pt
+            filename: `Presupuesto_${presupuesto.idPresupuesto}.pdf`,
+            image: { type: "jpeg", quality: 0.98 },
+            html2canvas: { scale: 2, useCORS: true, scrollY: 0 },
+            jsPDF: { unit: "pt", format: "legal", orientation: "portrait" },
+            pagebreak: { mode: ["css", "legacy", "avoid-all"] },
+        };
+
+        html2pdf()
+            .set(opt)
+            .from(element)
+            .toPdf()
+            .get("pdf")
+            .then((/*pdf*/) => {
+                // Opcional: escalar al ancho de la hoja
+                // const pageWidth = pdf.internal.pageSize.getWidth();
+                // const pageHeight = pdf.internal.pageSize.getHeight();
+
+                // guardamos
+            })
+            .save();
     };
-
-    html2pdf()
-      .set(opt)
-      .from(element)
-      .toPdf()
-      .get("pdf")
-      .then((pdf) => {
-        // Opcional: escalar al ancho de la hoja
-        const pageWidth = pdf.internal.pageSize.getWidth();
-        const pageHeight = pdf.internal.pageSize.getHeight();
-
-        // guardamos
-      })
-      .save();
-  };
 
     return (
         <div
@@ -155,7 +157,7 @@ const VistaPrevia: React.FC<VistaPreviaProps> = ({ presupuesto, items, onClose, 
                                         type="text"
                                         name="presupuesto"
                                         readOnly
-                                        value={presupuesto.id_presupuesto}
+                                        value={presupuesto.idPresupuesto}
                                         className="border-none outline-none w-[250px] text-[20px]"
                                     />
                                 </div>
@@ -264,7 +266,9 @@ const VistaPrevia: React.FC<VistaPreviaProps> = ({ presupuesto, items, onClose, 
                                         {itemsUbicacion.map((item) => (
                                             <tr key={item.id} className="relative h-[30px]">
                                                 <td className="border-[3px] border-black w-[50px] text-left"></td>
-                                                <td className="border-[3px] border-black w-[500px] text-left">{item.descripcion}</td>
+                                                <td className="border-[3px] border-black w-[500px] text-left">
+                                                    {item.descripcion.replace(/\|/g, ' ')}
+                                                </td>
                                                 <td className="border-[3px] border-black w-[50px] text-center">{item.a}</td>
                                                 <td className="border-[3px] border-black w-[50px] text-center">{item.b}</td>
                                                 <td className="border-[3px] border-black w-[350px] text-left">{item.observaciones}</td>
@@ -317,7 +321,7 @@ const VistaPrevia: React.FC<VistaPreviaProps> = ({ presupuesto, items, onClose, 
                                 <div key={campo} className="flex flex-col items-center">
                                     <input
                                         type="text"
-                                        value={i === 0 ? `CABA ${formatearFecha(presupuesto.fecha)}` : i === 1 ? ' ' : `${presupuesto.firma_responsable}`}
+                                        value={i === 0 ? `CABA ${formatearFecha(presupuesto.fecha)}` : i === 1 ? ' ' : `${presupuesto.firmaResponsable}`}
                                         readOnly
                                         className={`border-b-2 border-dotted border-black text-center w-[280px] h-[60px] ${i === 0 ? 'pt-5 text-3xl' : i === 1 ? '' : i === 2 ? 'text-6xl ' : ''}`}
                                     />

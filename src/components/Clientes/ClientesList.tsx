@@ -1,12 +1,10 @@
-import { filtrarClientes } from '../../helpers/utilsClientes';
+import { useClientesList } from '../../hooks/Clientes/useClientesList';
 import { EntidadNotFound } from '../Shared/EntidadNotFound';
 import { FiltrosEntidad } from '../Shared/FiltrosEntidad';
 import { HeaderEntidad } from '../Shared/HeaderEntidad';
-import { useClientes } from '../../hooks/useClientes';
 import { Search, User } from 'lucide-react';
 import { ClienteCard } from './ClienteCard';
 import { Cliente } from '../../types';
-import { useState } from "react";
 
 
 interface ClientesListProps {
@@ -17,19 +15,27 @@ interface ClientesListProps {
   error: string | null;
 }
 
-const tipos: { value: 'all' | 'persona' | 'empresa'; label: string }[] = [
-  { value: 'all', label: 'Todos' },
-  { value: 'persona', label: 'Personas' },
-  { value: 'empresa', label: 'Empresas' },
+const tipos: { value: "all" | "persona" | "empresa"; label: string }[] = [
+  { value: "all", label: "Todos" },
+  { value: "persona", label: "Personas" },
+  { value: "empresa", label: "Empresas" },
 ];
 
-const ClientesList: React.FC<ClientesListProps> = ({ onAddCliente, onEditCliente }) => {
-  const { clientes, error, eliminarCliente } = useClientes();
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filterTipo, setFilterType] = useState<"all" | "persona" | "empresa">("all");
-  const filteredClientes = filtrarClientes(clientes, searchTerm, filterTipo);
+const ClientesList: React.FC<ClientesListProps> = ({
+  onAddCliente,
+  onEditCliente,
+}) => {
+  const {
+    errorCliente,
+    eliminarCliente,
+    searchTerm,
+    setSearchTerm,
+    filterTipo,
+    setFilterType,
+    filteredClientes,
+  } = useClientesList();
 
-  if (error) return <p>{error}</p>;
+  if (errorCliente) return <p>{errorCliente}</p>;
 
   return (
     <div className="p-6">

@@ -1,10 +1,8 @@
+import { useVehiculoForm } from '../../hooks/Vehiculos/useVehiculoForm';
 import { BotonesForm } from '../Shared/BotonesForm';
 import { HeaderForm } from '../Shared/HeaderForm';
-import { useApiGit } from '../../hooks/useApiGit';
 import { Vehiculo, Cliente } from '../../types';
 import { InputForm } from '../Shared/InputForm';
-import { useAuth } from '../../hooks/useAuth';
-import { useState, useEffect } from 'react';
 import { Car } from 'lucide-react';
 
 
@@ -16,97 +14,7 @@ interface VehiculoFormProps {
 }
 
 const VehiculoForm: React.FC<VehiculoFormProps> = ({ vehiculo, clientes, onSave, onCancel }) => {
-  const { token } = useAuth();
-  const [errors, setErrors] = useState<{ [key: string]: string }>({});
-  const { marcas, modelos, cargarMarcasYModelos } = useApiGit();
-  const [formData, setFormData] = useState({
-    patente: vehiculo?.patente || '',
-    marca: vehiculo?.marca || '',
-    modelo: vehiculo?.modelo || '',
-    anio: vehiculo?.anio || new Date().getFullYear(),
-    nroDeChasis: vehiculo?.nroDeChasis || '',
-    estado: vehiculo?.estado || 'No Recibido',
-    fechaRecibido: vehiculo?.fechaRecibido || '',
-    fechaEsperada: vehiculo?.fechaEsperada || '',
-    fechaEntrega: vehiculo?.fechaEntrega || '',
-    descripcionTrabajos: vehiculo?.descripcionTrabajos || '',
-    idCliente: vehiculo?.idCliente,
-  });
-
-  const handleSubmit = (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
-
-    const newErrors: { [key: string]: string } = {};
-
-    if (formData.patente.length < 6 || formData.patente.length > 10) {
-      newErrors.patente = "debe tener entre 6 y 10 caracteres.";
-    }
-    if (!formData.nroDeChasis || formData.nroDeChasis.length < 11 || formData.nroDeChasis.length > 20) {
-      newErrors.nroDeChasis = "debe tener entre 11 y 20 caracteres.";
-    }
-    if (!formData.marca.trim()) {
-      newErrors.marca = "es obligatoria.";
-    }
-    if (!formData.modelo.trim()) {
-      newErrors.modelo = "es obligatorio.";
-    }
-    if (!formData.anio || isNaN(formData.anio) || formData.anio <= 0) {
-      newErrors.anio = "es obligatorio.";
-    }
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
-    }
-
-    setErrors({});
-
-    onSave({
-      idVehiculo: vehiculo?.idVehiculo,
-      patente: formData.patente,
-      marca: formData.marca,
-      modelo: formData.modelo,
-      anio: Number(formData.anio),
-      nroDeChasis: formData.nroDeChasis,
-      estado: formData.estado,
-      fechaRecibido: formData.fechaRecibido ? formData.fechaRecibido.split("T")[0] : null,
-      fechaEsperada: formData.fechaEsperada ? formData.fechaEsperada.split("T")[0] : null,
-      fechaEntrega: formData.fechaEntrega ? formData.fechaEntrega.split("T")[0] : null,
-      descripcionTrabajos: formData.descripcionTrabajos,
-      idCliente: formData.idCliente ?? Number(formData.idCliente),
-    });
-  };
-
-  useEffect(() => {
-    if (!token) return;
-
-    cargarMarcasYModelos(vehiculo?.marca); // si es edición, pasar la marca
-  }, [token, vehiculo]);
-
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    let value: string | number = e.target.value;
-
-    if (e.target.type === "number" || e.target.name === "anio" || e.target.name === "idCliente") {
-      value = e.target.value ? Number(e.target.value) : 0; // O null si tu backend lo acepta
-    }
-
-    setFormData(prev => ({
-      ...prev,
-      [e.target.name]: value
-    }));
-
-    // Si cambió la marca, recargo los modelos
-    if (e.target.name === "marca") {
-      cargarMarcasYModelos(value as string);
-      // También limpio el modelo seleccionado previamente
-      setFormData(prev => ({
-        ...prev,
-        modelo: ''
-      }));
-    }
-  };
-
-  const formatearFecha = (fecha?: string) => fecha?.split("T")[0] || "";
+  const { formData, errors, marcas, modelos, handleChange, handleSubmit, formatearFecha } = useVehiculoForm(vehiculo, onSave);
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -124,7 +32,7 @@ const VehiculoForm: React.FC<VehiculoFormProps> = ({ vehiculo, clientes, onSave,
           {/* Información del Vehículo */}
           <div className="space-y-4">
             <h3 className="text-lg font-medium text-gray-900 border-b border-gray-200 pb-2">
-              Información del Vehículo (obligatorio: <span className="text-red-500">*</span>) 
+              Información del Vehículo (obligatorio: <span className="text-red-500">*</span>)
             </h3>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -172,7 +80,7 @@ const VehiculoForm: React.FC<VehiculoFormProps> = ({ vehiculo, clientes, onSave,
                 </select>
                 {errors.modelo && <p className="text-red-500 text-sm">{errors.modelo}</p>}
               </div>
-              
+
               <div>
                 <div className="grid grid-cols-1 md:grid-cols-1">
                   <label htmlFor="anio" className="block text-sm font-medium text-gray-700 mb-2">
@@ -226,7 +134,7 @@ const VehiculoForm: React.FC<VehiculoFormProps> = ({ vehiculo, clientes, onSave,
                 <select
                   id="idCliente"
                   name="idCliente"
-                  value={formData.idCliente || ""}
+                  value={formData.idCliente}
                   onChange={handleChange}
                   required
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
@@ -234,7 +142,7 @@ const VehiculoForm: React.FC<VehiculoFormProps> = ({ vehiculo, clientes, onSave,
                   <option value="">Seleccione</option>
                   {clientes.map((c) => (
                     <option key={c.idCliente} value={c.idCliente}>
-                      {c.nombre} {c.apellido}
+                      {c.tipoCliente === "Persona" ? `${c.nombre} ${c.apellido}` : `${c.razonSocial}`}
                     </option>
                   ))}
                 </select>

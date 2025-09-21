@@ -1,4 +1,3 @@
-import React from "react";
 import { LucideIcon, X } from "lucide-react";
 
 interface HeaderFormProps {

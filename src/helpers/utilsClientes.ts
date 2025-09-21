@@ -9,8 +9,8 @@ export const filtrarClientes = (
     const isEmpresa = cliente.tipoCliente === "Empresa";
 
     const matchesSearch = isEmpresa
-      ? cliente.razonSocial.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        cliente.nombreDeFantasia.toLowerCase().includes(searchTerm.toLowerCase())
+      ? cliente.razonSocial?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        cliente.nombreDeFantasia?.toLowerCase().includes(searchTerm.toLowerCase())
       : `${cliente.nombre} ${cliente.apellido}`
           .toLowerCase()
           .includes(searchTerm.toLowerCase());

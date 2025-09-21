@@ -1,7 +1,7 @@
+import { formatDate, getDaysFromNow, getStatusColor } from "../../helpers/utilsVehiculos";
+import { BotonesTarjeta } from "../Shared/BotonesTarjeta";
 import { Calendar, Car, User } from "lucide-react";
 import { Vehiculo, Cliente } from "../../types";
-import { BotonesTarjeta } from "../Shared/BotonesTarjeta";
-import { formatDate, getDaysFromNow, getStatusColor } from "../../helpers/utilsVehiculos";
 
 interface VehiculoCardProps {
     vehiculo: Vehiculo;
