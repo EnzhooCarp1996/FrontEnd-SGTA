@@ -13,6 +13,7 @@ const BarraLateral: React.FC<BarraLateralProps> = ({ vistaActual, onViewChange, 
     { id: 'clientes', label: 'Clientes', icon: Users },
     { id: 'vehiculos', label: 'Vehículos', icon: Car },
     { id: 'presupuestos', label: 'Presupuestos', icon: FileText },
+    { id: 'usuarios', label: 'Usuarios', icon: Users },
   ];
 
   return (

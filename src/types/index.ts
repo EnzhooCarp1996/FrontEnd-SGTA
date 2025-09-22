@@ -3,7 +3,7 @@ export interface Usuario {
   nombreUsuario: string;
   correo: string;
   contrasenia: string;
-  rol: "Admin" | "Encargado" | "Empleado";
+  role: "Admin" | "Encargado" | "Empleado";
 }
 
 export interface Cliente {

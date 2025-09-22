@@ -2,6 +2,7 @@ import PanelDeControl from "../PanelDeControl/PanelDeControl";
 import PresupuestoView from "../Presupuestos/PresupuestoView";
 import VehiculoView from "../Vehiculos/VehiculosView";
 import ClienteView from "../Clientes/ClienteView";
+import UsuarioView from "../Usuarios/UsuarioView";
 import { Toaster } from "react-hot-toast";
 import BarraLateral from "./BarraLateral";
 import { useState } from "react";
@@ -24,6 +25,8 @@ const AppContent: React.FC = () => {
         return <VehiculoView />; //
       case "presupuestos":
         return <PresupuestoView />;
+      case "usuarios":
+        return <UsuarioView />;
       default:
         return <PanelDeControl />;
     }

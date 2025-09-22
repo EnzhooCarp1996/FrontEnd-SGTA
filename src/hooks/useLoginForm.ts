@@ -29,7 +29,7 @@ export function useLoginForm() {
 
     try {
       const data = await logIn( formData.nombreUsuario, formData.contrasenia );
-      login(data.token, formData.recordar);
+      login(data.token, formData.recordar, { nombreUsuario: data.nombreUsuario, role: data.role });
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Error inesperado");
     } finally {
