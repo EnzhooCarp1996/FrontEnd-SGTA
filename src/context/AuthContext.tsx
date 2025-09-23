@@ -49,8 +49,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return null;
   });
 
+  useEffect(() => {
+    const savedUserLocal = localStorage.getItem("user");
+    const savedUserSession = sessionStorage.getItem("user");
+
+    if (token) {
+      if (savedUserLocal) {
+        setUserInfo(JSON.parse(savedUserLocal));
+      } else if (savedUserSession) {
+        setUserInfo(JSON.parse(savedUserSession));
+      }
+    }
+  }, [token]);
+
   // 🔹 Mantener sincronización entre pestañas
-   useEffect(() => {
+  useEffect(() => {
     const handleStorage = () => {
       const savedLocal = localStorage.getItem("token");
       const savedSession = sessionStorage.getItem("token");

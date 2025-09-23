@@ -7,7 +7,7 @@ interface BotonesTarjetaProps {
 
 export const BotonesTarjeta: React.FC<BotonesTarjetaProps> = ({ onEdit, onDelete }) => {
     return (
-        <div className="flex space-x-2">
+        <div className="flex space-x-2 justify-center items-center">
             <button
                 onClick={onEdit}
                 className="p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors"

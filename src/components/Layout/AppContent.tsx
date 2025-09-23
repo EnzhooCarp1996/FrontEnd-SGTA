@@ -7,8 +7,10 @@ import { Toaster } from "react-hot-toast";
 import BarraLateral from "./BarraLateral";
 import { useState } from "react";
 import Header from "./Header";
+import { useAuth } from "../../hooks/useAuth";
 
 const AppContent: React.FC = () => {
+  const { role } = useAuth();
   const [vistaActual, setVistaActual] = useState("panelDeControl");
   const [abrirBarraLateral, setAbrirBarraLateral] = useState(false);
 
@@ -16,9 +18,12 @@ const AppContent: React.FC = () => {
   const handleViewChange = (view: string) => setVistaActual(view);
 
   const renderContenido = () => {
+
+    if (role === "Admin") return <UsuarioView />;
+
     switch (vistaActual) {
-      case "panelDeControl":
-        return <PanelDeControl />;
+      // case "panelDeControl":
+      //   return <PanelDeControl />;
       case "clientes":
         return <ClienteView />;
       case "vehiculos":
@@ -40,6 +45,7 @@ const AppContent: React.FC = () => {
         onViewChange={handleViewChange}
         isOpen={abrirBarraLateral}
         onToggle={alternarBarraLateral}
+        role={role}
       />
       <div className="flex-1 flex flex-col overflow-hidden lg:ml-0">
         <Header

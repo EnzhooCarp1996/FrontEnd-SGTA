@@ -1,8 +1,8 @@
 import { Save } from "lucide-react";
 
 interface BotonesFormProps {
-  onGuardar?: () => void;
-  onCancel: () => void;
+  onGuardar: () => void;
+  onCancel?: () => void;
 }
 
 export const BotonesForm: React.FC<BotonesFormProps> = ({

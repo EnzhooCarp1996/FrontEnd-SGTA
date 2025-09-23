@@ -10,17 +10,14 @@ export const useUsuarioView = () => {
     modificarUsuario,
     eliminarUsuario,
   } = useUsuarios();
-  const [mostrarForm, setMostrarForm] = useState(false);
   const [editarUsuario, setEditarUsuario] = useState<Usuario | undefined>();
 
   const handleAdd = () => {
     setEditarUsuario(undefined);
-    setMostrarForm(true);
   };
 
   const handleEdit = (usuario: Usuario) => {
-    setEditarUsuario(usuario);
-    setMostrarForm(true);
+    setEditarUsuario({...usuario});
   };
 
   const handleSave = async (usuario: Partial<Usuario>) => {
@@ -31,27 +28,20 @@ export const useUsuarioView = () => {
       } else {
         await agregarUsuario(usuario as NewUsuario);
       }
-      setMostrarForm(false);
       setEditarUsuario(undefined);
     } catch (err) {
       console.error(err);
     }
   };
 
-  const handleCancel = () => {
-    setEditarUsuario(undefined);
-    setMostrarForm(false);
-  };
 
   return {
     usuarios,
     errorUsuario,
-    mostrarForm,
     editarUsuario,
     handleAdd,
     handleEdit,
     handleSave,
-    handleCancel,
     eliminarUsuario,
   };
 };

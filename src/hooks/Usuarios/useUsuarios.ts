@@ -13,11 +13,6 @@ export function useUsuarios() {
   const [usuarios, setUsuarios] = useState<Usuario[]>([]);
   const [errorUsuario, setError] = useState<string | null>(null);
 
-  // -------------------------------
-  // HELPERS
-  // -------------------------------
-  const getNombreUsuario = (usuario: NewUsuario | Usuario) =>
-    usuario.nombreUsuario;
 
   const handleError = (action: string, err: unknown) => {
     if (err instanceof Error) {
@@ -48,10 +43,7 @@ export function useUsuarios() {
       setUsuarios((prev) => [...prev, usuarioCreado]);
 
       alert(
-        `👤 ¡Agregado correctamente!\n✅ Usuario: ${getNombreUsuario(
-          newUsuario
-        )}\n🆔 Usuario: ${newUsuario.nombreUsuario}`
-      );
+        `✅¡Agregado correctamente!\n👤Usuario: ${newUsuario.nombreUsuario}` );
       return usuarioCreado;
     } catch (err: unknown) {
       handleError("crear", err);
@@ -71,10 +63,7 @@ export function useUsuarios() {
       );
 
       alert(
-        `👤 ¡Actualizado correctamente!\n✅ Cliente: ${getNombreUsuario(
-          usuarioActualizado
-        )}\n🆔 Usuario: ${usuarioActualizado.nombreUsuario}`
-      );
+        `✅¡Actualizado correctamente!\n👤Usuario: ${usuarioActualizado.nombreUsuario}` );
       return usuario;
     } catch (err: unknown) {
       handleError("actualizar", err);
@@ -85,11 +74,11 @@ export function useUsuarios() {
   // -------------------------------
   // DELETE
   // -------------------------------
-  const eliminarUsuario = async (id: number) => {
+  const eliminarUsuario = async (id: number, nombre: string ) => {
     if (!token) return;
 
     const confirmar = window.confirm(
-      "⚠️ ¿Estás seguro de eliminar este Usuario?"
+      `⚠️ ¿Estás seguro de eliminar al usuario 👤${nombre}?`
     );
     if (!confirmar) return;
 

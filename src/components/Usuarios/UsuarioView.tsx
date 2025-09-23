@@ -5,12 +5,10 @@ const UsuarioView: React.FC = () => {
     const {
         usuarios,
         errorUsuario,
-        mostrarForm,
         editarUsuario,
         handleAdd,
         handleEdit,
         handleSave,
-        handleCancel,
         eliminarUsuario,
     } = useUsuarioView();
 
@@ -21,15 +19,10 @@ const UsuarioView: React.FC = () => {
                 onEditUsuario={handleEdit}
                 eliminarUsuario={eliminarUsuario}
                 usuarios={usuarios}
+                usuario={editarUsuario}
+                onSave={handleSave}
                 error={errorUsuario}
             />
-            {/* {mostrarForm && (
-                <ClienteForm
-                    cliente={editarCliente}
-                    onSave={handleSave}
-                    onCancel={handleCancel}
-                />
-            )} */}
         </>
     );
 };
