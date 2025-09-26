@@ -6,18 +6,9 @@ interface HeaderProps {
   vistaActual: string;
 }
 
-const Header: React.FC<HeaderProps> = ({ onMenuToggle, vistaActual }) => {
+const Header: React.FC<HeaderProps> = ({ onMenuToggle }) => {
   const { nombreUsuario, role, logout } = useAuth();
-  const getViewTitle = (view: string) => {
-    const titles = {
-      panelDeControl: 'Panel de Control',
-      clientes: 'Gestión de Clientes',
-      vehiculos: 'Gestión de Vehículos',
-      presupuestos: 'Gestión de Presupuestos',
-      usuarios: 'Gestión de Usuarios',
-    };
-    return titles[view as keyof typeof titles] || 'SGTA';
-  };
+  
 
   return (
     <header className="bg-green-500 border-b border-gray-200 px-6 py-4">
@@ -30,7 +21,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, vistaActual }) => {
             <Menu className="w-6 h-6 text-gray-600" />
           </button>
           <h2 className="text-2xl font-bold text-gray-900">
-            {getViewTitle(vistaActual)}
+            Clinica del Automóvil
           </h2>
         </div>
 

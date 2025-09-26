@@ -1,4 +1,5 @@
 import { Edit, Trash2 } from "lucide-react";
+import { usePermisos } from "../../hooks/usePermisos";
 
 interface BotonesTarjetaProps {
     onEdit?: () => void;
@@ -6,6 +7,12 @@ interface BotonesTarjetaProps {
 }
 
 export const BotonesTarjeta: React.FC<BotonesTarjetaProps> = ({ onEdit, onDelete }) => {
+    const { puedeModificar } = usePermisos();
+
+    if (!puedeModificar) {
+        return null;
+    }
+
     return (
         <div className="flex space-x-2 justify-center items-center">
             <button

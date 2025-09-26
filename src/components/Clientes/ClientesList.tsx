@@ -5,6 +5,7 @@ import { HeaderEntidad } from '../Shared/HeaderEntidad';
 import { Search, User } from 'lucide-react';
 import { ClienteCard } from './ClienteCard';
 import { Cliente } from '../../types';
+import { usePermisos } from '../../hooks/usePermisos';
 
 
 interface ClientesListProps {
@@ -35,6 +36,8 @@ const ClientesList: React.FC<ClientesListProps> = ({
     filteredClientes,
   } = useClientesList();
 
+  const { puedeModificar } = usePermisos();
+
   if (errorCliente) return <p>{errorCliente}</p>;
 
   return (
@@ -64,8 +67,8 @@ const ClientesList: React.FC<ClientesListProps> = ({
           <ClienteCard
             key={cliente.idCliente}
             cliente={cliente}
-            onEdit={onEditCliente}
-            onDelete={eliminarCliente}
+            onEdit={puedeModificar ? onEditCliente : () => { }}
+            onDelete={puedeModificar ? eliminarCliente : () => { }}
           />
         ))}
       </div>

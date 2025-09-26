@@ -164,6 +164,8 @@ const VistaPrevia: React.FC<VistaPreviaProps> = ({ presupuesto, items, onClose, 
                                 <div className="flex items-center gap-2 mt-4 mb-4">
                                     <h2 className="ml-5 font-bold">Fecha:</h2>
                                     <input
+                                        id="fecha-presupuesto"
+                                        name="fechaPresupuesto"
                                         type="text"
                                         readOnly
                                         value={formatearFecha(presupuesto.fecha)}
@@ -179,8 +181,10 @@ const VistaPrevia: React.FC<VistaPreviaProps> = ({ presupuesto, items, onClose, 
                         <div className="flex m-2 w-full">
                             <div className="text-left mr-5 flex flex-col w-[620px]">
                                 <div className="flex items-center mb-3">
-                                    <label className="w-[50px] mr-2">Cliente:</label>
+                                    <label htmlFor="cliente" className="w-[50px] mr-2">Cliente:</label>
                                     <input
+                                        id="cliente"
+                                        name="cliente"
                                         type="text"
                                         value={presupuesto.cliente}
                                         readOnly
@@ -188,8 +192,10 @@ const VistaPrevia: React.FC<VistaPreviaProps> = ({ presupuesto, items, onClose, 
                                     />
                                 </div>
                                 <div className="flex items-center mb-3">
-                                    <label className="w-[67px] mr-2">Domicilio:</label>
+                                    <label htmlFor="domicilio" className="w-[67px] mr-2">Domicilio:</label>
                                     <input
+                                        id="domicilio"
+                                        name="domicilio"
                                         type="text"
                                         value={presupuesto.domicilio}
                                         readOnly
@@ -197,8 +203,10 @@ const VistaPrevia: React.FC<VistaPreviaProps> = ({ presupuesto, items, onClose, 
                                     />
                                 </div>
                                 <div className="flex items-center mb-3">
-                                    <label className="w-[67px] mr-2">Póliza N°:</label>
+                                    <label htmlFor="poliza" className="w-[67px] mr-2">Póliza N°:</label>
                                     <input
+                                        id="poliza"
+                                        name="poliza"
                                         type="text"
                                         value={presupuesto.poliza}
                                         readOnly
@@ -208,8 +216,10 @@ const VistaPrevia: React.FC<VistaPreviaProps> = ({ presupuesto, items, onClose, 
                             </div>
                             <div className="text-left flex flex-col w-[560px]">
                                 <div className="flex items-center mb-3">
-                                    <label className="w-[47px] mr-2">Coche:</label>
+                                    <label htmlFor="vehiculo" className="w-[47px] mr-2">Coche:</label>
                                     <input
+                                        id="vehiculo"
+                                        name="vehiculo"
                                         type="text"
                                         value={presupuesto.vehiculo}
                                         readOnly
@@ -217,8 +227,10 @@ const VistaPrevia: React.FC<VistaPreviaProps> = ({ presupuesto, items, onClose, 
                                     />
                                 </div>
                                 <div className="flex items-center mb-3">
-                                    <label className="w-[56px] mr-2">Patente:</label>
+                                    <label htmlFor="patente" className="w-[56px] mr-2">Patente:</label>
                                     <input
+                                        id="patente"
+                                        name="patente"
                                         type="text"
                                         value={presupuesto.patente}
                                         readOnly
@@ -226,8 +238,10 @@ const VistaPrevia: React.FC<VistaPreviaProps> = ({ presupuesto, items, onClose, 
                                     />
                                 </div>
                                 <div className="flex items-center mb-3">
-                                    <label className="w-[87px] mr-2">Siniestro N°:</label>
+                                    <label htmlFor="siniestro" className="w-[87px] mr-2">Siniestro N°:</label>
                                     <input
+                                        id="siniestro"
+                                        name="siniestro"
                                         type="text"
                                         value={presupuesto.siniestro}
                                         readOnly
@@ -285,20 +299,27 @@ const VistaPrevia: React.FC<VistaPreviaProps> = ({ presupuesto, items, onClose, 
                     <div className="final border-[3px] border-black my-10 max-w-[1200px] min-w-[1200px] mx-auto avoid-break">
                         <div className="facturacion text-left m-8 mb-2">
                             <h3 id="precio-estimado" className="text-center mb-4 font-bold">PRECIO ESTIMADO</h3>
-                            {["chapa", "pintura", "mecanica", "electricidad"].map((campo) => (
-                                <div className="facturacion-row flex justify-between mb-2" key={campo}>
-                                    <label>M.O. {campo.toUpperCase()}</label>
-                                    <input
-                                        type="text"
-                                        value={`$ ${Number(presupuesto[campo as keyof typeof presupuesto] || 0).toFixed(2)}`}
-                                        readOnly
-                                        className="border-b-2 border-dotted border-[rgba(22,22,22,0.688)] outline-none w-[980px] ml-[10px] text-[16px]"
-                                    />
-                                </div>
-                            ))}
+                            {["chapa", "pintura", "mecanica", "electricidad"].map((campo) => {
+                                const inputId = `manoObra-${campo}`;
+                                return (
+                                    <div className="facturacion-row flex justify-between mb-2" key={campo}>
+                                        <label htmlFor={inputId}>M.O. {campo.toUpperCase()}</label>
+                                        <input
+                                            id={inputId}
+                                            name={`manoObra-${campo}`}
+                                            type="text"
+                                            value={`$ ${Number(presupuesto[campo as keyof typeof presupuesto] || 0).toFixed(2)}`}
+                                            readOnly
+                                            className="border-b-2 border-dotted border-[rgba(22,22,22,0.688)] outline-none w-[980px] ml-[10px] text-[16px]"
+                                        />
+                                    </div>
+                                );
+                            })}
                             <div className="facturacion-row flex justify-between mb-2">
-                                <label>REPUESTOS</label>
+                                <label htmlFor="repuestos">REPUESTOS</label>
                                 <input
+                                    id="repuestos"
+                                    name="repuestos"
                                     type="text"
                                     value={`$ ${totalImporte.toFixed(2)}`}
                                     readOnly
@@ -306,8 +327,10 @@ const VistaPrevia: React.FC<VistaPreviaProps> = ({ presupuesto, items, onClose, 
                                 />
                             </div>
                             <div className="facturacion-row font-bold flex justify-between align-items: center w-auto">
-                                <label>TOTAL</label>
+                                <label htmlFor="total">TOTAL</label>
                                 <input
+                                    id="total"
+                                    name="total"
                                     type="text"
                                     value={`$ ${presupuesto.total.toFixed(2)}`}
                                     readOnly
@@ -320,6 +343,8 @@ const VistaPrevia: React.FC<VistaPreviaProps> = ({ presupuesto, items, onClose, 
                             {["lugar_fecha", "firma_cliente", "firma_responsable"].map((campo, i) => (
                                 <div key={campo} className="flex flex-col items-center">
                                     <input
+                                        id={campo}
+                                        name={campo}
                                         type="text"
                                         value={i === 0 ? `CABA ${formatearFecha(presupuesto.fecha)}` : i === 1 ? ' ' : `${presupuesto.firmaResponsable}`}
                                         readOnly

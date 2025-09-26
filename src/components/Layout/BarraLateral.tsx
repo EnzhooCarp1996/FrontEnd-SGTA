@@ -1,4 +1,4 @@
-import { /*Home,*/ Users, Car, FileText, PaintBucket, X } from 'lucide-react';
+import { /*Home,*/ Users, Car, FileText, PaintBucket, X, User } from 'lucide-react';
 
 interface BarraLateralProps {
   role: string;
@@ -22,7 +22,7 @@ const BarraLateral: React.FC<BarraLateralProps> = ({ role, vistaActual, onViewCh
       ? allMenuItems.filter((item) => item.id === "usuarios")
       : allMenuItems.filter((item) => item.id !== "usuarios");
 
-   return (
+  return (
     <>
       {/* Mobile overlay */}
       {isOpen && (
@@ -39,16 +39,17 @@ const BarraLateral: React.FC<BarraLateralProps> = ({ role, vistaActual, onViewCh
         transform transition-transform duration-300 ease-in-out z-50
         ${isOpen ? "translate-x-0" : "-translate-x-full"}
         lg:translate-x-0 lg:static lg:z-auto
+        flex flex-col
       `}
       >
         <div className="flex items-center justify-between p-6 border-b border-green-700">
           <div className="flex items-center space-x-3">
             <div className="bg-green-600 p-2 rounded-lg">
-              <PaintBucket className="w-6 h-6 text-white" />
+              <PaintBucket className="w-10 h-10 text-white" />
             </div>
             <div>
               <h1 className="text-white font-bold text-lg">SGTA</h1>
-              <p className="text-green-300 text-sm">Clinica del Automóvil</p>
+              <p className="text-green-300 text-sm">Sistema de Gestion de Taller Automotriz</p>
             </div>
           </div>
           <button
@@ -80,14 +81,12 @@ const BarraLateral: React.FC<BarraLateralProps> = ({ role, vistaActual, onViewCh
                 `}
               >
                 <Icon
-                  className={`w-5 h-5 ${
-                    isActive ? "text-green-300" : "text-green-400"
-                  }`}
+                  className={`w-5 h-5 ${isActive ? "text-green-300" : "text-green-400"
+                    }`}
                 />
                 <span
-                  className={`font-medium ${
-                    isActive ? "text-white" : "text-green-200"
-                  }`}
+                  className={`font-medium ${isActive ? "text-white" : "text-green-200"
+                    }`}
                 >
                   {item.label}
                 </span>
@@ -95,7 +94,16 @@ const BarraLateral: React.FC<BarraLateralProps> = ({ role, vistaActual, onViewCh
             );
           })}
         </nav>
+        {/* Footer */}
+        <footer className="mt-auto p-4 text-center text-sm text-green-300 border-t border-green-700 flex flex-col items-start">
+          &copy; {new Date().getFullYear()} SGTA.
+          <div className="flex items-center space-x-1 mt-1">
+            <User className="w-4 h-4" />By
+            <span className="font-bold text-white">Enzo Olmedo</span>
+          </div>
+        </footer>
       </div>
+
     </>
   );
 };

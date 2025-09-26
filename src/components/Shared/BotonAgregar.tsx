@@ -1,4 +1,5 @@
 import { Plus } from "lucide-react";
+import { usePermisos } from "../../hooks/usePermisos";
 
 interface BotonAgregarProps {
     onClick: () => void;
@@ -6,6 +7,12 @@ interface BotonAgregarProps {
 }
 
 export const BotonAgregar: React.FC<BotonAgregarProps> = ({ onClick, textoAgregar }) => {
+    const { puedeModificar } = usePermisos();
+
+    if (!puedeModificar) {
+        return null;
+    }
+
     return (
         <button
             onClick={onClick}

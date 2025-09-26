@@ -11,7 +11,7 @@
       "frente": ["sup/inf", "moldura", "insig."]
     },
     "Rejilla": {
-      "radiador": [" ", "marco", "insig."]
+      "radiador": [" mongo, firebase", "marco", "insig."]
     },
     "Guardabarros": {
       "derecho": [" ", "moldura", "guardapolvo"],

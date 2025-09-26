@@ -160,8 +160,7 @@ export function usePresupuestoForm(
       newErrors.chapa = "Chapa debe ser mayor a 0.";
     if (Number(formData.pintura) <= 0)
       newErrors.pintura = "Pintura debe ser mayor a 0.";
-    if (!formData.firmaResponsable.trim())
-      newErrors.firmaResponsable = "es obligatoria.";
+    
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);

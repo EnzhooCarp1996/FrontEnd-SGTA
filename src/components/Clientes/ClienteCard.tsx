@@ -7,8 +7,8 @@ import { Cliente } from "../../types";
 
 interface ClienteCardProps {
     cliente: Cliente;
-    onEdit: (cliente: Cliente) => void;
-    onDelete: (id: number) => void;
+    onEdit?: (cliente: Cliente) => void;
+    onDelete?: (id: number) => void;
 }
 
 export const ClienteCard: React.FC<ClienteCardProps> = ({ cliente, onEdit, onDelete }) => {
@@ -39,10 +39,12 @@ export const ClienteCard: React.FC<ClienteCardProps> = ({ cliente, onEdit, onDel
                         {isEmpresa && <p className="text-sm text-gray-500">{cliente.razonSocial}</p>}
                     </div>
                 </div>
-                <BotonesTarjeta
-                    onEdit={() => onEdit(cliente)}
-                    onDelete={() => onDelete(cliente.idCliente)}
-                />
+                {(onEdit || onDelete) && (
+                    <BotonesTarjeta
+                        onEdit={onEdit ? () => onEdit(cliente) : undefined}
+                        onDelete={onDelete ? () => onDelete(cliente.idCliente) : undefined}
+                    />
+                )}
             </div>
 
             {/* Datos de contacto */}
