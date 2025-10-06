@@ -4,7 +4,10 @@ import { Cliente } from "../../types";
 
 type TipoCliente = "Persona" | "Empresa";
 
-export function useClienteForm(cliente?: Cliente) {
+export function useClienteForm(
+  cliente?: Cliente,
+  onSave?: (cliente: Partial<Cliente>) => void
+) {
   const { token } = useAuth();
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [tipoCliente, setTipoCliente] = useState<TipoCliente>(
@@ -114,13 +117,18 @@ export function useClienteForm(cliente?: Cliente) {
     if (!token) return;
   }, [token, cliente]);
 
+  const handleSubmit = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (!validate()) return;
+    onSave?.(buildCliente());
+  };
+
   return {
     formData,
     errors,
     tipoCliente,
     setTipoCliente,
     handleChange,
-    validate,
-    buildCliente,
+    handleSubmit,
   };
 }

@@ -38,29 +38,10 @@ export interface Vehiculo {
   idCliente?: number;
 }
 
-export interface Presupuesto {
-  idPresupuesto: number;
-  fecha: string;
-  manoDeObraChapa: number;
-  manoDeObraPintura: number;
-  totalRepuestos: number;
-  idCliente: number;
-}
-
-export interface PresupuestoItem {
-  id: number;
-  descripcion: string;
-  ubicacion: string;
-  a: string;
-  b: string;
-  observaciones: string;
-  importe: number;
-}
-
 export interface PresupuestoData {
-  idPresupuesto: number;
+  _id: string;
   fecha: string;
-  idCliente?: number,
+  idCliente?: number;
   cliente: string;
   domicilio: string;
   poliza: string;
@@ -68,32 +49,34 @@ export interface PresupuestoData {
   vehiculo: string;
   patente: string;
   siniestro: string;
-  chapa: number;
-  pintura: number;
+  manoDeObraChapa: number;
+  manoDeObraPintura: number;
   mecanica: number;
   electricidad: number;
-  repuestos: number;
-  lugarFecha: string;
-  firmaCliente: string;
+  totalRepuestos: number;
+  lugarFecha?: string;
+  firmaCliente?: string;
   firmaResponsable: string;
   observaciones: string;
-  ruedaAuxilio: string;
-  encendedor: string;
-  cricket: string;
-  herramientas: string;
+  ruedaAuxilio?: string;
+  encendedor?: string;
+  cricket?: string;
+  herramientas?: string;
   total: number;
   items: PresupuestoItem[];
+}
+
+export interface PresupuestoItem {
+  id: number;
+  ubicacion: string;
+  descripcion: string;
+  a: string;
+  b: string;
+  observaciones: string;
+  importe: number;
 }
 
 export type NewUsuario = Omit<Usuario, "idUsuario">;
 export type NewVehiculo = Omit<Vehiculo, "idVehiculo">;
 export type NewCliente = Omit<Cliente, "idCliente">;
-export type NewPresupuesto = Omit<Presupuesto, "idPresupuesto">;
-
-export type NodoParte = {
-  [key: string]: NodoParte | string[] | null;
-};
-
-export type EstructuraPartes = {
-  [key: string]: NodoParte;  // índice genérico
-};
+export type NewPresupuesto = Omit<PresupuestoData, "_id">;

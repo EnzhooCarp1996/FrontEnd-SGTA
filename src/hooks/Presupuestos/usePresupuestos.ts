@@ -5,19 +5,19 @@ import {
   updatePresupuesto,
   deletePresupuesto,
 } from "../../Services/PresupuestoService";
-import { Presupuesto, NewPresupuesto } from "../../types";
+import { PresupuestoData, NewPresupuesto } from "../../types";
 import { useAuth } from "../useAuth";
 
 export function usePresupuestos() {
   const { token } = useAuth();
-  const [presupuestos, setPresupuestos] = useState<Presupuesto[]>([]);
+  const [presupuestos, setPresupuestos] = useState<PresupuestoData[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!token) return;
 
     getPresupuestos(token)
-      .then((data) => setPresupuestos(data))
+      .then((data) => setPresupuestos(data)) // los datos ya vienen normalizados
       .catch((err) => setError(err.message));
   }, [token]);
 
@@ -47,7 +47,9 @@ export function usePresupuestos() {
   // -------------------------------
   // UPDATE
   // -------------------------------
-  const modificarPresupuesto = async (presupuestoActualizado: Presupuesto) => {
+  const modificarPresupuesto = async (
+    presupuestoActualizado: PresupuestoData
+  ) => {
     if (!token) return;
 
     try {
@@ -56,12 +58,10 @@ export function usePresupuestos() {
         presupuestoActualizado
       );
       setPresupuestos((prev) =>
-        prev.map((p) =>
-          p.idPresupuesto === presupuesto.idPresupuesto ? presupuesto : p
-        )
+        prev.map((p) => (p._id === presupuesto._id ? presupuesto : p))
       );
       alert(
-        `✏️ Presupuesto: ${presupuestoActualizado.idPresupuesto} actualizado correctamente ✅`
+        `✏️ Presupuesto: ${presupuestoActualizado._id} actualizado correctamente ✅`
       );
       return presupuesto;
     } catch (err: unknown) {
@@ -74,7 +74,7 @@ export function usePresupuestos() {
     }
   };
 
-  const eliminarPresupuesto = async (id: number) => {
+  const eliminarPresupuesto = async (id: string) => {
     if (!token) return;
 
     const confirmar = window.confirm(
@@ -84,7 +84,7 @@ export function usePresupuestos() {
 
     try {
       await deletePresupuesto(token, id);
-      setPresupuestos((prev) => prev.filter((p) => p.idPresupuesto !== id));
+      setPresupuestos((prev) => prev.filter((p) => p._id !== id));
       alert("Presupuesto eliminado correctamente ✅");
     } catch (err: unknown) {
       if (err instanceof Error) {

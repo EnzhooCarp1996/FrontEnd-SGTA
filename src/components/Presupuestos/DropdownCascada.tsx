@@ -1,8 +1,8 @@
-import estructuraPartesJson from "../../data/estructuraPartes.json";
-import { EstructuraPartes, NodoParte } from "../../types/index";
 import { SelectCascada } from './SelectCascada';
 import { useState, useEffect } from 'react';
-
+import { getPartesVehiculo } from '../../Services/PartesVehiculoService';
+import { useAuth } from "../../hooks/useAuth";
+import { PartesVehiculo } from "../../types/PartesVehiculo";
 
 interface Props {
   ubicacion: string;
@@ -10,8 +10,15 @@ interface Props {
   valorActual: string;
   descripcionesUsadas: string[];
 }
-
-const estructuraPartes = estructuraPartesJson as EstructuraPartes;
+export type EstructuraPartes = {
+  [categoria: string]: {
+    [componente: string]:
+    | null // ej: "Panel" (sin subcomponentes ni detalles)
+    | {
+      [subcomponente: string]: string[]; // ej: "delantera": ["cristal", "moldura"]
+    };
+  };
+};
 
 
 export const DropdownCascada: React.FC<Props> = ({
@@ -20,11 +27,46 @@ export const DropdownCascada: React.FC<Props> = ({
   valorActual,
   descripcionesUsadas: descripcionUsadas,
 }) => {
-  const partes: NodoParte = (estructuraPartes[ubicacion] ?? {}) as NodoParte;
+  const [estructuraPartes, setEstructuraPartes] = useState<EstructuraPartes>({});
 
+  const { token } = useAuth();
   const [parte1, setParte1] = useState('');
   const [parte2, setParte2] = useState('');
   const [parte3, setParte3] = useState('');
+
+
+  useEffect(() => {
+    if (!token) return;
+    getPartesVehiculo(token)
+      .then((data: PartesVehiculo[]) => {
+        const mapa: EstructuraPartes = {};
+
+        data.forEach(pv => {
+          const componentes: {
+            [componente: string]: null | { [sub: string]: string[] };
+          } = {};
+
+          pv.componentes.forEach(c => {
+            if (c.subcomponentes) {
+              const subMap: { [sub: string]: string[] } = {};
+              c.subcomponentes.forEach(sc => {
+                subMap[sc.nombre] = sc.detalles ?? [];
+              });
+              componentes[c.nombre] = subMap;
+            } else {
+              componentes[c.nombre] = null;
+            }
+          });
+
+          mapa[pv.categoria] = componentes;
+        });
+
+        setEstructuraPartes(mapa);
+      })
+      .catch(err => console.error(err));
+  }, [token]);
+
+
 
   useEffect(() => {
     if (!valorActual) {
@@ -46,24 +88,28 @@ export const DropdownCascada: React.FC<Props> = ({
   const estaUsada = (desc: string) =>
     descripcionUsadas.includes(desc) && desc !== valorActual;
 
+  const opcionesParte1 = estructuraPartes[ubicacion]
+    ? Object.keys(estructuraPartes[ubicacion])
+    : [];
+
   const opcionesParte2 =
     parte1 &&
-      partes[parte1] &&
-      typeof partes[parte1] === 'object' &&
-      !Array.isArray(partes[parte1])
-      ? Object.keys(partes[parte1] as NodoParte)
+      estructuraPartes[ubicacion] &&
+      estructuraPartes[ubicacion][parte1] &&
+      estructuraPartes[ubicacion][parte1] !== null
+      ? Object.keys(estructuraPartes[ubicacion][parte1] as Record<string, string[]>)
       : [];
 
   const opcionesParte3 =
     parte1 &&
       parte2 &&
-      partes[parte1] &&
-      typeof partes[parte1] === 'object' &&
-      !Array.isArray(partes[parte1]) &&
-      partes[parte1][parte2] &&
-      Array.isArray(partes[parte1][parte2])
-      ? (partes[parte1][parte2] as string[])
+      estructuraPartes[ubicacion] &&
+      estructuraPartes[ubicacion][parte1] &&
+      estructuraPartes[ubicacion][parte1] !== null
+      ? (estructuraPartes[ubicacion][parte1] as Record<string, string[]>)[parte2] || []
       : [];
+
+
 
 
   const onChangeParte1 = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -71,7 +117,7 @@ export const DropdownCascada: React.FC<Props> = ({
     setParte1(val);
     setParte2('');
     setParte3('');
-    if (!partes[val]) {
+    if (!estructuraPartes[val]) {
       onSelect(val);
     }
   };
@@ -80,8 +126,8 @@ export const DropdownCascada: React.FC<Props> = ({
     const val = e.target.value;
     setParte2(val);
     setParte3('');
-    if (partes[parte1] && typeof partes[parte1] === 'object' && !Array.isArray(partes[parte1])) {
-      if (partes[parte1][val] === null) {
+    if (estructuraPartes[parte1] && typeof estructuraPartes[parte1] === 'object' && !Array.isArray(estructuraPartes[parte1])) {
+      if (estructuraPartes[parte1][val] === null) {
         onSelect(`${parte1} ${val}`);
       }
     }
@@ -100,7 +146,7 @@ export const DropdownCascada: React.FC<Props> = ({
       <SelectCascada
         value={parte1}
         onChange={onChangeParte1}
-        opciones={Object.keys(partes)}
+        opciones={opcionesParte1}
         descripcionCompleta={descripcionCompleta}
         estaUsada={estaUsada}
       />

@@ -24,12 +24,11 @@ const PresupuestoView: React.FC = () => {
                 onEditPresupuesto={handleEdit}
                 eliminarPresupuesto={eliminarPresupuesto}
                 presupuestos={presupuestos}
-                clientes={clientes}
                 error={error}
             />
             {mostrarForm && (
                 <PresupuestoForm
-                    presupuestos={editarPresupuesto}
+                    presupuesto={editarPresupuesto}
                     onSave={handleSave}
                     onCancel={handleCancel}
                     clientes={clientes}

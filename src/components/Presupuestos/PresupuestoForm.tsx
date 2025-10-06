@@ -1,46 +1,34 @@
 import { usePresupuestoForm } from '../../hooks/Presupuestos/usePresupuestoForm';
-import { Cliente, Presupuesto, PresupuestoData, Vehiculo } from "../../types";
+import { Cliente, PresupuestoData, Vehiculo } from "../../types";
 import { SeccionUbicacion } from './SeccionUbicacion';
 import { HeaderForm } from '../Shared/HeaderForm';
 import { InputForm } from '../Shared/InputForm';
 import { Eye, FileText } from 'lucide-react';
 import VistaPrevia from './VistaPrevia';
 
-
-const ubicaciones = [
-  'PARTE DELANTERA',
-  'PARTE TRASERA',
-  'INTERIOR',
-  'LADO DERECHO',
-  'LADO IZQUIERDO',
-  'MOTOR',
-  'CHASIS',
-  'TREN DELANTERO',
-  'TREN TRASERO',
-  'TRANSMISION',
-  'DIRECCION',
-];
-
-const PresupuestoForm: React.FC<{
-  presupuestos?: Presupuesto;
-  onSave: (data: PresupuestoData) => void;
+interface PresupuestoFormProps {
+  presupuesto?: PresupuestoData;
+  onSave: (presupuesto: Partial<PresupuestoData>) => void;
   onCancel: () => void;
   clientes: Cliente[];
   vehiculos: Vehiculo[];
-}> = ({ presupuestos, vehiculos, clientes, onSave, onCancel }) => {
+}
+
+const PresupuestoForm: React.FC<PresupuestoFormProps> = ({ presupuesto, vehiculos, clientes, onSave, onCancel }) => {
+
   const {
     formData,
-    items,
     errors,
     mostrarVistaPrevia,
+    ubicaciones,
     handleChange,
     addItem,
     updateItem,
     removeItem,
-    handleVistaPrevia,
-    handleGuardar,
+    handleValidarYMostrarVistaPrevia,
+    handleSubmit,
     handleCerrarModal
-  } = usePresupuestoForm( vehiculos, clientes, presupuestos);
+  } = usePresupuestoForm(vehiculos, clientes, presupuesto, onSave);
 
   return (
     <>
@@ -60,8 +48,8 @@ const PresupuestoForm: React.FC<{
               </h3>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                
-                
+
+
 
                 <div>
                   <label htmlFor="idCliente" className="block text-sm font-medium text-gray-700 mb-2">Cliente</label>
@@ -108,8 +96,8 @@ const PresupuestoForm: React.FC<{
 
                 <InputForm label="Patente" name="patente" value={formData.patente} onChange={handleChange} placeholder="ABC123" readOnly required error={errors.patente} />
                 <div><InputForm label="Siniestro N°" name="siniestro" value={formData.siniestro} onChange={handleChange} /></div>
-                <InputForm label="M.O. CHAPA" type="number" name="chapa" value={formData.chapa} onChange={handleChange} step="0.01" required error={errors.chapa} />
-                <InputForm label="M.O. PINTURA" type="number" name="pintura" value={formData.pintura} onChange={handleChange} step="0.01" required error={errors.pintura} />
+                <InputForm label="M.O. CHAPA" type="number" name="manoDeObraChapa" value={formData.manoDeObraChapa} onChange={handleChange} step="0.01" required error={errors.chapa} />
+                <InputForm label="M.O. PINTURA" type="number" name="manoDeObraPintura" value={formData.manoDeObraPintura} onChange={handleChange} step="0.01" required error={errors.pintura} />
                 <div><InputForm label="M.O. ELECTRICIDAD" type="number" name="electricidad" value={formData.electricidad} onChange={handleChange} step="0.01" /></div>
                 <div><InputForm label="M.O. MECANICA" type="number" name="mecanica" value={formData.mecanica} onChange={handleChange} step="0.01" /></div>
                 <div><InputForm label="Fecha" type="date" name="fecha" value={formData.fecha} onChange={handleChange} required error={errors.fecha} /></div>
@@ -123,7 +111,7 @@ const PresupuestoForm: React.FC<{
               <SeccionUbicacion
                 key={ubicacion}
                 ubicacion={ubicacion}
-                items={items}
+                items={formData.items}
                 addItem={addItem}
                 updateItem={updateItem}
                 removeItem={removeItem}
@@ -144,7 +132,7 @@ const PresupuestoForm: React.FC<{
             </div>
 
             <div className="flex space-x-4 pt-6 border-t border-gray-200">
-              <button type="button" onClick={handleVistaPrevia} className="flex-1 bg-blue-600 hover:bg-blue-800 text-white px-4 py-2 rounded-lg flex items-center justify-center space-x-2 transition-colors">
+              <button type="button" onClick={handleValidarYMostrarVistaPrevia} className="flex-1 bg-blue-600 hover:bg-blue-800 text-white px-4 py-2 rounded-lg flex items-center justify-center space-x-2 transition-colors">
                 <Eye className="w-5 h-5" />
                 <span>Vista Previa</span>
               </button>
@@ -159,9 +147,8 @@ const PresupuestoForm: React.FC<{
       {mostrarVistaPrevia && (
         <VistaPrevia
           presupuesto={formData}
-          items={items}
           onClose={handleCerrarModal}
-          onSave={() => handleGuardar(onSave)}
+          onSave={handleSubmit}
         />
       )}
     </>

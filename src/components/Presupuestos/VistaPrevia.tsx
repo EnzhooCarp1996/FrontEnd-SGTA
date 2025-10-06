@@ -1,45 +1,11 @@
-import html2pdf from 'html2pdf.js';
+// import html2pdf from 'html2pdf.js';
 import { X } from 'lucide-react';
 import { useRef } from 'react';
+import { NewPresupuesto } from '../../types';
 
-interface PresupuestoItem {
-    id: number;
-    descripcion: string;
-    ubicacion: string;
-    a: string;
-    b: string;
-    observaciones: string;
-    importe: number;
-}
 
 interface VistaPreviaProps {
-    presupuesto: {
-        idPresupuesto: number;
-        fecha: string;
-        total: number;
-        idCliente?: number,
-        cliente: string;
-        domicilio: string;
-        poliza: string;
-        idVehiculo?: number;
-        vehiculo: string;
-        patente: string;
-        siniestro: string;
-        chapa: number;
-        pintura?: number;
-        mecanica?: number;
-        electricidad?: number;
-        repuestos?: number;
-        lugarFecha?: string;
-        firmaCliente?: string;
-        firmaResponsable: string;
-        observaciones?: string;
-        ruedaAuxilio?: string;
-        encendedor?: string;
-        cricket?: string;
-        herramientas?: string;
-    };
-    items: PresupuestoItem[];
+    presupuesto: NewPresupuesto,
     onClose: () => void;
     onSave: () => void;
 }
@@ -63,46 +29,46 @@ const ubicaciones = [
     'DIRECCION',
 ];
 
-const VistaPrevia: React.FC<VistaPreviaProps> = ({ presupuesto, items, onClose, onSave }) => {
+const VistaPrevia: React.FC<VistaPreviaProps> = ({ presupuesto, onClose, onSave }) => {
     const pdfRef = useRef<HTMLDivElement>(null);
-    const totalImporte = items.reduce((sum, item) => sum + item.importe, 0);
+    const totalImporte = presupuesto.items.reduce((sum, item) => sum + item.importe, 0);
 
     // (Mantengo tu lógica original que muta el prop para no tocar otros componentes)
     presupuesto.total =
-        Number(presupuesto.chapa || 0) +
-        Number(presupuesto.pintura || 0) +
+        Number(presupuesto.manoDeObraChapa || 0) +
+        Number(presupuesto.manoDeObraPintura || 0) +
         Number(presupuesto.mecanica || 0) +
         Number(presupuesto.electricidad || 0) +
         Number(totalImporte || 0);
 
-    const handleDownloadPDF = () => {
-        if (!pdfRef.current) return;
+    // const handleDownloadPDF = () => {
+    //     if (!pdfRef.current) return;
 
-        const element = pdfRef.current;
+    //     const element = pdfRef.current;
 
-        const opt = {
-            margin: [10, 10, 10, 10], // pt
-            filename: `Presupuesto_${presupuesto.idPresupuesto}.pdf`,
-            image: { type: "jpeg", quality: 0.98 },
-            html2canvas: { scale: 2, useCORS: true, scrollY: 0 },
-            jsPDF: { unit: "pt", format: "legal", orientation: "portrait" },
-            pagebreak: { mode: ["css", "legacy", "avoid-all"] },
-        };
+    //     const opt = {
+    //         margin: [10, 10, 10, 10], // pt
+    //         filename: `Presupuesto_${presupuesto._id}.pdf`,
+    //         image: { type: "jpeg", quality: 0.98 },
+    //         html2canvas: { scale: 2, useCORS: true, scrollY: 0 },
+    //         jsPDF: { unit: "pt", format: "legal", orientation: "portrait" },
+    //         pagebreak: { mode: ["css", "legacy", "avoid-all"] },
+    //     };
 
-        html2pdf()
-            .set(opt)
-            .from(element)
-            .toPdf()
-            .get("pdf")
-            .then((/*pdf*/) => {
-                // Opcional: escalar al ancho de la hoja
-                // const pageWidth = pdf.internal.pageSize.getWidth();
-                // const pageHeight = pdf.internal.pageSize.getHeight();
+    //     html2pdf()
+    //         .set(opt)
+    //         .from(element)
+    //         .toPdf()
+    //         .get("pdf")
+    //         .then((/*pdf*/) => {
+    //             // Opcional: escalar al ancho de la hoja
+    //             // const pageWidth = pdf.internal.pageSize.getWidth();
+    //             // const pageHeight = pdf.internal.pageSize.getHeight();
 
-                // guardamos
-            })
-            .save();
-    };
+    //             // guardamos
+    //         })
+    //         .save();
+    // };
 
     return (
         <div
@@ -157,7 +123,6 @@ const VistaPrevia: React.FC<VistaPreviaProps> = ({ presupuesto, items, onClose, 
                                         type="text"
                                         name="presupuesto"
                                         readOnly
-                                        value={presupuesto.idPresupuesto}
                                         className="border-none outline-none w-[250px] text-[20px]"
                                     />
                                 </div>
@@ -259,7 +224,7 @@ const VistaPrevia: React.FC<VistaPreviaProps> = ({ presupuesto, items, onClose, 
 
                     {/* Aquí separamos las tablas por ubicación */}
                     {ubicaciones.map((ubicacion) => {
-                        const itemsUbicacion = items.filter(item => item.ubicacion === ubicacion);
+                        const itemsUbicacion = presupuesto.items.filter(item => item.ubicacion === ubicacion);
                         if (itemsUbicacion.length === 0) return null;
 
                         return (
@@ -383,7 +348,7 @@ const VistaPrevia: React.FC<VistaPreviaProps> = ({ presupuesto, items, onClose, 
                                             type="text"
                                             id={campo}
                                             name={campo}
-                                            value={presupuesto[campo as keyof typeof presupuesto] || ''}
+                                            value={String(presupuesto[campo as keyof typeof presupuesto] || '')}
                                             readOnly
                                             className="border-b-2 border-dotted border-black w-[150px] text-base"
                                         />
@@ -407,7 +372,7 @@ const VistaPrevia: React.FC<VistaPreviaProps> = ({ presupuesto, items, onClose, 
                         type="button"
                         onClick={() => {
                             onSave();
-                            handleDownloadPDF();
+                            //handleDownloadPDF();
                         }}
                         className="bg-green-600 text-white rounded px-4 py-2"
                     >

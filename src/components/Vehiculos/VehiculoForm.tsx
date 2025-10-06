@@ -8,13 +8,21 @@ import { Car } from 'lucide-react';
 
 interface VehiculoFormProps {
   vehiculo?: Vehiculo;
+  clientes: Cliente[];
   onSave: (vehiculo: Partial<Vehiculo>) => void;
   onCancel: () => void;
-  clientes: Cliente[];
 }
 
 const VehiculoForm: React.FC<VehiculoFormProps> = ({ vehiculo, clientes, onSave, onCancel }) => {
-  const { formData, errors, marcas, modelos, handleChange, handleSubmit, formatearFecha } = useVehiculoForm(vehiculo, onSave);
+  const { 
+    formData, 
+    errors, 
+    marcas, 
+    modelos, 
+    handleChange, 
+    handleSubmit, 
+    formatearFecha 
+  } = useVehiculoForm(vehiculo, onSave);
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">

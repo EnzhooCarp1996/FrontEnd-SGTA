@@ -1,21 +1,16 @@
 import { usePresupuestos } from "./usePresupuestos";
-import { useClientes } from "../Clientes/useClientes";
 import { useState } from "react";
 
 export function usePresupuestosList() {
   const { presupuestos, error, eliminarPresupuesto } = usePresupuestos();
-  const { clientes } = useClientes();
   const [searchTerm, setSearchTerm] = useState("");
   const [filterMonth, setFilterMonth] = useState<string>("all");
-
 
   // -------------------------------
   // Filtrado y búsqueda
   // -------------------------------
   const filteredPresupuestos = presupuestos.filter((presupuesto) => {
-    const matchesSearch = presupuesto.idPresupuesto
-      .toString()
-      .includes(searchTerm);
+    const matchesSearch = presupuesto._id.toString().includes(searchTerm);
 
     const presupuestoMonth = new Date(presupuesto.fecha).getMonth();
     const currentMonth = new Date().getMonth();
@@ -26,15 +21,6 @@ export function usePresupuestosList() {
 
     return matchesSearch && matchesFilter;
   });
-
-  const getClienteNombre = (idCliente?: number) => {
-    if (!idCliente) return "Sin Cliente";
-    const cliente = clientes.find((c) => c.idCliente === idCliente);
-    if (!cliente) return "Sin Cliente";
-    return cliente.tipoCliente === "Empresa"
-      ? cliente.nombreDeFantasia
-      : `${cliente.nombre} ${cliente.apellido}`;
-  };
 
   const formatDate = (dateString: string) =>
     new Date(dateString).toLocaleDateString("es-AR");
@@ -53,7 +39,6 @@ export function usePresupuestosList() {
 
   return {
     presupuestos,
-    clientes,
     error,
     searchTerm,
     setSearchTerm,
@@ -61,7 +46,6 @@ export function usePresupuestosList() {
     setFilterMonth,
     filteredPresupuestos,
     eliminarPresupuesto,
-    getClienteNombre,
     formatDate,
     formatCurrency,
     opcionesMeses,

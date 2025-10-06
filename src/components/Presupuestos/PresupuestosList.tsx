@@ -5,14 +5,13 @@ import { FiltrosEntidad } from '../Shared/FiltrosEntidad';
 import { BotonesTarjeta } from '../Shared/BotonesTarjeta';
 import { HeaderEntidad } from '../Shared/HeaderEntidad';
 import { TarjetaSpan } from '../Clientes/TarjetaSpan';
-import { Cliente, Presupuesto } from '../../types';
+import { PresupuestoData } from '../../types';
 
 interface PresupuestosListProps {
   onAddPresupuesto: () => void;
-  onEditPresupuesto: (presupuesto: Presupuesto) => void;
-  eliminarPresupuesto: (id: number) => void;
-  presupuestos: Presupuesto[];
-  clientes: Cliente[];
+  onEditPresupuesto: (presupuesto: PresupuestoData) => void;
+  eliminarPresupuesto: (id: string) => void;
+  presupuestos: PresupuestoData[];
   error: string | null;
 }
 
@@ -24,7 +23,6 @@ const PresupuestosList: React.FC<PresupuestosListProps> = ({ onAddPresupuesto, o
     setSearchTerm,
     filterMonth,
     setFilterMonth,
-    getClienteNombre,
     eliminarPresupuesto,
     formatDate,
     formatCurrency,
@@ -54,10 +52,10 @@ const PresupuestosList: React.FC<PresupuestosListProps> = ({ onAddPresupuesto, o
 
       {/* Presupuestos Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-6">
-        {filteredPresupuestos.map((presupuesto) => {
+        {filteredPresupuestos.map((presupuesto, index) => {
 
           return (
-            <div key={presupuesto.idPresupuesto} className="bg-white rounded-lg shadow-sm border border-gray-400 p-6 hover:shadow-md 
+            <div key={presupuesto._id + '-' + index} className="bg-white rounded-lg shadow-sm border border-gray-400 p-6 hover:shadow-md 
                                                        hover:border-green-500 transform hover:-translate-y-1 transition-all">
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center space-x-3">
@@ -65,12 +63,12 @@ const PresupuestosList: React.FC<PresupuestosListProps> = ({ onAddPresupuesto, o
                     <FileText className="w-5 h-5 text-green-600" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900 text-lg">{presupuesto.idPresupuesto}</h3>
+                    <h3 className="font-semibold text-gray-900 text-lg">{presupuesto._id}</h3>
                   </div>
                 </div>
                 <BotonesTarjeta
                   onEdit={() => onEditPresupuesto(presupuesto)}
-                  onDelete={() => eliminarPresupuesto(presupuesto.idPresupuesto)}
+                  onDelete={() => eliminarPresupuesto(presupuesto._id)}
                 />
 
               </div>
@@ -78,7 +76,7 @@ const PresupuestosList: React.FC<PresupuestosListProps> = ({ onAddPresupuesto, o
               <div className="space-y-2 mb-4">
                 <div className="flex items-center space-x-2 text-sm text-gray-600">
                   <Calendar className="w-4 h-4" />
-                  <span>Fecha: {formatDate(presupuesto.fecha)}</span>
+                  <span>Fecha: {presupuesto.fecha ? formatDate(presupuesto.fecha) : "—"}</span>
                 </div>
 
                 <TarjetaSpan >
@@ -101,7 +99,7 @@ const PresupuestosList: React.FC<PresupuestosListProps> = ({ onAddPresupuesto, o
 
               <div className="flex items-center space-x-2 text-xs text-gray-500">
                 <User className="w-4 h-4" />
-                <span>Cliente: {getClienteNombre(presupuesto.idCliente)}</span>
+                <span>Cliente: {presupuesto.cliente}</span>
               </div>
             </div>
           );

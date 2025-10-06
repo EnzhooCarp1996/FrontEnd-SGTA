@@ -23,7 +23,7 @@ interface TablaRowProps {
 export const TablaRow: React.FC<TablaRowProps> = ({
   item, items, displayValues, setDisplayValues, updateItem, removeItem
 }) => (
-  <tr key={item.id}>
+  <tr>
     <td className="border border-gray-600 px-1 py-1 relative overflow-visible z-[100]">
       <DropdownCascada
         ubicacion={item.ubicacion}
