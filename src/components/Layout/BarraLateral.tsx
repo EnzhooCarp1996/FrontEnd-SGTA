@@ -1,20 +1,21 @@
-import { /*Home,*/ Users, Car, FileText, PaintBucket, X, User } from 'lucide-react';
+import { Users, Car, FileText, PaintBucket, X, User } from "lucide-react";
+import { useNavigate, useLocation } from "react-router-dom";
 
 interface BarraLateralProps {
   role: string;
-  vistaActual: string;
-  onViewChange: (view: string) => void;
   isOpen: boolean;
   onToggle: () => void;
 }
 
-const BarraLateral: React.FC<BarraLateralProps> = ({ role, vistaActual, onViewChange, isOpen, onToggle }) => {
+const BarraLateral: React.FC<BarraLateralProps> = ({ role, isOpen, onToggle }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const allMenuItems = [
-    // { id: 'panelDeControl', label: 'Panel de control', icon: Home },
-    { id: 'clientes', label: 'Clientes', icon: Users },
-    { id: 'vehiculos', label: 'Vehículos', icon: Car },
-    { id: 'presupuestos', label: 'Presupuestos', icon: FileText },
-    { id: 'usuarios', label: 'Usuarios', icon: Users },
+    { id: "clientes", label: "Clientes", icon: Users },
+    { id: "vehiculos", label: "Vehículos", icon: Car },
+    { id: "presupuestos", label: "Presupuestos", icon: FileText },
+    { id: "usuarios", label: "Usuarios", icon: Users },
   ];
 
   const menuItems =
@@ -24,7 +25,6 @@ const BarraLateral: React.FC<BarraLateralProps> = ({ role, vistaActual, onViewCh
 
   return (
     <>
-      {/* Mobile overlay */}
       {isOpen && (
         <div
           className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
@@ -32,15 +32,14 @@ const BarraLateral: React.FC<BarraLateralProps> = ({ role, vistaActual, onViewCh
         />
       )}
 
-      {/* Barra lateral */}
       <div
         className={`
-        fixed left-0 top-0 h-full w-64 bg-gradient-to-b from-green-800 to-green-900 
-        transform transition-transform duration-300 ease-in-out z-50
-        ${isOpen ? "translate-x-0" : "-translate-x-full"}
-        lg:translate-x-0 lg:static lg:z-auto
-        flex flex-col
-      `}
+          fixed left-0 top-0 h-full w-64 bg-gradient-to-b from-green-800 to-green-900 
+          transform transition-transform duration-300 ease-in-out z-50
+          ${isOpen ? "translate-x-0" : "-translate-x-full"}
+          lg:translate-x-0 lg:static lg:z-auto
+          flex flex-col
+        `}
       >
         <div className="flex items-center justify-between p-6 border-b border-green-700">
           <div className="flex items-center space-x-3">
@@ -49,7 +48,9 @@ const BarraLateral: React.FC<BarraLateralProps> = ({ role, vistaActual, onViewCh
             </div>
             <div>
               <h1 className="text-white font-bold text-lg">SGTA</h1>
-              <p className="text-green-300 text-sm">Sistema de Gestion de Taller Automotriz</p>
+              <p className="text-green-300 text-sm">
+                Sistema de Gestión de Taller Automotriz
+              </p>
             </div>
           </div>
           <button
@@ -63,16 +64,14 @@ const BarraLateral: React.FC<BarraLateralProps> = ({ role, vistaActual, onViewCh
         <nav className="mt-6">
           {menuItems.map((item) => {
             const Icon = item.icon;
-            const isActive = vistaActual === item.id;
+            const isActive = location.pathname.includes(item.id);
 
             return (
               <button
                 key={item.id}
                 onClick={() => {
-                  onViewChange(item.id);
-                  if (window.innerWidth < 1024) {
-                    onToggle();
-                  }
+                  navigate(`/${item.id}`);
+                  if (window.innerWidth < 1024) onToggle();
                 }}
                 className={`
                   w-full flex items-center space-x-3 px-6 py-4 text-left
@@ -94,16 +93,15 @@ const BarraLateral: React.FC<BarraLateralProps> = ({ role, vistaActual, onViewCh
             );
           })}
         </nav>
-        {/* Footer */}
+
         <footer className="mt-auto p-4 text-center text-sm text-green-300 border-t border-green-700 flex flex-col items-start">
           &copy; {new Date().getFullYear()} SGTA.
           <div className="flex items-center space-x-1 mt-1">
-            <User className="w-4 h-4" />By
-            <span className="font-bold text-white">Enzo Olmedo</span>
+            <User className="w-4 h-4" />
+            By <span className="font-bold text-white">Enzo Olmedo</span>
           </div>
         </footer>
       </div>
-
     </>
   );
 };

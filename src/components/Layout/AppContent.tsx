@@ -1,43 +1,51 @@
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import PresupuestoView from "../Presupuestos/PresupuestoView";
 import { useAppContent } from "../../hooks/useAppContent";
 import VehiculoView from "../Vehiculos/VehiculoView";
 import ClienteView from "../Clientes/ClienteView";
 import UsuarioView from "../Usuarios/UsuarioView";
-import { Toaster } from "react-hot-toast";
 import BarraLateral from "./BarraLateral";
+import { Toaster } from "react-hot-toast";
 import Header from "./Header";
 
 const AppContent: React.FC = () => {
-  const { role, vistaActual, abrirBarraLateral, alternarBarraLateral, handleViewChange, renderContenido } = useAppContent();
-
-  const renderComponent = () => {
-    const vista = renderContenido();
-
-    switch (vista) {
-      case "clientes":
-        return <ClienteView />;
-      case "vehiculos":
-        return <VehiculoView />;
-      case "presupuestos":
-        return <PresupuestoView />;
-      case "usuarios":
-        return <UsuarioView />;
-      default:
-        return <ClienteView />;
-    }
-  };
+  const { role, abrirBarraLateral, alternarBarraLateral } = useAppContent();
 
   return (
-    <div className="flex h-screen bg-gray-50">
-      <Toaster position="top-right" />
-      <BarraLateral vistaActual={vistaActual} onViewChange={handleViewChange} isOpen={abrirBarraLateral} onToggle={alternarBarraLateral} role={role} />
-      <div className="flex-1 flex flex-col overflow-hidden lg:ml-0">
-        <Header onMenuToggle={alternarBarraLateral} vistaActual={vistaActual} />
-        <main className="flex-1 overflow-auto">
-          {renderComponent()}
-        </main>
+    <BrowserRouter>
+      <div className="flex h-screen bg-gray-50">
+        <Toaster position="top-right" />
+
+        {/* Barra lateral */}
+        <BarraLateral
+          role={role}
+          isOpen={abrirBarraLateral}
+          onToggle={alternarBarraLateral}
+        />
+
+        <div className="flex-1 flex flex-col overflow-hidden lg:ml-0">
+          <Header onMenuToggle={alternarBarraLateral} vistaActual="" />
+
+          <main className="flex-1 overflow-auto">
+            <Routes>
+              {role === "Admin" ? (
+                <>
+                  <Route path="/usuarios" element={<UsuarioView />} />
+                  <Route path="*" element={<Navigate to="/usuarios" />} />
+                </>
+              ) : (
+                <>
+                  <Route path="/clientes" element={<ClienteView />} />
+                  <Route path="/vehiculos" element={<VehiculoView />} />
+                  <Route path="/presupuestos" element={<PresupuestoView />} />
+                  <Route path="*" element={<Navigate to="/clientes" />} />
+                </>
+              )}
+            </Routes>
+          </main>
+        </div>
       </div>
-    </div>
+    </BrowserRouter>
   );
 };
 
