@@ -1,5 +1,5 @@
 import { usePresupuestos } from "..//Presupuestos/usePresupuestos";
-import { NewPresupuesto, Presupuesto } from "../../types";
+import { NewPresupuesto, PresupuestoData } from "../../types";
 import { useVehiculos } from "../Vehiculos/useVehiculos";
 import { useClientes } from "../Clientes/useClientes";
 import { useState } from "react";
@@ -17,7 +17,7 @@ export function usePresupuestoView() {
 
   const [mostrarForm, setMostrarForm] = useState(false);
   const [editarPresupuesto, setEditarPresupuesto] = useState<
-    Presupuesto | undefined
+    PresupuestoData | undefined
   >();
 
   const handleAdd = () => {
@@ -25,15 +25,15 @@ export function usePresupuestoView() {
     setMostrarForm(true);
   };
 
-  const handleEdit = (presupuesto: Presupuesto) => {
+  const handleEdit = (presupuesto: PresupuestoData) => {
     setEditarPresupuesto(presupuesto);
     setMostrarForm(true);
   };
 
-  const handleSave = async (presupuesto: Partial<Presupuesto>) => {
+  const handleSave = async (presupuesto: Partial<PresupuestoData>) => {
     try {
       if (editarPresupuesto) {
-        const presupuestoCompleto: Presupuesto = {
+        const presupuestoCompleto: PresupuestoData = {
           ...editarPresupuesto,
           ...presupuesto,
         };

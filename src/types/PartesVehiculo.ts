@@ -16,3 +16,13 @@ export interface PartesVehiculo {
   categoria: string;
   componentes: Componente[];
 }
+
+export type EstructuraPartes = {
+  [categoria: string]: {
+    [componente: string]:
+    | null // ej: "Panel" (sin subcomponentes ni detalles)
+    | {
+      [subcomponente: string]: string[]; // ej: "delantera": ["cristal", "moldura"]
+    };
+  };
+};

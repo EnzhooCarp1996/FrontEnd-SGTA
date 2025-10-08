@@ -63,7 +63,7 @@ const PresupuestosList: React.FC<PresupuestosListProps> = ({ onAddPresupuesto, o
                     <FileText className="w-5 h-5 text-green-600" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900 text-lg">{presupuesto._id}</h3>
+                    <h3 className="font-semibold text-gray-900 text-lg">{presupuesto._id.slice(-8)}</h3>
                   </div>
                 </div>
                 <BotonesTarjeta

@@ -2,16 +2,14 @@ import { LucideIcon, X } from "lucide-react";
 
 interface HeaderFormProps {
   icon: LucideIcon;            // Ícono (User, Car, etc.)
-  tituloNuevo: string;         // Texto cuando es nuevo
-  tituloEditar?: string;        // Texto cuando edita
+  titulo: string;         // Texto 
   condicion?: boolean;         // Si existe o no (ej: cliente o vehiculo)
   onCancel: () => void;        // Acción al cerrar
 }
 
 export const HeaderForm: React.FC<HeaderFormProps> = ({
   icon: Icon,
-  tituloNuevo,
-  tituloEditar,
+  titulo,
   condicion = false,
   onCancel,
 }) => {
@@ -22,7 +20,7 @@ export const HeaderForm: React.FC<HeaderFormProps> = ({
           <Icon className="w-6 h-6 text-green-600" />
         </div>
         <h2 className="text-xl font-semibold text-gray-900">
-          {condicion ? tituloEditar : tituloNuevo}
+          {condicion ? `Nuevo ${titulo}` : `Editar ${titulo}`}
         </h2>
       </div>
       <button

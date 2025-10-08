@@ -1,4 +1,6 @@
 interface SelectCascadaProps {
+  id: string;
+  name: string;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   opciones: string[];
@@ -9,6 +11,8 @@ interface SelectCascadaProps {
 }
 
 export const SelectCascada: React.FC<SelectCascadaProps> = ({
+  id,
+  name,
   value,
   onChange,
   opciones,
@@ -19,6 +23,8 @@ export const SelectCascada: React.FC<SelectCascadaProps> = ({
 }) => {
   return (
     <select
+      id={id}
+      name={name}
       value={value}
       onChange={onChange}
       disabled={disabled}
