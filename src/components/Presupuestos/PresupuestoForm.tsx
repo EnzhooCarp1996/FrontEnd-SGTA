@@ -1,8 +1,10 @@
 import { usePresupuestoForm } from '../../hooks/Presupuestos/usePresupuestoForm';
+import { ubicacionesPartes } from '../../constants/ubicacionesPresupuesto';
 import { SeccionUbicacion } from './FormComponents/SeccionUbicacion';
 import { Cliente, PresupuestoData, Vehiculo } from "../../types";
 import { FormGeneral } from '../Shared/FormGeneral';
-import { InputForm } from '../Shared/InputForm';
+import { FormField } from '../Shared/FormField';
+import { LabelForm } from '../Shared/LabelForm';
 import { Eye, FileText } from 'lucide-react';
 import VistaPrevia from './VistaPrevia';
 
@@ -14,13 +16,12 @@ interface PresupuestoFormProps {
   vehiculos: Vehiculo[];
 }
 
-const PresupuestoForm: React.FC<PresupuestoFormProps> = ({ presupuesto, vehiculos, clientes, onSave, onCancel }) => {
+export const PresupuestoForm: React.FC<PresupuestoFormProps> = ({ presupuesto, vehiculos, clientes, onSave, onCancel }) => {
 
   const {
     formData,
     errors,
     mostrarVistaPrevia,
-    ubicaciones,
     estructuraPartes,
     handleChange,
     addItem,
@@ -33,13 +34,7 @@ const PresupuestoForm: React.FC<PresupuestoFormProps> = ({ presupuesto, vehiculo
 
   return (
     <>
-      <FormGeneral
-        icon={FileText}
-        titulo="Presupuesto"
-        condicion={!!presupuesto}
-        onCancel={onCancel}
-      >
-
+      <FormGeneral icon={FileText} titulo="Presupuesto" condicion={!!presupuesto} onCancel={onCancel} >
 
         <div className="space-y-4">
           <h3 className="text-lg font-medium text-gray-900 border-b border-gray-200 pb-2">
@@ -48,7 +43,7 @@ const PresupuestoForm: React.FC<PresupuestoFormProps> = ({ presupuesto, vehiculo
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label htmlFor="idCliente" className="block text-sm font-medium text-gray-700 mb-2">Cliente</label>
+              <LabelForm htmlFor={"idCliente"} label={"Cliente"} />
               <select
                 id="idCliente"
                 name="idCliente"
@@ -66,10 +61,10 @@ const PresupuestoForm: React.FC<PresupuestoFormProps> = ({ presupuesto, vehiculo
               </select>
               {errors.cliente && <p className="text-red-500 text-sm">{errors.cliente}</p>}
             </div>
-            <InputForm label="Domicilio" name="domicilio" value={formData.domicilio} onChange={handleChange} placeholder="Avenida/Calle SiempreViva 123" required error={errors.domicilio} />
-            <InputForm label="Póliza N°" name="poliza" value={formData.poliza} onChange={handleChange} required error={errors.poliza} />
+            <FormField label="Domicilio" name="domicilio" value={formData.domicilio} onChange={handleChange} placeholder="Avenida/Calle SiempreViva 123" required error={errors.domicilio} />
+            <FormField label="Póliza N°" name="poliza" value={formData.poliza} onChange={handleChange} required error={errors.poliza} />
             <div>
-              <label htmlFor="idVehiculo" className="block text-sm font-medium text-gray-700 mb-2">Vehículo</label>
+              <LabelForm htmlFor={"idVehiculo"} label={"Vehículo"} />
               <select
                 id="idVehiculo"
                 name="idVehiculo"
@@ -90,20 +85,20 @@ const PresupuestoForm: React.FC<PresupuestoFormProps> = ({ presupuesto, vehiculo
               {errors.vehiculo && <p className="text-red-500 text-sm">{errors.vehiculo}</p>}
             </div>
 
-            <InputForm label="Patente" name="patente" value={formData.patente} onChange={handleChange} placeholder="ABC123" readOnly required error={errors.patente} />
-            <div><InputForm label="Siniestro N°" name="siniestro" value={formData.siniestro} onChange={handleChange} /></div>
-            <InputForm label="M.O. CHAPA" type="number" name="manoDeObraChapa" value={formData.manoDeObraChapa} onChange={handleChange} step="0.01" required error={errors.chapa} />
-            <InputForm label="M.O. PINTURA" type="number" name="manoDeObraPintura" value={formData.manoDeObraPintura} onChange={handleChange} step="0.01" required error={errors.pintura} />
-            <div><InputForm label="M.O. ELECTRICIDAD" type="number" name="electricidad" value={formData.electricidad} onChange={handleChange} step="0.01" /></div>
-            <div><InputForm label="M.O. MECANICA" type="number" name="mecanica" value={formData.mecanica} onChange={handleChange} step="0.01" /></div>
-            <div><InputForm label="Fecha" type="date" name="fecha" value={formData.fecha} onChange={handleChange} required error={errors.fecha} /></div>
-            <InputForm label="Firma" name="firmaResponsable" value={formData.firmaResponsable} onChange={handleChange} />
+            <FormField label="Patente" name="patente" value={formData.patente} onChange={handleChange} placeholder="ABC123" readOnly required error={errors.patente} />
+            <div><FormField label="Siniestro N°" name="siniestro" value={formData.siniestro} onChange={handleChange} /></div>
+            <FormField label="M.O. CHAPA" type="number" name="manoDeObraChapa" value={formData.manoDeObraChapa} onChange={handleChange} step="0.01" required error={errors.chapa} />
+            <FormField label="M.O. PINTURA" type="number" name="manoDeObraPintura" value={formData.manoDeObraPintura} onChange={handleChange} step="0.01" required error={errors.pintura} />
+            <div><FormField label="M.O. ELECTRICIDAD" type="number" name="electricidad" value={formData.electricidad} onChange={handleChange} step="0.01" /></div>
+            <div><FormField label="M.O. MECANICA" type="number" name="mecanica" value={formData.mecanica} onChange={handleChange} step="0.01" /></div>
+            <div><FormField label="Fecha" type="date" name="fecha" value={formData.fecha} onChange={handleChange} required error={errors.fecha} /></div>
+            <FormField label="Firma" name="firmaResponsable" value={formData.firmaResponsable} onChange={handleChange} />
           </div>
 
           <h3 className="text-lg font-medium text-gray-900 border-b border-gray-200 pb-2 mb-1">Reparaciones</h3>
         </div>
 
-        {ubicaciones.map(ubicacion => (
+        {ubicacionesPartes.map(ubicacion => (
           <SeccionUbicacion
             key={ubicacion}
             ubicacion={ubicacion}
@@ -151,4 +146,4 @@ const PresupuestoForm: React.FC<PresupuestoFormProps> = ({ presupuesto, vehiculo
   );
 };
 
-export default PresupuestoForm;
+

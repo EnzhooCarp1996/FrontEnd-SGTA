@@ -1,7 +1,7 @@
 import { Eye, EyeOff, PaintBucket } from "lucide-react";
 import { useLoginForm } from "../../hooks/useLoginForm";
 
-export default function LoginForm() {
+export const LoginForm = () => {
   const {
     formData,
     showContrasenia,
@@ -100,5 +100,5 @@ export default function LoginForm() {
         </div>
       </div>
     </div>
-  );
+  )
 }

@@ -5,6 +5,8 @@ export const formatDate = (dateString?: string | null) => {
   return new Date(dateString).toLocaleDateString("es-AR");
 };
 
+export const formatearFecha = (fecha?: string) => fecha?.split("T")[0] || "";
+
 export const getDaysFromNow = (dateString?: string | null) => {
   if (!dateString) return null;
   const date = new Date(dateString);
@@ -27,7 +29,6 @@ export const getStatusColor = (estado: string) => {
   }
 };
 
-
 export const filtrarVehiculos = (
   vehiculos: Vehiculo[],
   searchTerm: string,
@@ -45,3 +46,11 @@ export const filtrarVehiculos = (
     return matchesSearch && matchesFilter;
   });
 };
+
+export const estados = [
+  { value: "all", label: "Todos los estados" },
+  { value: "No Recibido", label: "No Recibido" },
+  { value: "Recibido", label: "Recibido" },
+  { value: "Proceso", label: "En Proceso" },
+  { value: "Entregado", label: "Entregado" },
+];

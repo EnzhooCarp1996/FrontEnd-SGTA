@@ -7,7 +7,6 @@ interface FormGeneralProps {
   titulo: string;
   condicion: boolean;
   onCancel: () => void;
-  onSubmit?: (e: React.FormEvent) => void;
   children: ReactNode;
   maxWidth?: string;
 }
@@ -17,7 +16,6 @@ export const FormGeneral: React.FC<FormGeneralProps> = ({
   titulo,
   condicion = false,
   onCancel,
-  onSubmit,
   children,
   maxWidth = "max-w-4xl",
 }) => {
@@ -33,10 +31,10 @@ export const FormGeneral: React.FC<FormGeneralProps> = ({
           onCancel={onCancel}
         />
 
-        <form onSubmit={onSubmit} className="p-6 space-y-4">
+        <form className="p-6 space-y-4">
           {children}
         </form>
-        
+
       </div>
     </div>
   );

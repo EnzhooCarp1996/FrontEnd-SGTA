@@ -1,18 +1,15 @@
 import { useClienteView } from "../../hooks/Clientes/useClienteView";
-import ClientesList from "./ClientesList";
-import ClienteForm from "./ClienteForm";
+import { ClientesList } from "./ClientesList";
+import { ClienteForm } from "./ClienteForm";
 
-const ClienteView: React.FC = () => {
+export const ClienteView: React.FC = () => {
   const {
-    clientes,
-    errorCliente,
     mostrarForm,
     editarCliente,
     handleAdd,
     handleEdit,
     handleSave,
     handleCancel,
-    eliminarCliente,
   } = useClienteView();
 
     return (
@@ -20,9 +17,6 @@ const ClienteView: React.FC = () => {
             <ClientesList
                 onAddCliente={handleAdd}
                 onEditCliente={handleEdit}
-                eliminarCliente={eliminarCliente}
-                clientes={clientes}
-                error={errorCliente}
             />
             {mostrarForm && (
                 <ClienteForm
@@ -35,4 +29,3 @@ const ClienteView: React.FC = () => {
     );
 };
 
-export default ClienteView;

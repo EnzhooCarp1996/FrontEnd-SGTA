@@ -1,9 +1,12 @@
+import { GridColumnas } from "./ClienteFormComponents/GridColumnas";
+import { RadioCardOption } from "./ClienteFormComponents/RadioCardOption";
 import { useClienteForm } from "../../hooks/Clientes/useClienteForm";
+import { SelectForm } from "./ClienteFormComponents/SelectForm";
+import { FormGeneral } from "../Shared/FormGeneral";
 import { BotonesForm } from "../Shared/BotonesForm";
-import { InputForm } from "../Shared/InputForm";
+import { FormField } from "../Shared/FormField";
 import { Building, User } from "lucide-react";
 import { Cliente } from "../../types";
-import { FormGeneral } from "../Shared/FormGeneral";
 
 
 interface ClienteFormProps {
@@ -12,26 +15,12 @@ interface ClienteFormProps {
   onCancel: () => void;
 }
 
-const ClienteForm: React.FC<ClienteFormProps> = ({ cliente, onSave, onCancel }) => {
-  const {
-    formData,
-    errors,
-    tipoCliente,
-    setTipoCliente,
-    handleChange,
-    handleSubmit,
-  } = useClienteForm(cliente, onSave);
+export const ClienteForm: React.FC<ClienteFormProps> = ({ cliente, onSave, onCancel }) => {
+  const { formData, errors, tipoCliente, setTipoCliente, handleChange, handleSubmit } = useClienteForm(cliente, onSave);
 
   return (
 
-    <FormGeneral
-      icon={User}
-      titulo="Cliente"
-      condicion={!!cliente}
-      onCancel={onCancel}
-      onSubmit={handleSubmit}
-      maxWidth="max-w-3xl"
-    >
+    <FormGeneral icon={User} titulo="Cliente" condicion={!!cliente} onCancel={onCancel} maxWidth="max-w-3xl">
 
       {/* Tipo de Cliente */}
       <div>
@@ -39,123 +28,74 @@ const ClienteForm: React.FC<ClienteFormProps> = ({ cliente, onSave, onCancel }) 
           Tipo de Cliente (obligatorio: <span className="text-red-500">*</span>)
         </span>
         <div className="flex space-x-4">
-          <label className={`flex items-center space-x-2 px-4 py-2 rounded-lg border cursor-pointer transition-colors ${tipoCliente === 'Persona'
-            ? 'bg-green-50 border-green-300 text-green-700'
-            : 'bg-gray-50 border-gray-300 text-gray-700 hover:bg-gray-100'
-            }`}>
-            <input
-              type="radio"
-              name="tipoCliente"
-              value="Persona"
-              checked={tipoCliente === 'Persona'}
-              onChange={() => setTipoCliente('Persona')}
-              className="hidden"
-            />
-            <User className="w-5 h-5" />
-            <span>Persona</span>
-          </label>
-
-          <label className={`flex items-center space-x-2 px-4 py-2 rounded-lg border cursor-pointer transition-colors ${tipoCliente === 'Empresa'
-            ? 'bg-green-50 border-green-300 text-green-700'
-            : 'bg-gray-50 border-gray-300 text-gray-700 hover:bg-gray-100'
-            }`}>
-            <input
-              type="radio"
-              name="tipoCliente"
-              value="Empresa"
-              checked={tipoCliente === 'Empresa'}
-              onChange={() => setTipoCliente('Empresa')}
-              className="hidden"
-            />
-            <Building className="w-5 h-5" />
-            <span>Empresa</span>
-          </label>
+          <RadioCardOption name="tipoCliente" value="Persona" label="Persona" icon={User} selectedValue={tipoCliente} onChange={setTipoCliente} />
+          <RadioCardOption name="tipoCliente" value="Empresa" label="Empresa" icon={Building} selectedValue={tipoCliente} onChange={setTipoCliente} />
         </div>
       </div>
 
       {/* Campos específicos por tipo */}
       {tipoCliente === 'Persona' ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <InputForm label="Nombre " name="nombre" value={formData.nombre} onChange={handleChange} required error={errors.nombre} />
-          <InputForm label="Apellido " name="apellido" value={formData.apellido} onChange={handleChange} required error={errors.apellido} />
-        </div>
+        <GridColumnas>
+          <FormField label="Nombre " name="nombre" value={formData.nombre} onChange={handleChange} required error={errors.nombre} />
+          <FormField label="Apellido " name="apellido" value={formData.apellido} onChange={handleChange} required error={errors.apellido} />
+        </GridColumnas>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <InputForm label="Razón Social " name="razonSocial" value={formData.razonSocial} onChange={handleChange} required error={errors.razonSocial} />
+        <GridColumnas>
+          <FormField label="Razón Social " name="razonSocial" value={formData.razonSocial} onChange={handleChange} required error={errors.razonSocial} />
           <div>
-            <InputForm label="Nombre de Fantasía " name="nombreDeFantasia" value={formData.nombreDeFantasia} onChange={handleChange} />
+            <FormField label="Nombre de Fantasía " name="nombreDeFantasia" value={formData.nombreDeFantasia} onChange={handleChange} />
           </div>
-        </div>
+        </GridColumnas>
       )}
 
       {/* Contacto */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <InputForm label="Teléfono " type="tel" name="telefono" value={formData.telefono} onChange={handleChange} required error={errors.telefono} />
+      <GridColumnas>
+        <FormField label="Teléfono " type="tel" name="telefono" value={formData.telefono} onChange={handleChange} required error={errors.telefono} />
         <div>
-          <InputForm label="Celular " type="tel" name="celular" value={formData.celular} onChange={handleChange} />
+          <FormField label="Celular " type="tel" name="celular" value={formData.celular} onChange={handleChange} />
         </div>
-      </div>
+      </GridColumnas>
 
       {/* Responsabilidad */}
-      <div>
-        <label htmlFor="responsabilidad" className="block text-sm font-medium text-gray-700 mb-2">
-          Responsabilidad Fiscal <span className="text-red-500">*</span>
-        </label>
-        <select
-          id="responsabilidad"
-          name="responsabilidad"
-          value={formData.responsabilidad}
-          onChange={handleChange}
-          required
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-        >
-          <option value="" disabled>
-            Seleccione una opción
-          </option>
-
-          {tipoCliente === "Empresa" ? (
-            <option value="ResponsableInscripto">Responsable Inscripto</option>
-          ) : (
-            <>
-              <option value="ConsumidorFinal">Consumidor Final</option>
-              <option value="Monotributista">Monotributista</option>
-            </>
-          )}
-
-        </select>
-        {errors.responsabilidad && <p className="text-red-500 text-sm">{errors.responsabilidad}</p>}
-      </div>
+      <SelectForm
+        id="responsabilidad"
+        name="responsabilidad"
+        label="Responsabilidad Fiscal"
+        value={formData.responsabilidad}
+        onChange={handleChange}
+        required
+        error={errors.responsabilidad}
+        options={
+          tipoCliente === "Empresa"
+            ? [{ value: "ResponsableInscripto", label: "Responsable Inscripto" }]
+            : [
+              { value: "ConsumidorFinal", label: "Consumidor Final" },
+              { value: "Monotributista", label: "Monotributista" },
+            ]
+        }
+      />
 
       {/* Tipo de Documento */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label htmlFor="tipoDocumento" className="block text-sm font-medium text-gray-700 mb-2">
-            Tipo de Documento <span className="text-red-500">*</span>
-          </label>
-          <select
-            id="tipoDocumento"
-            name="tipoDocumento"
-            value={formData.tipoDocumento}
-            onChange={handleChange}
-            required
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-          >
-            <option value="" disabled>
-              Seleccione una opción
-            </option>
-
-            {((tipoCliente === 'Persona') && (formData.responsabilidad === 'ConsumidorFinal')) ?
-              (<>
-                <option value="DNI">DNI</option>
-                <option value="CUIL">CUIL</option>
-              </>
-              ) : (
-                <option value="CUIT">CUIT</option>)}
-          </select>
-          {errors.tipoDocumento && <p className="text-red-500 text-sm">{errors.tipoDocumento}</p>}
-        </div>
-        <InputForm label="Número de Documento " name="documento" value={formData.documento} onChange={handleChange} required error={errors.documento} />
-      </div>
+      <GridColumnas>
+        <SelectForm
+          id="tipoDocumento"
+          name="tipoDocumento"
+          label="Tipo de Documento"
+          value={formData.tipoDocumento}
+          onChange={handleChange}
+          required
+          error={errors.tipoDocumento}
+          options={
+            tipoCliente === "Persona" && formData.responsabilidad === "ConsumidorFinal"
+              ? [
+                { value: "DNI", label: "DNI" },
+                { value: "CUIL", label: "CUIL" },
+              ]
+              : [{ value: "CUIT", label: "CUIT" }]
+          }
+        />
+        <FormField label="Número de Documento " name="documento" value={formData.documento} onChange={handleChange} required error={errors.documento} />
+      </GridColumnas>
 
       {/* Botones */}
       <BotonesForm
@@ -166,4 +106,3 @@ const ClienteForm: React.FC<ClienteFormProps> = ({ cliente, onSave, onCancel }) 
   );
 };
 
-export default ClienteForm;

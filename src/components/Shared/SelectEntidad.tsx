@@ -1,5 +1,4 @@
 import { Filter } from "lucide-react";
-import React from "react";
 
 interface Option<T> {
     value: T;

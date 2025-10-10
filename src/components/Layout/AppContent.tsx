@@ -1,14 +1,11 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import PresupuestoView from "../Presupuestos/PresupuestoView";
 import { useAppContent } from "../../hooks/useAppContent";
-import VehiculoView from "../Vehiculos/VehiculoView";
-import ClienteView from "../Clientes/ClienteView";
-import UsuarioView from "../Usuarios/UsuarioView";
-import BarraLateral from "./BarraLateral";
+import { BrowserRouter } from "react-router-dom";
+import { BarraLateral } from "./BarraLateral";
 import { Toaster } from "react-hot-toast";
-import Header from "./Header";
+import { Header } from "./Header";
+import { Main } from "./Main";
 
-const AppContent: React.FC = () => {
+export const AppContent: React.FC = () => {
   const { role, abrirBarraLateral, alternarBarraLateral } = useAppContent();
 
   return (
@@ -17,36 +14,14 @@ const AppContent: React.FC = () => {
         <Toaster position="top-right" />
 
         {/* Barra lateral */}
-        <BarraLateral
-          role={role}
-          isOpen={abrirBarraLateral}
-          onToggle={alternarBarraLateral}
-        />
-
+        <BarraLateral role={role} isOpen={abrirBarraLateral} onAlternar={alternarBarraLateral}/>
         <div className="flex-1 flex flex-col overflow-hidden lg:ml-0">
-          <Header onMenuToggle={alternarBarraLateral} vistaActual="" />
-
-          <main className="flex-1 overflow-auto">
-            <Routes>
-              {role === "Admin" ? (
-                <>
-                  <Route path="/usuarios" element={<UsuarioView />} />
-                  <Route path="*" element={<Navigate to="/usuarios" />} />
-                </>
-              ) : (
-                <>
-                  <Route path="/clientes" element={<ClienteView />} />
-                  <Route path="/vehiculos" element={<VehiculoView />} />
-                  <Route path="/presupuestos" element={<PresupuestoView />} />
-                  <Route path="*" element={<Navigate to="/clientes" />} />
-                </>
-              )}
-            </Routes>
-          </main>
+          <Header onAlternarMenu={alternarBarraLateral} vistaActual="" />
+          <Main role={role} />
         </div>
+
       </div>
     </BrowserRouter>
   );
 };
 
-export default AppContent;

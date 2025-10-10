@@ -41,7 +41,7 @@ export const FiltrosEntidad = <T extends string>({
       <div className="flex flex-col lg:flex-row gap-4">
         <BuscadorEntidad
           icon={buscadorIcon}
-          placeholder={buscadorPlaceholder}
+          placeholder={`Buscar por ${buscadorPlaceholder}...`}
           value={buscadorValue}
           onChange={onBuscadorChange}
           id={buscadorId}

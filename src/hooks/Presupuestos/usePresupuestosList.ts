@@ -22,20 +22,6 @@ export function usePresupuestosList() {
     return matchesSearch && matchesFilter;
   });
 
-  const formatDate = (dateString: string) =>
-    new Date(dateString).toLocaleDateString("es-AR");
-
-  const formatCurrency = (amount: number) =>
-    new Intl.NumberFormat("es-AR", {
-      style: "currency",
-      currency: "ARS",
-    }).format(amount);
-
-  const opcionesMeses = [
-    { value: "all", label: "Todos los Meses" },
-    { value: "current", label: "Mes actual" },
-    { value: "previous", label: "Mes anterior" },
-  ];
 
   return {
     presupuestos,
@@ -46,8 +32,5 @@ export function usePresupuestosList() {
     setFilterMonth,
     filteredPresupuestos,
     eliminarPresupuesto,
-    formatDate,
-    formatCurrency,
-    opcionesMeses,
   };
 }

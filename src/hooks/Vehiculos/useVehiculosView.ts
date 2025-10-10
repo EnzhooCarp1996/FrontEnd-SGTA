@@ -5,11 +5,8 @@ import { useState } from "react";
 
 export function useVehiculoView() {
   const {
-    vehiculos,
-    error,
     agregarVehiculo,
     modificarVehiculo,
-    eliminarVehiculo,
   } = useVehiculos();
   const { clientes } = useClientes();
 
@@ -47,15 +44,12 @@ export function useVehiculoView() {
   };
 
   return {
-    vehiculos,
     clientes,
-    error,
     mostrarForm,
     editarVehiculo,
     handleAdd,
     handleEdit,
     handleSave,
     handleCancel,
-    eliminarVehiculo,
   };
 }

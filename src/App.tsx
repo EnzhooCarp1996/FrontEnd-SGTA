@@ -1,6 +1,6 @@
-import AppContent from "./components/Layout/AppContent";
+import { AppContent } from "./components/Layout/AppContent";
 import { AuthProvider } from "./context/AuthContext";
-import LoginForm from "./components/Login/LoginForm";
+import { LoginForm } from "./components/Login/LoginForm";
 import { useAuth } from "./hooks/useAuth";
 
 function AppContentWrapper() {
@@ -11,12 +11,10 @@ function AppContentWrapper() {
   return <AppContent />;
 }
 
-function App() {
+export const App = () => {
   return (
     <AuthProvider>
       <AppContentWrapper />
     </AuthProvider>
   );
 }
-
-export default App;

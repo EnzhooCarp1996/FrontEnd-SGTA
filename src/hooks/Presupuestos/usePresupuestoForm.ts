@@ -1,3 +1,5 @@
+import { EstructuraPartes, PartesVehiculo } from "../../types/PartesVehiculo";
+import { getPartesVehiculo } from "../../Services/PartesVehiculoService";
 import { useState, useEffect, useRef } from "react";
 import {
   Cliente,
@@ -5,11 +7,7 @@ import {
   PresupuestoItem,
   Vehiculo,
 } from "../../types";
-import { getPartesVehiculo } from "../../Services/PartesVehiculoService";
-import { EstructuraPartes, PartesVehiculo } from "../../types/PartesVehiculo";
 import { useAuth } from "../useAuth";
-
-
 
 export function usePresupuestoForm(
   vehiculos: Vehiculo[],
@@ -20,7 +18,9 @@ export function usePresupuestoForm(
   const { token } = useAuth();
   const [mostrarVistaPrevia, setMostrarVistaPrevia] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
-  const [estructuraPartes, setEstructuraPartes] = useState<EstructuraPartes>({});
+  const [estructuraPartes, setEstructuraPartes] = useState<EstructuraPartes>(
+    {}
+  );
 
   useEffect(() => {
     if (!token) return;
@@ -28,12 +28,14 @@ export function usePresupuestoForm(
       .then((data: PartesVehiculo[]) => {
         const mapa: EstructuraPartes = {};
 
-        data.forEach(pv => {
-          const componentes: { [componente: string]: null | { [sub: string]: string[] } } = {};
-          pv.componentes.forEach(c => {
+        data.forEach((pv) => {
+          const componentes: {
+            [componente: string]: null | { [sub: string]: string[] };
+          } = {};
+          pv.componentes.forEach((c) => {
             if (c.subcomponentes) {
               const subMap: { [sub: string]: string[] } = {};
-              c.subcomponentes.forEach(sc => {
+              c.subcomponentes.forEach((sc) => {
                 subMap[sc.nombre] = sc.detalles ?? [];
               });
               componentes[c.nombre] = subMap;
@@ -46,9 +48,8 @@ export function usePresupuestoForm(
 
         setEstructuraPartes(mapa);
       })
-      .catch(err => console.error(err));
+      .catch((err) => console.error(err));
   }, [token]);
-
 
   const formatearFecha = (fecha: string | Date) => {
     const d = new Date(fecha);
@@ -86,20 +87,6 @@ export function usePresupuestoForm(
     total: presupuestos?.total ?? 0,
     items: presupuestos?.items ?? [],
   });
-
-  const ubicaciones = [
-    "PARTE DELANTERA",
-    "PARTE TRASERA",
-    "INTERIOR",
-    "LADO DERECHO",
-    "LADO IZQUIERDO",
-    "MOTOR",
-    "CHASIS",
-    "TREN DELANTERO",
-    "TREN TRASERO",
-    "TRANSMISION",
-    "DIRECCION",
-  ];
 
   useEffect(() => {
     document.body.style.overflow = mostrarVistaPrevia ? "hidden" : "";
@@ -270,7 +257,6 @@ export function usePresupuestoForm(
     formData,
     errors,
     mostrarVistaPrevia,
-    ubicaciones,
     estructuraPartes,
     setFormData,
     handleChange,

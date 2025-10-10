@@ -6,11 +6,8 @@ import { useState } from "react";
 
 export function usePresupuestoView() {
   const {
-    presupuestos,
-    error,
     agregarPresupuesto,
     modificarPresupuesto,
-    eliminarPresupuesto,
   } = usePresupuestos();
   const { clientes } = useClientes();
   const { vehiculos } = useVehiculos();
@@ -54,16 +51,13 @@ export function usePresupuestoView() {
   };
 
   return {
-    presupuestos,
     vehiculos,
     clientes,
-    error,
     mostrarForm,
     editarPresupuesto,
     handleAdd,
     handleEdit,
     handleSave,
     handleCancel,
-    eliminarPresupuesto,
   };
 }

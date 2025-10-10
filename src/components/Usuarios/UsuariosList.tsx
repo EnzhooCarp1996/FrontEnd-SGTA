@@ -1,12 +1,10 @@
-import { Usuario } from "../../types";
-import { BotonesTarjeta } from "../Shared/BotonesTarjeta";
-import { InputForm } from "../Shared/InputForm";
 import { useUsuariosList } from "../../hooks/Usuarios/useUsuariosList";
+import { BotonesTarjeta } from "../Shared/BotonesTarjeta";
+import { FormField } from "../Shared/FormField";
+import { Usuario } from "../../types";
 import { Save } from "lucide-react";
 
-
-
-interface UsuarioProps {
+interface UsuariosListProps {
   onAddUsuario: () => void;
   onEditUsuario: (usuario: Usuario) => void;
   onSave: (usuario: Partial<Usuario>) => void;
@@ -16,7 +14,7 @@ interface UsuarioProps {
   error: string | null;
 }
 
-const UsuariosList: React.FC<UsuarioProps> = ({ usuario, usuarios, onSave, /*onAddUsuario,*/ onEditUsuario, eliminarUsuario }) => {
+export const UsuariosList: React.FC<UsuariosListProps> = ({ usuario, usuarios, onSave, /*onAddUsuario,*/ onEditUsuario, eliminarUsuario }) => {
   const {
     formData,
     handleSubmit,
@@ -26,20 +24,20 @@ const UsuariosList: React.FC<UsuarioProps> = ({ usuario, usuarios, onSave, /*onA
 
 
   return (
-    <div className="p-6">
+    <>
       <h1 className="text-2xl font-bold mb-4">Usuarios</h1>
       <div className="flex flex-col md:flex-row gap-6 w-full">
         {/* Formulario */}
         <div className="flex-1">
           <form onSubmit={handleSubmit} className="mb-6 flex flex-col gap-4 w-full">
             <div className="flex-1">
-              <InputForm label="Nombre de Usuario" name="nombreUsuario" value={formData.nombreUsuario ?? ""} onChange={handleChange} placeholder="Cesar" required />
+              <FormField label="Nombre de Usuario" name="nombreUsuario" value={formData.nombreUsuario ?? ""} onChange={handleChange} placeholder="Cesar" required />
             </div>
             <div className="flex-1">
-              <InputForm label="Correo" type="email" name="correo" value={formData.correo ?? ""} onChange={handleChange} placeholder="example@gmail.com" required />
+              <FormField label="Correo" type="email" name="correo" value={formData.correo ?? ""} onChange={handleChange} placeholder="example@gmail.com" required />
             </div>
             <div className="flex-1">
-              <InputForm label="Contraseña" name="contrasenia" value={formData.contrasenia ?? ""} onChange={handleChange} placeholder="*********" required />
+              <FormField label="Contraseña" name="contrasenia" value={formData.contrasenia ?? ""} onChange={handleChange} placeholder="*********" required />
             </div>
             <div className="flex-1">
               <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-2">Tipo de Usuario<span className="text-red-500">*</span></label>
@@ -102,8 +100,7 @@ const UsuariosList: React.FC<UsuarioProps> = ({ usuario, usuarios, onSave, /*onA
           </table>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
-export default UsuariosList;

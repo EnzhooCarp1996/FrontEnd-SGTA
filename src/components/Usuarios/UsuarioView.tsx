@@ -1,20 +1,12 @@
 import { useUsuarioView } from "../../hooks/Usuarios/useUsuariosView";
-import Usuarios from "./UsuariosList";
+import { UsuariosList } from "./UsuariosList";
 
-const UsuarioView: React.FC = () => {
-    const {
-        usuarios,
-        errorUsuario,
-        editarUsuario,
-        handleAdd,
-        handleEdit,
-        handleSave,
-        eliminarUsuario,
-    } = useUsuarioView();
+export const UsuarioView: React.FC = () => {
+    const { usuarios, errorUsuario, editarUsuario, handleAdd, handleEdit, handleSave, eliminarUsuario } = useUsuarioView();
 
     return (
         <>
-            <Usuarios
+            <UsuariosList
                 onAddUsuario={handleAdd}
                 onEditUsuario={handleEdit}
                 eliminarUsuario={eliminarUsuario}
@@ -27,4 +19,4 @@ const UsuarioView: React.FC = () => {
     );
 };
 
-export default UsuarioView;
+

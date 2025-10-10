@@ -2,20 +2,19 @@ import { Menu, LogOut, UserCheck } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 
 interface HeaderProps {
-  onMenuToggle: () => void;
+  onAlternarMenu: () => void;
   vistaActual: string;
 }
 
-const Header: React.FC<HeaderProps> = ({ onMenuToggle }) => {
+export const Header: React.FC<HeaderProps> = ({ onAlternarMenu }) => {
   const { nombreUsuario, role, logout } = useAuth();
-  
 
   return (
     <header className="bg-green-500 border-b border-gray-200 px-6 py-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
           <button
-            onClick={onMenuToggle}
+            onClick={onAlternarMenu}
             className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
           >
             <Menu className="w-6 h-6 text-gray-600" />
@@ -26,11 +25,6 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle }) => {
         </div>
 
         <div className="flex items-center space-x-4">
-          {/* <button className="p-2 rounded-lg hover:bg-gray-100 transition-colors relative">
-            <Bell className="w-6 h-6 text-gray-600" />
-            <span className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full"></span>
-          </button> */}
-
           <button className="flex items-center space-x-2 p-2 rounded-lg bg-green-600 hover:bg-green-700 transition-colors">
             <UserCheck className="w-6 h-6 text-black" />
             <span className="text-black font-medium">{nombreUsuario}</span>
@@ -45,5 +39,3 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle }) => {
     </header>
   );
 };
-
-export default Header;

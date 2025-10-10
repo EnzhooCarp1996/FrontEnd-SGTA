@@ -1,0 +1,13 @@
+export const ubicacionesPartes = [
+  "PARTE DELANTERA",
+  "PARTE TRASERA",
+  "INTERIOR",
+  "LADO DERECHO",
+  "LADO IZQUIERDO",
+  "MOTOR",
+  "CHASIS",
+  "TREN DELANTERO",
+  "TREN TRASERO",
+  "TRANSMISION",
+  "DIRECCION",
+];

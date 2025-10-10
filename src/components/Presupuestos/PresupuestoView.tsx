@@ -1,20 +1,17 @@
 import { usePresupuestoView } from "../../hooks/Presupuestos/usePresupuestoView";
-import PresupuestosList from "./PresupuestosList";
-import PresupuestoForm from "./PresupuestoForm";
+import { PresupuestosList } from "./PresupuestosList";
+import { PresupuestoForm } from "./PresupuestoForm";
 
-const PresupuestoView: React.FC = () => {
+export const PresupuestoView: React.FC = () => {
     const {
-        presupuestos,
         vehiculos,
         clientes,
-        error,
         mostrarForm,
         editarPresupuesto,
         handleAdd,
         handleEdit,
         handleSave,
         handleCancel,
-        eliminarPresupuesto
     } = usePresupuestoView();
 
     return (
@@ -22,9 +19,6 @@ const PresupuestoView: React.FC = () => {
             <PresupuestosList
                 onAddPresupuesto={handleAdd}
                 onEditPresupuesto={handleEdit}
-                eliminarPresupuesto={eliminarPresupuesto}
-                presupuestos={presupuestos}
-                error={error}
             />
             {mostrarForm && (
                 <PresupuestoForm
@@ -39,4 +33,3 @@ const PresupuestoView: React.FC = () => {
     );
 };
 
-export default PresupuestoView;

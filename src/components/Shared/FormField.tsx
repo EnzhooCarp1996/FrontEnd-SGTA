@@ -1,3 +1,4 @@
+import { LabelForm } from "./LabelForm";
 import { useId } from "react";
 
 interface InputFormProps {
@@ -14,7 +15,7 @@ interface InputFormProps {
   disabled?: boolean;
 }
 
-export const InputForm: React.FC<InputFormProps> = ({
+export const FormField: React.FC<InputFormProps> = ({
   label,
   name,
   value,
@@ -31,12 +32,7 @@ export const InputForm: React.FC<InputFormProps> = ({
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-1">
-      <label
-        htmlFor={id}
-        className="block text-sm font-medium text-gray-700 mb-2"
-      >
-        {label} {required && <span className="text-red-500">*</span>}
-      </label>
+      <LabelForm htmlFor={id} label={label} required={required} />
       <input
         id={id}
         type={type}
@@ -46,9 +42,8 @@ export const InputForm: React.FC<InputFormProps> = ({
         required={required}
         readOnly={readOnly}
         disabled={disabled}
-        className={`w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
-          readOnly || disabled ? "bg-gray-100 cursor-not-allowed" : ""
-        }`}
+        className={`w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${readOnly || disabled ? "bg-gray-100 cursor-not-allowed" : ""
+          }`}
         placeholder={placeholder}
         step={step}
       />

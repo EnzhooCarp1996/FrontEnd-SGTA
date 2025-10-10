@@ -4,11 +4,8 @@ import { useState } from "react";
 
 export const useClienteView = () => {
   const {
-    clientes,
-    errorCliente,
     agregarCliente,
     modificarCliente,
-    eliminarCliente,
   } = useClientes();
   const [mostrarForm, setMostrarForm] = useState(false);
   const [editarCliente, setEditarCliente] = useState<Cliente | undefined>();
@@ -44,14 +41,11 @@ export const useClienteView = () => {
   };
 
   return {
-    clientes,
-    errorCliente,
     mostrarForm,
     editarCliente,
     handleAdd,
     handleEdit,
     handleSave,
     handleCancel,
-    eliminarCliente,
   };
 };

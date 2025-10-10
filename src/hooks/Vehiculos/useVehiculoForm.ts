@@ -60,6 +60,9 @@ export function useVehiculoForm(
     if (e) e.preventDefault();
     const newErrors: { [key: string]: string } = {};
 
+    // -------------------------------
+    // VALIDACIONES BÁSICAS
+    // -------------------------------
     if (formData.patente.length < 6 || formData.patente.length > 10)
       newErrors.patente = "debe tener entre 6 y 10 caracteres.";
     if (
@@ -73,11 +76,55 @@ export function useVehiculoForm(
     if (!formData.anio || isNaN(formData.anio) || formData.anio <= 0)
       newErrors.anio = "es obligatorio.";
 
+    // -------------------------------
+    // VALIDACIONES DE FECHAS
+    // -------------------------------
+    const estado = formData.estado?.toLowerCase() ?? "";
+    const fechaRecibido = formData.fechaRecibido
+      ? new Date(formData.fechaRecibido)
+      : null;
+    const fechaEsperada = formData.fechaEsperada
+      ? new Date(formData.fechaEsperada)
+      : null;
+    const fechaEntrega = formData.fechaEntrega
+      ? new Date(formData.fechaEntrega)
+      : null;
+
+    //Si el estado es "Recibido", debe tener fechaRecibido
+    if (estado === "recibido" && !fechaRecibido)
+      newErrors.fechaRecibido = "Definir la fecha si esta Recibido.";
+
+    // No se puede setear fechaEsperada si no hay fechaRecibido
+    if (!fechaRecibido && fechaEsperada)
+      newErrors.fechaEsperada = "No puede definir sin fecha de recepción.";
+
+    // No se puede setear fechaEntrega si no hay fechaRecibido
+    if (!fechaRecibido && fechaEntrega)
+      newErrors.fechaEntrega = "No puede definir sin fecha de recepción.";
+
+    // FechaEsperada >= FechaRecibido
+    if (fechaRecibido && fechaEsperada && fechaEsperada < fechaRecibido)
+      newErrors.fechaEsperada = "No puede ser anterior a la recibida";
+
+    // Si el estado es "Entregado", debe tener fechaEntrega
+    if (estado === "entregado" && !fechaEntrega)
+      newErrors.fechaEntrega = "Definir la fecha si esta Entregado.";
+
+    //  FechaEntrega >= FechaRecibido
+    if (fechaRecibido && fechaEntrega && fechaEntrega < fechaRecibido)
+      newErrors.fechaEntrega = "Tiene que ser mayor a la recepción.";
+
+    // -------------------------------
+    // SI HAY ERRORES → DETENER
+    // -------------------------------
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
     }
 
+    // -------------------------------
+    // GUARDAR FORMULARIO
+    // -------------------------------
     setErrors({});
     onSave?.({
       idVehiculo: vehiculo?.idVehiculo,
@@ -95,7 +142,7 @@ export function useVehiculoForm(
     });
   };
 
-  const formatearFecha = (fecha?: string) => fecha?.split("T")[0] || "";
+
 
   return {
     formData,
@@ -104,6 +151,5 @@ export function useVehiculoForm(
     modelos,
     handleChange,
     handleSubmit,
-    formatearFecha,
   };
 }
