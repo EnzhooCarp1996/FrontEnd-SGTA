@@ -1,4 +1,4 @@
-import { useAuth } from "../../hooks/useAuth";
+import { useAuth } from "../../context/Auth/useAuth";
 import { useState, useEffect } from "react";
 import { Cliente } from "../../types";
 

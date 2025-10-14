@@ -1,5 +1,5 @@
 import { logIn } from "../Services/AuthService";
-import { useAuth } from "./useAuth";
+import { useAuth } from "../context/Auth/useAuth";
 import { useState } from "react";
 
 export function useLoginForm() {
@@ -28,8 +28,11 @@ export function useLoginForm() {
     setError(null);
 
     try {
-      const data = await logIn( formData.nombreUsuario, formData.contrasenia );
-      login(data.token, formData.recordar, { nombreUsuario: data.nombreUsuario, role: data.role });
+      const data = await logIn(formData.nombreUsuario, formData.contrasenia);
+      login(data.token, formData.recordar, {
+        nombreUsuario: data.nombreUsuario,
+        role: data.role,
+      });
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Error inesperado");
     } finally {

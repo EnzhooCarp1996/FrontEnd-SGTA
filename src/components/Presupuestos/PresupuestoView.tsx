@@ -1,3 +1,4 @@
+import { PartesVehiculoProvider } from "../../context/Presupuestos/PartesVehiculoProvider";
 import { usePresupuestoView } from "../../hooks/Presupuestos/usePresupuestoView";
 import { PresupuestosList } from "./PresupuestosList";
 import { PresupuestoForm } from "./PresupuestoForm";
@@ -21,13 +22,15 @@ export const PresupuestoView: React.FC = () => {
                 onEditPresupuesto={handleEdit}
             />
             {mostrarForm && (
-                <PresupuestoForm
-                    presupuesto={editarPresupuesto}
-                    onSave={handleSave}
-                    onCancel={handleCancel}
-                    clientes={clientes}
-                    vehiculos={vehiculos}
-                />
+                <PartesVehiculoProvider>
+                    <PresupuestoForm
+                        presupuesto={editarPresupuesto}
+                        onSave={handleSave}
+                        onCancel={handleCancel}
+                        clientes={clientes}
+                        vehiculos={vehiculos}
+                    />
+                </PartesVehiculoProvider>
             )}
         </>
     );

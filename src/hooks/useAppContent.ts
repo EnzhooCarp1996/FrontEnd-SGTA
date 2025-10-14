@@ -1,4 +1,4 @@
-import { useAuth } from "./useAuth";
+import { useAuth } from "../context/Auth/useAuth";
 import { useState } from "react";
 
 export const useAppContent = () => {

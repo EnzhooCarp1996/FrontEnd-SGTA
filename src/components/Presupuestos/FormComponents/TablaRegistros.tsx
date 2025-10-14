@@ -1,4 +1,3 @@
-import { EstructuraPartes } from "../../../types/PartesVehiculo";
 import { MenuDesplegable } from "./MenuDesplegable";
 import { PresupuestoItem } from "../../../types";
 import { SelectCell } from "./SelectCell";
@@ -9,7 +8,6 @@ interface TablaRegistrosProps {
   rowId: number;
   item: PresupuestoItem;
   items: PresupuestoItem[];
-  estructuraPartes: EstructuraPartes;
   displayValues: Record<string, string>;
   setDisplayValues: React.Dispatch<React.SetStateAction<Record<string, string>>>;
   updateItem: (id: number, field: keyof PresupuestoItem, value: string | number, type?: string) => void;
@@ -17,7 +15,7 @@ interface TablaRegistrosProps {
 }
 
 export const TablaRegistros: React.FC<TablaRegistrosProps> = ({
-  rowId, item, items, estructuraPartes, displayValues, setDisplayValues, updateItem, removeItem
+  rowId, item, items, displayValues, setDisplayValues, updateItem, removeItem
 }) => (
   <tr>
     {/* Columna descripción */}
@@ -26,7 +24,6 @@ export const TablaRegistros: React.FC<TablaRegistrosProps> = ({
       name={`descripcion-${rowId}`}
       ubicacion={item.ubicacion}
       valorActual={item.descripcion}
-      estructuraPartes={estructuraPartes}
       onSelect={(desc) => updateItem(item.id, 'descripcion', desc)}
       descripcionUsadas={items.filter(i => i.id !== item.id).map(i => i.descripcion)}
     />

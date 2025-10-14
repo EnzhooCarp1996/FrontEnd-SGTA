@@ -1,5 +1,5 @@
 import { Menu, LogOut, UserCheck } from 'lucide-react';
-import { useAuth } from '../../hooks/useAuth';
+import { useAuth } from '../../context/Auth/useAuth';
 
 interface HeaderProps {
   onAlternarMenu: () => void;

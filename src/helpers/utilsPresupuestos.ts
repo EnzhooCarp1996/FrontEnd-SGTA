@@ -1,4 +1,3 @@
-
 export const formatCurrency = (amount: number) =>
   new Intl.NumberFormat("es-AR", {
     style: "currency",
@@ -12,6 +11,12 @@ export const opcionesMeses = [
 ];
 
 export const formatearFecha = (iso: string): string => {
-    const [año, mes, dia] = iso.split('-');
-    return `${dia}/${mes}/${año}`;
+  const [año, mes, dia] = iso.split("-");
+  return `${dia}/${mes}/${año}`;
 };
+
+export const formatearImporte = (importe: number) =>
+  new Intl.NumberFormat("es-AR", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(importe);

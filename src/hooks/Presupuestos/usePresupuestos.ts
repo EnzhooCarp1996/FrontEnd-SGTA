@@ -6,7 +6,7 @@ import {
   deletePresupuesto,
 } from "../../Services/PresupuestoService";
 import { PresupuestoData, NewPresupuesto } from "../../types";
-import { useAuth } from "../useAuth";
+import { useAuth } from "../../context/Auth/useAuth";
 
 export function usePresupuestos() {
   const { token } = useAuth();

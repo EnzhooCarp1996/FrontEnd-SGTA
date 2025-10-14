@@ -1,31 +1,9 @@
-import { createContext, useState, useEffect, ReactNode } from "react";
+import { useState, useEffect, ReactNode } from "react";
 import { jwtDecode } from "jwt-decode";
+import { User, JwtPayload } from "../../types";
+import { AuthContext } from "./AuthContext";
 
-interface User {
-  nombreUsuario: string;
-  role: string;
-}
-
-interface AuthContextType {
-  token: string | null;
-  nombreUsuario: string;
-  role: string;
-  login: (token: string, recordar: boolean, user?: User) => void;
-  logout: () => void;
-  isAuthenticated: boolean;
-}
-
-
-interface JwtPayload {
-  exp: number;
-  sub: string;
-  nombreUsuario?: string;
-  role?: string;
-}
-
-export const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-// 🔹 Función para validar el token
+// Función para validar el token
 const isTokenValid = (token: string): boolean => {
   try {
     const decoded: JwtPayload = jwtDecode(token);
@@ -62,7 +40,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [token]);
 
-  // 🔹 Mantener sincronización entre pestañas
+  //  Mantener sincronización entre pestañas
   useEffect(() => {
     const handleStorage = () => {
       const savedLocal = localStorage.getItem("token");

@@ -1,5 +1,5 @@
 import { getMarcas, getModelos } from "../Services/ApiGitService";
-import { useAuth } from "./useAuth";
+import { useAuth } from "../context/Auth/useAuth";
 import { useState } from "react";
 
 export function useApiGit() {
@@ -53,5 +53,3 @@ export function useApiGit() {
     cargarMarcasYModelos,
   };
 }
-
-

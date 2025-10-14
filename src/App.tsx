@@ -1,7 +1,7 @@
 import { AppContent } from "./components/Layout/AppContent";
-import { AuthProvider } from "./context/AuthContext";
+import { AuthProvider } from "./context/Auth/AuthProvider";
 import { LoginForm } from "./components/Login/LoginForm";
-import { useAuth } from "./hooks/useAuth";
+import { useAuth } from "./context/Auth/useAuth";
 
 function AppContentWrapper() {
   const { token } = useAuth();

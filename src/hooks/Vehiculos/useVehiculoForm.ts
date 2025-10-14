@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useApiGit } from "../useApiGit";
 import { Vehiculo } from "../../types";
-import { useAuth } from "../useAuth";
+import { useAuth } from "../../context/Auth/useAuth";
 
 export function useVehiculoForm(
   vehiculo?: Vehiculo,
@@ -141,8 +141,6 @@ export function useVehiculoForm(
         : null,
     });
   };
-
-
 
   return {
     formData,

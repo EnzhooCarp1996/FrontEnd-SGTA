@@ -6,7 +6,7 @@ import {
   updateVehiculo,
   deleteVehiculo,
 } from "../../Services/VehiculoService";
-import { useAuth } from "../useAuth";
+import { useAuth } from "../../context/Auth/useAuth";
 
 export function useVehiculos() {
   const { token } = useAuth();

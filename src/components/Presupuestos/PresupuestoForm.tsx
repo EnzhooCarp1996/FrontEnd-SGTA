@@ -6,7 +6,7 @@ import { FormGeneral } from '../Shared/FormGeneral';
 import { FormField } from '../Shared/FormField';
 import { LabelForm } from '../Shared/LabelForm';
 import { Eye, FileText } from 'lucide-react';
-import VistaPrevia from './VistaPrevia';
+import { VistaPrevia } from './VistaPrevia';
 
 interface PresupuestoFormProps {
   presupuesto?: PresupuestoData;
@@ -22,7 +22,6 @@ export const PresupuestoForm: React.FC<PresupuestoFormProps> = ({ presupuesto, v
     formData,
     errors,
     mostrarVistaPrevia,
-    estructuraPartes,
     handleChange,
     addItem,
     updateItem,
@@ -103,7 +102,6 @@ export const PresupuestoForm: React.FC<PresupuestoFormProps> = ({ presupuesto, v
             key={ubicacion}
             ubicacion={ubicacion}
             items={formData.items}
-            estructuraPartes={estructuraPartes}
             addItem={addItem}
             updateItem={updateItem}
             removeItem={removeItem}

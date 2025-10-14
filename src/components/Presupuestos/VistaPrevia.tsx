@@ -1,9 +1,9 @@
-// components/Presupuestos/VistaPrevia.tsx
-import { NewPresupuesto } from '../../types';
+import { useVistaPrevia } from '../../hooks/Presupuestos/useVistaPrevia';
+import { pdf, PDFDownloadLink, PDFViewer } from '@react-pdf/renderer';
+import { formatearImporte } from '../../helpers/utilsPresupuestos';
+import { PresupuestoPDF } from './PresupuestoPDF';
 import { X, Download, Save } from 'lucide-react';
-import { PDFDownloadLink, PDFViewer } from '@react-pdf/renderer';
-import PresupuestoPDF from './PresupuestoPdf';
-import { useEffect, useState } from 'react';
+import { NewPresupuesto } from '../../types';
 
 interface VistaPreviaProps {
     presupuesto: NewPresupuesto;
@@ -11,39 +11,22 @@ interface VistaPreviaProps {
     onSave: () => void;
 }
 
-const VistaPrevia: React.FC<VistaPreviaProps> = ({ presupuesto, onClose, onSave }) => {
-    const totalImporte = presupuesto.items.reduce((sum, item) => sum + item.importe, 0);
-    const [pdfKey, setPdfKey] = useState(0);
+export const VistaPrevia: React.FC<VistaPreviaProps> = ({ presupuesto, onClose, onSave }) => {
+    const { pdfKey, presupuestoConTotal, totalCalculado, handleOnlySave } = useVistaPrevia(presupuesto, onSave, onClose);
 
-    useEffect(() => {
-        setPdfKey(prev => prev + 1);
-    }, []);
-    const handleReloadPDF = () => {
-        setPdfKey(prev => prev + 1);
-    };
+    const handleSaveAndDownload = async () => {
+        await onSave();
 
-    // Calcular total completo
-    const totalCalculado =
-        Number(presupuesto.manoDeObraChapa || 0) +
-        Number(presupuesto.manoDeObraPintura || 0) +
-        Number(presupuesto.mecanica || 0) +
-        Number(presupuesto.electricidad || 0) +
-        Number(totalImporte || 0);
+        // Generar blob del PDF
+        const blob = await pdf(<PresupuestoPDF presupuesto={presupuestoConTotal} />).toBlob();
 
-    // Crear copia del presupuesto con el total calculado
-    const presupuestoConTotal = {
-        ...presupuesto,
-        total: totalCalculado
-    };
-
-    const handleSaveAndDownload = () => {
-        onSave(); // Guarda en la base de datos
-        // La descarga del PDF se maneja automáticamente con PDFDownloadLink
-    };
-
-    const handleOnlySave = () => {
-        onSave(); // Solo guarda sin descargar
-        onClose(); // Cierra el modal
+        // Crear enlace y descargar
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Presupuesto_${presupuesto.cliente?.replace(/\s+/g, "_")}_${presupuesto.fecha}.pdf`;
+        a.click();
+        URL.revokeObjectURL(url);
     };
 
     return (
@@ -60,16 +43,20 @@ const VistaPrevia: React.FC<VistaPreviaProps> = ({ presupuesto, onClose, onSave 
                 {/* Header con controles */}
                 <div className="flex justify-between items-center p-4 border-b bg-white">
                     <h2 className="text-xl font-bold text-gray-800">
-                        Vista Previa del Presupuesto - {presupuesto.cliente}
+                        Presupuesto - {presupuesto.cliente}
                     </h2>
                     <div className="flex items-center gap-3">
-                        {/* Botón para solo guardar */}
+                        {/* Botón para guardar y descargar PDF */}
+
                         <button
-                            onClick={handleReloadPDF}
-                            className="flex items-center gap-2 bg-blue-500 text-white px-4 py-2 rounded-lg transition-colors"
+                            onClick={handleSaveAndDownload}
+                            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
                         >
-                            Actualizar Vista PDF
+                            <Download className="w-4 h-4" />
+                            Guardar y Descargar
                         </button>
+
+                        {/* Botón para solo guardar */}
                         <button
                             onClick={handleOnlySave}
                             className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors"
@@ -77,26 +64,6 @@ const VistaPrevia: React.FC<VistaPreviaProps> = ({ presupuesto, onClose, onSave 
                             <Save className="w-4 h-4" />
                             Solo Guardar
                         </button>
-
-                        {/* Botón para guardar y descargar PDF */}
-                        <PDFDownloadLink
-                            document={<PresupuestoPDF presupuesto={presupuestoConTotal} />}
-                            fileName={`Presupuesto_${presupuesto.cliente?.replace(/\s+/g, "_")}_${presupuesto.fecha}.pdf`}
-                            onClick={handleSaveAndDownload}
-                        >
-                            {({ loading }) => (
-                                <button
-                                    className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${loading
-                                        ? 'bg-blue-400 cursor-not-allowed'
-                                        : 'bg-blue-600 hover:bg-blue-700 text-white'
-                                        }`}
-                                    disabled={loading}
-                                >
-                                    <Download className="w-4 h-4" />
-                                    {loading ? 'Generando...' : 'Guardar y Descargar PDF'}
-                                </button>
-                            )}
-                        </PDFDownloadLink>
 
                         {/* Botón para solo descargar PDF */}
                         <PDFDownloadLink
@@ -112,7 +79,7 @@ const VistaPrevia: React.FC<VistaPreviaProps> = ({ presupuesto, onClose, onSave 
                                     disabled={loading}
                                 >
                                     <Download className="w-4 h-4" />
-                                    {loading ? 'Generando...' : 'Solo Descargar PDF'}
+                                    {loading ? 'Generando...' : 'Solo Descargar'}
                                 </button>
                             )}
                         </PDFDownloadLink>
@@ -132,14 +99,6 @@ const VistaPrevia: React.FC<VistaPreviaProps> = ({ presupuesto, onClose, onSave 
 
                 {/* Contenedor principal con pestañas */}
                 <div className="flex-1 flex flex-col overflow-hidden">
-                    {/* Pestañas para cambiar entre vista HTML y PDF */}
-                    <div className="flex border-b bg-gray-50">
-                        <button
-                            className="px-4 py-2 font-medium text-blue-600 border-b-2 border-blue-600"
-                        >
-                            Vista PDF
-                        </button>
-                    </div>
 
                     {/* Contenedor del PDF Viewer */}
                     <div className="flex-1 bg-gray-100 p-4">
@@ -157,7 +116,7 @@ const VistaPrevia: React.FC<VistaPreviaProps> = ({ presupuesto, onClose, onSave 
                                 <span><strong>Cliente:</strong> {presupuesto.cliente}</span>
                                 <span><strong>Vehículo:</strong> {presupuesto.vehiculo}</span>
                                 <span><strong>Patente:</strong> {presupuesto.patente}</span>
-                                <span><strong>Total:</strong> ${totalCalculado.toFixed(2)}</span>
+                                <span><strong>Total:</strong> $ {formatearImporte(totalCalculado)}</span>
                             </div>
                             <div className="text-xs text-gray-500">
                                 {presupuesto.items.length} items presupuestados
@@ -169,5 +128,3 @@ const VistaPrevia: React.FC<VistaPreviaProps> = ({ presupuesto, onClose, onSave 
         </div>
     );
 };
-
-export default VistaPrevia;

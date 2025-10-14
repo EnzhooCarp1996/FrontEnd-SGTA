@@ -76,6 +76,18 @@ export interface PresupuestoItem {
   importe: number;
 }
 
+export interface User {
+  nombreUsuario: string;
+  role: string;
+}
+
+export interface JwtPayload {
+  exp: number;
+  sub: string;
+  nombreUsuario?: string;
+  role?: string;
+}
+
 export type NewUsuario = Omit<Usuario, "idUsuario">;
 export type NewVehiculo = Omit<Vehiculo, "idVehiculo">;
 export type NewCliente = Omit<Cliente, "idCliente">;

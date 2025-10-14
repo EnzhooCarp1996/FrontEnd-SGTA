@@ -6,7 +6,7 @@ import {
   updateCliente,
   deleteCliente,
 } from "../../Services/ClienteService";
-import { useAuth } from "../useAuth";
+import { useAuth } from "../../context/Auth/useAuth";
 
 export function useClientes() {
   const { token } = useAuth();
@@ -104,5 +104,11 @@ export function useClientes() {
     }
   };
 
-  return { clientes, errorCliente, agregarCliente, modificarCliente, eliminarCliente };
+  return {
+    clientes,
+    errorCliente,
+    agregarCliente,
+    modificarCliente,
+    eliminarCliente,
+  };
 }

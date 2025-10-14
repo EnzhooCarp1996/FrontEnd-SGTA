@@ -1,5 +1,4 @@
 import { useMenuDesplegable } from '../../../hooks/Presupuestos/UseMenuDesplegable';
-import { EstructuraPartes } from '../../../types/PartesVehiculo';
 import { SelectCascada } from './SelectCascada';
 
 interface MenuDesplegableProps {
@@ -8,22 +7,21 @@ interface MenuDesplegableProps {
   ubicacion: string;
   valorActual: string;
   descripcionUsadas: string[];
-  estructuraPartes: EstructuraPartes;
   onSelect: (descripcion: string) => void;
 }
 
 
 export const MenuDesplegable: React.FC<MenuDesplegableProps> = ({
-  id, name, ubicacion, valorActual, descripcionUsadas, estructuraPartes, onSelect
+  id, name, ubicacion, valorActual, descripcionUsadas, onSelect
 }) => {
   const {
     parte1, parte2, parte3,
     setParte1, setParte2, setParte3,
     descripcionCompleta,
-    opcionesParte1, opcionesParte2, opcionesParte3
-  } = useMenuDesplegable(ubicacion, valorActual, estructuraPartes);
+    opcionesParte1, opcionesParte2, opcionesParte3,
+    estaUsada
+  } = useMenuDesplegable(ubicacion, valorActual, descripcionUsadas);
 
-  const estaUsada = (desc: string) => descripcionUsadas.includes(desc) && desc !== valorActual;
 
   const onChangeParte1 = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const val = e.target.value;
@@ -59,7 +57,7 @@ export const MenuDesplegable: React.FC<MenuDesplegableProps> = ({
         value={parte1}
         onChange={onChangeParte1}
         opciones={opcionesParte1}
-        descripcionCompleta={descripcionCompleta}
+        descripcionCompleta={(p1) => descripcionCompleta(p1)}
         estaUsada={estaUsada}
       />
       <SelectCascada

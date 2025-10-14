@@ -4,7 +4,7 @@ import { EntidadNotFound } from '../Shared/EntidadNotFound';
 import { FiltrosEntidad } from '../Shared/FiltrosEntidad';
 import { HeaderEntidad } from '../Shared/HeaderEntidad';
 import { usePermisos } from '../../hooks/usePermisos';
-import { PresupuestoCard } from './PresupuestoCArd';
+import { PresupuestoCard } from './PresupuestoCard';
 import { Search, FileText } from 'lucide-react';
 import { PresupuestoData } from '../../types';
 

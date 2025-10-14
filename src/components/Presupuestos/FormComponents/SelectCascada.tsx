@@ -32,8 +32,8 @@ export const SelectCascada: React.FC<SelectCascadaProps> = ({
     >
       <option value="">{placeholder}</option>
       {opciones.map((opcion) => {
-        const desc = descripcionCompleta ? descripcionCompleta(opcion) : opcion;
-        const isDisabled = estaUsada ? estaUsada(desc) : false;
+        const fullDesc = descripcionCompleta ? descripcionCompleta(opcion) : opcion;
+        const isDisabled = estaUsada ? estaUsada(fullDesc) : false;
         return (
           <option key={opcion} value={opcion} disabled={isDisabled}>
             {opcion} {isDisabled ? '(usado)' : ''}

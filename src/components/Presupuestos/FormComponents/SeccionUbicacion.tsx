@@ -1,4 +1,3 @@
-import { EstructuraPartes } from "../../../types/PartesVehiculo";
 import { TablaRegistros } from "./TablaRegistros";
 import { PresupuestoItem } from "../../../types";
 import { SeccionHeader } from "./SeccionHeader";
@@ -7,13 +6,12 @@ import { TablaHeader } from "./TablaHeader";
 interface SeccionUbicacionProps {
   ubicacion: string;
   items: PresupuestoItem[];
-  estructuraPartes: EstructuraPartes;
   addItem: (ubicacion: string) => void;
   updateItem: (id: number, field: keyof PresupuestoItem, value: string | number, type?: string) => void;
   removeItem: (id: number) => void;
 }
 
-export const SeccionUbicacion: React.FC<SeccionUbicacionProps> = ({ ubicacion, items, estructuraPartes, addItem, updateItem, removeItem }) => {
+export const SeccionUbicacion: React.FC<SeccionUbicacionProps> = ({ ubicacion, items, addItem, updateItem, removeItem }) => {
   const itemsPorUbicacion = items.filter(item => item.ubicacion === ubicacion);
 
   return (
@@ -33,7 +31,6 @@ export const SeccionUbicacion: React.FC<SeccionUbicacionProps> = ({ ubicacion, i
                   rowId={rowId}
                   item={item}
                   items={itemsPorUbicacion}
-                  estructuraPartes={estructuraPartes}
                   displayValues={{}}
                   setDisplayValues={() => { }}
                   updateItem={updateItem}

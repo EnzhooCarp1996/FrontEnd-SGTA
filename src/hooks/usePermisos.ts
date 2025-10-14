@@ -1,4 +1,4 @@
-import { useAuth } from "./useAuth";
+import { useAuth } from "../context/Auth/useAuth";
 
 export function usePermisos() {
   const { role } = useAuth();

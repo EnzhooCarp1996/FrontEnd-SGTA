@@ -1,13 +1,6 @@
-import { EstructuraPartes, PartesVehiculo } from "../../types/PartesVehiculo";
-import { getPartesVehiculo } from "../../Services/PartesVehiculoService";
+import { Cliente, PresupuestoData, PresupuestoItem, Vehiculo } from "../../types";
 import { useState, useEffect, useRef } from "react";
-import {
-  Cliente,
-  PresupuestoData,
-  PresupuestoItem,
-  Vehiculo,
-} from "../../types";
-import { useAuth } from "../useAuth";
+
 
 export function usePresupuestoForm(
   vehiculos: Vehiculo[],
@@ -15,41 +8,8 @@ export function usePresupuestoForm(
   presupuestos?: PresupuestoData,
   onSave?: (presupuestos: Partial<PresupuestoData>) => void
 ) {
-  const { token } = useAuth();
   const [mostrarVistaPrevia, setMostrarVistaPrevia] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
-  const [estructuraPartes, setEstructuraPartes] = useState<EstructuraPartes>(
-    {}
-  );
-
-  useEffect(() => {
-    if (!token) return;
-    getPartesVehiculo(token)
-      .then((data: PartesVehiculo[]) => {
-        const mapa: EstructuraPartes = {};
-
-        data.forEach((pv) => {
-          const componentes: {
-            [componente: string]: null | { [sub: string]: string[] };
-          } = {};
-          pv.componentes.forEach((c) => {
-            if (c.subcomponentes) {
-              const subMap: { [sub: string]: string[] } = {};
-              c.subcomponentes.forEach((sc) => {
-                subMap[sc.nombre] = sc.detalles ?? [];
-              });
-              componentes[c.nombre] = subMap;
-            } else {
-              componentes[c.nombre] = null;
-            }
-          });
-          mapa[pv.categoria] = componentes;
-        });
-
-        setEstructuraPartes(mapa);
-      })
-      .catch((err) => console.error(err));
-  }, [token]);
 
   const formatearFecha = (fecha: string | Date) => {
     const d = new Date(fecha);
@@ -257,7 +217,6 @@ export function usePresupuestoForm(
     formData,
     errors,
     mostrarVistaPrevia,
-    estructuraPartes,
     setFormData,
     handleChange,
     addItem,

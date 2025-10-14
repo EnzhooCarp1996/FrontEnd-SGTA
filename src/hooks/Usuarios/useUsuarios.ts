@@ -6,13 +6,12 @@ import {
   updateUsuario,
   deleteUsuario,
 } from "../../Services/UsuarioService";
-import { useAuth } from "../useAuth";
+import { useAuth } from "../../context/Auth/useAuth";
 
 export function useUsuarios() {
   const { token } = useAuth();
   const [usuarios, setUsuarios] = useState<Usuario[]>([]);
   const [errorUsuario, setError] = useState<string | null>(null);
-
 
   const handleError = (action: string, err: unknown) => {
     if (err instanceof Error) {
@@ -43,7 +42,8 @@ export function useUsuarios() {
       setUsuarios((prev) => [...prev, usuarioCreado]);
 
       alert(
-        `✅¡Agregado correctamente!\n👤Usuario: ${newUsuario.nombreUsuario}` );
+        `✅¡Agregado correctamente!\n👤Usuario: ${newUsuario.nombreUsuario}`
+      );
       return usuarioCreado;
     } catch (err: unknown) {
       handleError("crear", err);
@@ -63,7 +63,8 @@ export function useUsuarios() {
       );
 
       alert(
-        `✅¡Actualizado correctamente!\n👤Usuario: ${usuarioActualizado.nombreUsuario}` );
+        `✅¡Actualizado correctamente!\n👤Usuario: ${usuarioActualizado.nombreUsuario}`
+      );
       return usuario;
     } catch (err: unknown) {
       handleError("actualizar", err);
@@ -74,7 +75,7 @@ export function useUsuarios() {
   // -------------------------------
   // DELETE
   // -------------------------------
-  const eliminarUsuario = async (id: number, nombre: string ) => {
+  const eliminarUsuario = async (id: number, nombre: string) => {
     if (!token) return;
 
     const confirmar = window.confirm(
@@ -91,5 +92,11 @@ export function useUsuarios() {
     }
   };
 
-  return { usuarios, errorUsuario, agregarUsuario, modificarUsuario, eliminarUsuario };
+  return {
+    usuarios,
+    errorUsuario,
+    agregarUsuario,
+    modificarUsuario,
+    eliminarUsuario,
+  };
 }
