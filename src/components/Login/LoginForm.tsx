@@ -1,51 +1,16 @@
-import { useState } from "react";
 import { Eye, EyeOff, PaintBucket } from "lucide-react";
-import { login } from "../../Services/AuthService";
+import { useLoginForm } from "../../hooks/useLoginForm";
 
-interface LoginFormProps {
-  onLoginSuccess: (token: string) => void;
-}
-
-export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
-  const [showContrasenia, setShowContrasenia] = useState(false);
-  const [formData, setFormData] = useState({
-    nombreUsuario: "",
-    contrasenia: "",
-    recordar: false,
-  });
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = e.target;
-    setFormData({
-      ...formData,
-      [name]: type === "checkbox" ? checked : value,
-    });
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-
-    try {
-      // Llamada al authService tipado
-      const data = await login(formData.nombreUsuario, formData.contrasenia);
-
-      // Guardar token si se marca "Recordarme"
-      if (formData.recordar) {
-        localStorage.setItem("token", data.token);
-      }
-
-      // Devolver token al padre
-      onLoginSuccess(data.token);
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Error inesperado");
-    } finally {
-      setLoading(false);
-    }
-  };
+export const LoginForm = () => {
+  const {
+    formData,
+    showContrasenia,
+    loading,
+    error,
+    setShowContrasenia,
+    handleChange,
+    handleSubmit,
+  } = useLoginForm();
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-green-900 via-emerald-900 to-green-800 px-4">
@@ -64,11 +29,13 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Usuario */}
             <div>
-              <label className="block text-gray-300 mb-2">Nombre de Usuario</label>
+              <label htmlFor="nombreUsuario" className="block text-gray-300 mb-2">Nombre de Usuario</label>
               <input
+                id="nombreUsuario"
                 type="text"
                 name="nombreUsuario"
                 value={formData.nombreUsuario}
+                autoComplete="username"
                 onChange={handleChange}
                 className="w-full px-4 py-2 rounded-md bg-transparent border border-gray-600 text-white focus:outline-none focus:border-green-500"
                 required
@@ -77,13 +44,15 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
 
             {/* Contraseña */}
             <div>
-              <label className="block text-gray-300 mb-2">Contraseña</label>
+              <label htmlFor="contrasenia" className="block text-gray-300 mb-2">Contraseña</label>
               <div className="relative">
                 <input
+                  id="contrasenia"
                   type={showContrasenia ? "text" : "password"}
                   name="contrasenia"
                   value={formData.contrasenia}
                   onChange={handleChange}
+                  autoComplete="current-password"
                   className="w-full px-4 py-2 rounded-md bg-transparent border border-gray-600 text-white focus:outline-none focus:border-green-500 pr-10"
                   required
                 />
@@ -131,5 +100,5 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
         </div>
       </div>
     </div>
-  );
+  )
 }
