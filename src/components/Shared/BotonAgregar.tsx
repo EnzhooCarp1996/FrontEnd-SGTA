@@ -1,5 +1,5 @@
-import { Plus } from "lucide-react";
 import { usePermisos } from "../../hooks/usePermisos";
+import { Plus } from "lucide-react";
 
 interface BotonAgregarProps {
     onClick: () => void;

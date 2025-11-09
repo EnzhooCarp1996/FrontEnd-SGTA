@@ -40,7 +40,7 @@ export const VehiculosList: React.FC<VehiculosListProps> = ({ onAddVehiculo, onE
       />
 
       {/* Vehiculos Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-6">
+      <div className="grid gap-6 grid-cols-[repeat(auto-fit,minmax(200px,1fr))] px-4">
         {filteredVehiculos.map(vehiculo => (
           <VehiculoCard
             key={vehiculo.idVehiculo}

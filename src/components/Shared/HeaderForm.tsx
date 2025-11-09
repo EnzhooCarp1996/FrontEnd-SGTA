@@ -1,10 +1,10 @@
 import { LucideIcon, X } from "lucide-react";
 
 interface HeaderFormProps {
-  icon: LucideIcon;            // Ícono (User, Car, etc.)
-  titulo: string;         // Texto 
-  condicion?: boolean;         // Si existe o no (ej: cliente o vehiculo)
-  onCancel: () => void;        // Acción al cerrar
+  icon: LucideIcon;
+  titulo: string;
+  condicion?: boolean;
+  onCancel: () => void;
 }
 
 export const HeaderForm: React.FC<HeaderFormProps> = ({

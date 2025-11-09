@@ -1,5 +1,7 @@
+import { PresupuestoPDF } from "../../components/Presupuestos/PresupuestoPDF";
 import { NewPresupuesto } from "../../types";
 import { useEffect, useState } from "react";
+import { pdf } from "@react-pdf/renderer";
 
 export const useVistaPrevia = (
   presupuesto: NewPresupuesto,
@@ -9,7 +11,10 @@ export const useVistaPrevia = (
   const [pdfKey, setPdfKey] = useState(0);
 
   // Calcular total de repuestos
-  const totalImporteRepuestos = presupuesto.items.reduce((sum, item) => sum + item.importe, 0);
+  const totalImporteRepuestos = presupuesto.items.reduce(
+    (sum, item) => sum + item.importe,
+    0
+  );
 
   // Calcular total general
   const totalCalculado =
@@ -30,6 +35,19 @@ export const useVistaPrevia = (
     setPdfKey((prev) => prev + 1);
   }, []);
 
+  const handleSaveAndDownload = async () => {
+    await onSave();
+    const blob = await pdf(
+      <PresupuestoPDF presupuesto={presupuestoConTotal} />
+    ).toBlob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `Presupuesto_${presupuesto.cliente?.replace(/\s+/g, "_")}_${presupuesto.fecha
+      }.pdf`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
 
   // Guardar sin descargar
   const handleOnlySave = () => {
@@ -42,5 +60,6 @@ export const useVistaPrevia = (
     presupuestoConTotal,
     totalCalculado,
     handleOnlySave,
+    handleSaveAndDownload
   };
 };

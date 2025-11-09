@@ -14,9 +14,14 @@ interface SeccionUbicacionProps {
 export const SeccionUbicacion: React.FC<SeccionUbicacionProps> = ({ ubicacion, items, addItem, updateItem, removeItem }) => {
   const itemsPorUbicacion = items.filter(item => item.ubicacion === ubicacion);
 
+
   return (
     <div className="border-none p-0 rounded-md mt-2 mb-6">
-      <SeccionHeader titulo={ubicacion} onAgregar={() => addItem(ubicacion)} />
+      <SeccionHeader
+        titulo={ubicacion}
+        onAgregarParte={() => addItem(ubicacion)}
+        ubicacion={ubicacion}
+      />
 
       {itemsPorUbicacion.length > 0 && (
         <table className="w-full text-sm border-collapse border border-gray-950">

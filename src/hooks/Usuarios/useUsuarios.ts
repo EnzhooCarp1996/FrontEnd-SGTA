@@ -6,10 +6,8 @@ import {
   updateUsuario,
   deleteUsuario,
 } from "../../Services/UsuarioService";
-import { useAuth } from "../../context/Auth/useAuth";
 
 export function useUsuarios() {
-  const { token } = useAuth();
   const [usuarios, setUsuarios] = useState<Usuario[]>([]);
   const [errorUsuario, setError] = useState<string | null>(null);
 
@@ -25,20 +23,17 @@ export function useUsuarios() {
   // FETCH INICIAL
   // -------------------------------
   useEffect(() => {
-    if (!token) return;
-
-    getUsuarios(token)
+    getUsuarios()
       .then((data) => setUsuarios(data))
       .catch((err) => setError(err.message));
-  }, [token]);
+  }, []);
 
   // -------------------------------
   // CREATE
   // -------------------------------
   const agregarUsuario = async (newUsuario: NewUsuario) => {
-    if (!token) return;
     try {
-      const usuarioCreado = await createUsuario(token, newUsuario);
+      const usuarioCreado = await createUsuario(newUsuario);
       setUsuarios((prev) => [...prev, usuarioCreado]);
 
       alert(
@@ -55,9 +50,8 @@ export function useUsuarios() {
   // UPDATE
   // -------------------------------
   const modificarUsuario = async (usuarioActualizado: Usuario) => {
-    if (!token) return;
     try {
-      const usuario = await updateUsuario(token, usuarioActualizado);
+      const usuario = await updateUsuario(usuarioActualizado);
       setUsuarios((prev) =>
         prev.map((c) => (c.idUsuario === usuario.idUsuario ? usuario : c))
       );
@@ -76,15 +70,13 @@ export function useUsuarios() {
   // DELETE
   // -------------------------------
   const eliminarUsuario = async (id: number, nombre: string) => {
-    if (!token) return;
-
     const confirmar = window.confirm(
       `⚠️ ¿Estás seguro de eliminar al usuario 👤${nombre}?`
     );
     if (!confirmar) return;
 
     try {
-      await deleteUsuario(token, id);
+      await deleteUsuario(id);
       setUsuarios((prev) => prev.filter((c) => c.idUsuario !== id));
       alert("Usuario eliminado correctamente ✅");
     } catch (err: unknown) {

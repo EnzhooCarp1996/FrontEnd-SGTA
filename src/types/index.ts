@@ -74,6 +74,7 @@ export interface PresupuestoItem {
   b: string;
   observaciones: string;
   importe: number;
+  modoManual?: boolean;
 }
 
 export interface User {
@@ -86,6 +87,14 @@ export interface JwtPayload {
   sub: string;
   nombreUsuario?: string;
   role?: string;
+}
+
+export interface LoginResponse {
+  token: string;
+  nombreUsuario: string;
+  role: string;
+  refreshToken?: string;
+  mensaje?: string;
 }
 
 export type NewUsuario = Omit<Usuario, "idUsuario">;

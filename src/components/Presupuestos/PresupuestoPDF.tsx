@@ -1,6 +1,5 @@
-import { formatearFecha, formatearImporte } from '../../helpers/utilsPresupuestos';
+import { formatearFecha, formatearImporte, ubicacionesPartes } from '../../helpers/utilsPresupuestos';
 import { usePresupuestoPDF } from '../../hooks/Presupuestos/usePresupuestoPDF';
-import { ubicacionesPartes } from '../../constants/ubicacionesPresupuesto';
 import { Document, Page, Text, View } from '@react-pdf/renderer';
 import { styles } from '../../Styles/PresupuestoPDFStyles';
 import { NewPresupuesto } from '../../types';

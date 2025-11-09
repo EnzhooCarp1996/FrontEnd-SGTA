@@ -6,7 +6,7 @@ import { BotonesForm } from '../Shared/BotonesForm';
 import { Vehiculo, Cliente } from '../../types';
 import { LabelForm } from '../Shared/LabelForm';
 import { FormField } from '../Shared/FormField';
-import { Car } from 'lucide-react';
+import { Car, Plus, X } from 'lucide-react';
 
 
 interface VehiculoFormProps {
@@ -17,7 +17,8 @@ interface VehiculoFormProps {
 }
 
 export const VehiculoForm: React.FC<VehiculoFormProps> = ({ vehiculo, clientes, onSave, onCancel }) => {
-  const { formData, errors, marcas, modelos, handleChange, handleSubmit } = useVehiculoForm(vehiculo, onSave);
+  const { formData, errors, marcas, modelos, handleChange, handleSubmit, modoManual, activarModoManual, desactivarModoManual } = useVehiculoForm(vehiculo, onSave);
+
 
   return (
     <FormGeneral icon={Car} titulo="Vehículo" condicion={!!vehiculo} onCancel={onCancel} maxWidth="max-w-3xl" >
@@ -29,50 +30,104 @@ export const VehiculoForm: React.FC<VehiculoFormProps> = ({ vehiculo, clientes, 
         </h3>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <FormField label="Patente " name="patente" value={formData.patente} onChange={handleChange} placeholder="ABC123" required error={errors.patente} />
-          <FormField label="Número de Chasis " name="nroDeChasis" value={formData.nroDeChasis} onChange={handleChange} placeholder="JTDBU4DK4KJ123456" required error={errors.nroDeChasis} />
+          <FormField label="Patente" name="patente" value={formData.patente} onChange={handleChange} placeholder="ABC123" required error={errors.patente} />
+          <FormField label="Número de Chasis" name="nroDeChasis" value={formData.nroDeChasis} onChange={handleChange} placeholder="JTDBU4DK4KJ123456" required error={errors.nroDeChasis} />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* Marca */}
           <div>
-            <LabelForm htmlFor={"marca"} label={"Marca"} required />
-            <select
-              id="marca"
-              name="marca"
-              value={formData.marca}
-              onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-            >
-              <option value="">Seleccione</option>
-              {marcas.map((m) => (
-                <option key={`${m.id}-${m.brand}`} value={m.brand}>
-                  {m.brand}
-                </option>
-              ))}
-            </select>
-            {errors.marca && <p className="text-red-500 text-sm">{errors.marca}</p>}
+            <LabelForm htmlFor="marca" label="Marca" required />
+            {!modoManual ? (
+              <select
+                id="marca"
+                name="marca"
+                value={formData.marca}
+                onChange={handleChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              >
+                <option value="">Seleccione</option>
+                {marcas.map((m) => (
+                  <option key={`${m.id}-${m.brand}`} value={m.brand}>
+                    {m.brand}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <input
+                type="text"
+                id="marca"
+                name="marca"
+                value={formData.marca}
+                onChange={handleChange}
+                placeholder="Escriba la marca"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              />
+            )}
+            {errors.marca && (
+              <p className="text-red-500 text-sm">{errors.marca}</p>
+            )}
           </div>
 
           {/* Modelo */}
           <div>
-            <LabelForm htmlFor={"modelo"} label={"Modelo"} required />
-            <select
-              id="modelo"
-              name="modelo"
-              value={formData.modelo}
-              onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-            >
-              <option value="">Seleccione</option>
-              {modelos.map((m) => (
-                <option key={`${m.id}-${m.model}`} value={m.model}>
-                  {m.model}
-                </option>
-              ))}
-            </select>
-            {errors.modelo && <p className="text-red-500 text-sm">{errors.modelo}</p>}
+            <LabelForm htmlFor="modelo" label="Modelo" required />
+
+            <div className="flex gap-2 items-center">
+              {!modoManual ? (
+                <>
+                  <select
+                    id="modelo"
+                    name="modelo"
+                    value={formData.modelo}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  >
+                    <option value="">Seleccione</option>
+                    {modelos.map((m) => (
+                      <option key={`${m.id}-${m.model}`} value={m.model}>
+                        {m.model}
+                      </option>
+                    ))}
+                  </select>
+                  {/* Boton + de carga manual*/}
+                  <button
+                    type="button"
+                    onClick={activarModoManual}
+                    className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition"
+                    title="Agregar marca y modelo manualmente"
+                  >
+                    <Plus size={18} />
+                  </button>
+                </>
+              ) : (
+                <>
+                  <input
+                    type="text"
+                    id="modelo"
+                    name="modelo"
+                    value={formData.modelo}
+                    onChange={handleChange}
+                    placeholder="Escriba el modelo"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  />
+                  <button
+                    type="button"
+                    onClick={desactivarModoManual}
+                    className="p-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition"
+                    title="Volver al listado"
+                  >
+                    <X size={18} />
+                  </button>
+                </>
+              )}
+            </div>
+
+            {errors.modelo && (
+              <p className="text-red-500 text-sm">{errors.modelo}</p>
+            )}
           </div>
+
 
           <div>
             <div className="grid grid-cols-1 md:grid-cols-1">

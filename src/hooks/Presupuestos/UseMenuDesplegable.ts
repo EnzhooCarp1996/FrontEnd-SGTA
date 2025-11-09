@@ -6,7 +6,7 @@ export const useMenuDesplegable = (
   valorActual: string,
   descripcionUsadasProp: string[] = []
 ) => {
-  const { estructuraPartes } = usePartesVehiculoContext();
+  const { estructuraPartes, addComponente } = usePartesVehiculoContext();
   const [parte1, setParte1] = useState("");
   const [parte2, setParte2] = useState("");
   const [parte3, setParte3] = useState("");
@@ -76,5 +76,6 @@ export const useMenuDesplegable = (
     opcionesParte2,
     opcionesParte3,
     estaUsada,
+    addComponente 
   };
 };

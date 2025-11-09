@@ -1,78 +1,29 @@
-import { isTokenExpired, logout } from "./AuthService";
 import { Vehiculo, NewVehiculo } from "../types";
+import axiosInstance from "./AxiosService";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+// GET: Traer vehiculos
+export const getVehiculos = async () => {
+  const { data } = await axiosInstance.get<Vehiculo[]>("/vehiculo");
+  return data;
+};
 
-// -------------------------
-// FUNCION GENÉRICA
-// -------------------------
-async function fetchWithAuth<T>(
-  token: string,
-  url: string,
-  options: RequestInit = {}
-): Promise<T> {
-  if (!token || isTokenExpired(token)) {
-    logout();
-    alert("Sesión Expirada, Inicie nuevamente");
-    throw new Error("Sesión expirada");
-  }
+// POST: Crear vehiculo
+export const createVehiculo = async (vehiculo: NewVehiculo) => {
+  const { data } = await axiosInstance.post<Vehiculo>("/vehiculo", vehiculo);
+  return data;
+};
 
-  const response = await fetch(url, {
-    ...options,
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-      ...(options.headers || {}),
-    },
-  });
-
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => null);
-    throw errorData || new Error(`Error HTTP: ${response.status}`);
-  }
-
-  const text = await response.text();
-  return text ? (JSON.parse(text) as T) : ({} as T);
-}
-
-// -------------------------
-// GET: Traer vehículos
-// -------------------------
-export function getVehiculos(token: string) {
-  return fetchWithAuth<Vehiculo[]>(token, `${API_BASE_URL}/vehiculo`, {
-    method: "GET",
-  });
-}
-
-// -------------------------
-// POST: Crear vehículo
-// -------------------------
-export function createVehiculo(token: string, vehiculo: NewVehiculo) {
-  return fetchWithAuth<Vehiculo>(token, `${API_BASE_URL}/vehiculo`, {
-    method: "POST",
-    body: JSON.stringify(vehiculo),
-  });
-}
-
-// -------------------------
-// PUT: Actualizar vehículo
-// -------------------------
-export function updateVehiculo(token: string, vehiculo: Vehiculo) {
-  return fetchWithAuth<Vehiculo>(
-    token,
-    `${API_BASE_URL}/vehiculo/${vehiculo.idVehiculo}`,
-    {
-      method: "PUT",
-      body: JSON.stringify(vehiculo),
-    }
+// PUT: Actualizar vehiculo
+export const updateVehiculo = async (vehiculo: Vehiculo) => {
+  const { data } = await axiosInstance.put<Vehiculo>(
+    `/vehiculo/${vehiculo.idVehiculo}`,
+    vehiculo
   );
-}
+  return data;
+};
 
-// -------------------------
-// DELETE: Eliminar vehículo
-// -------------------------
-export function deleteVehiculo(token: string, id: number) {
-  return fetchWithAuth<boolean>(token, `${API_BASE_URL}/vehiculo/${id}`, {
-    method: "DELETE",
-  });
-}
+// DELETE: Eliminar vehiculo
+export const deleteVehiculo = async (id: number) => {
+  const { data } = await axiosInstance.delete<boolean>(`/vehiculo/${id}`);
+  return data;
+};

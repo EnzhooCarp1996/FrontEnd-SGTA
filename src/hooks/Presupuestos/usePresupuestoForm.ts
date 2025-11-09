@@ -1,6 +1,14 @@
-import { Cliente, PresupuestoData, PresupuestoItem, Vehiculo } from "../../types";
+import {
+  Cliente,
+  PresupuestoData,
+  PresupuestoItem,
+  Vehiculo,
+} from "../../types";
+import { formatearFecha2 } from "../../helpers/utilsPresupuestos";
 import { useState, useEffect, useRef } from "react";
-
+import { usePartesVehiculoContext } from "../../context/Presupuestos/usePartesVehiculoContext";
+import toast from "react-hot-toast";
+import { NuevaParteDto } from "../../types/PartesVehiculo";
 
 export function usePresupuestoForm(
   vehiculos: Vehiculo[],
@@ -10,18 +18,14 @@ export function usePresupuestoForm(
 ) {
   const [mostrarVistaPrevia, setMostrarVistaPrevia] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
-
-  const formatearFecha = (fecha: string | Date) => {
-    const d = new Date(fecha);
-    const yyyy = d.getFullYear();
-    const mm = String(d.getMonth() + 1).padStart(2, "0");
-    const dd = String(d.getDate()).padStart(2, "0");
-    return `${yyyy}-${mm}-${dd}`;
-  };
-
+  const [modoManual, setModoManual] = useState(false);
+  const [inputManual, setInputManual] = useState("");
+  const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState("");
+  const { addComponente } = usePartesVehiculoContext();
+  
   const [formData, setFormData] = useState({
     fecha: presupuestos
-      ? formatearFecha(presupuestos.fecha)
+      ? formatearFecha2(presupuestos.fecha)
       : new Date().toISOString().split("T")[0],
     idCliente: presupuestos?.idCliente ?? 0,
     cliente: presupuestos?.cliente ?? "",
@@ -97,8 +101,8 @@ export function usePresupuestoForm(
               ? `${selectedCliente.nombre} ${selectedCliente.apellido}`
               : selectedCliente.razonSocial
             : "") || "",
-        idVehiculo: 0, // 👈 limpiamos vehículo si cambió cliente
-        patente: "", // 👈 limpiamos patente también
+        idVehiculo: 0,
+        patente: "",
       }));
     } else if (type === "select-one" && name === "idVehiculo") {
       const numValue = Number(value);
@@ -108,9 +112,9 @@ export function usePresupuestoForm(
         ...prev,
         idVehiculo: isNaN(numValue) ? 0 : numValue,
         vehiculo: selectedVehiculo
-          ? `${selectedVehiculo.marca} ${selectedVehiculo.modelo}` // 👈 marca + modelo
+          ? `${selectedVehiculo.marca} ${selectedVehiculo.modelo}`
           : "",
-        patente: selectedVehiculo ? selectedVehiculo.patente : "", // 👈 seteamos patente
+        patente: selectedVehiculo ? selectedVehiculo.patente : "",
       }));
     } else {
       setFormData((prev) => ({
@@ -122,7 +126,7 @@ export function usePresupuestoForm(
 
   const nextIdRef = useRef(1);
 
-  const addItem = (ubicacion: string) => {
+  const addItem = (ubicacion: string, modoManual: boolean = false) => {
     const newItem: PresupuestoItem = {
       id: nextIdRef.current++,
       descripcion: "",
@@ -131,6 +135,7 @@ export function usePresupuestoForm(
       b: "",
       observaciones: "",
       importe: 0,
+      modoManual, // <-- aquí pasamos si empieza en manual
     };
     setFormData((prev) => ({
       ...prev,
@@ -213,10 +218,25 @@ export function usePresupuestoForm(
 
   const handleCerrarModal = () => setMostrarVistaPrevia(false);
 
+  const handleAgregarComponente = (ubicacion: string) => {
+    if (!inputManual) return;
+
+    const nuevoComponente: NuevaParteDto = {
+      categoria: ubicacion,
+      componente: inputManual,
+    };
+
+    addComponente(nuevoComponente);
+    setInputManual("");
+    toast.success(`Se agregó la nueva parte a ${"ubicacion"}`);
+  };
+
   return {
     formData,
     errors,
     mostrarVistaPrevia,
+    modoManual,
+    setModoManual,
     setFormData,
     handleChange,
     addItem,
@@ -225,5 +245,10 @@ export function usePresupuestoForm(
     handleValidarYMostrarVistaPrevia,
     handleSubmit,
     handleCerrarModal,
+    handleAgregarComponente,
+    inputManual,
+    setInputManual,
+    ubicacionSeleccionada,
+    setUbicacionSeleccionada,
   };
 }

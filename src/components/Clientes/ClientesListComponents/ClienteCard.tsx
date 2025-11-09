@@ -1,8 +1,8 @@
 import { getResponsabilidadColor } from "../../../helpers/utilsClientes";
 import { CardSection } from "../../Shared/CardSection";
-import { TarjetaSpan } from "./TarjetaSpan";
 import { CardHeader } from "../../Shared/CardHeader";
 import { Building, User } from "lucide-react";
+import { TarjetaSpan } from "./TarjetaSpan";
 import { Cliente } from "../../../types";
 import { Card } from "../../Shared/Card";
 import { Contacto } from "./Contacto";

@@ -6,10 +6,8 @@ import {
   updateCliente,
   deleteCliente,
 } from "../../Services/ClienteService";
-import { useAuth } from "../../context/Auth/useAuth";
 
 export function useClientes() {
-  const { token } = useAuth();
   const [clientes, setClientes] = useState<Cliente[]>([]);
   const [errorCliente, setError] = useState<string | null>(null);
 
@@ -33,20 +31,17 @@ export function useClientes() {
   // FETCH INICIAL
   // -------------------------------
   useEffect(() => {
-    if (!token) return;
-
-    getClientes(token)
+    getClientes()
       .then((data) => setClientes(data))
       .catch((err) => setError(err.message));
-  }, [token]);
+  }, []);
 
   // -------------------------------
   // CREATE
   // -------------------------------
   const agregarCliente = async (newCliente: NewCliente) => {
-    if (!token) return;
     try {
-      const clienteCreado = await createCliente(token, newCliente);
+      const clienteCreado = await createCliente(newCliente);
       setClientes((prev) => [...prev, clienteCreado]);
 
       alert(
@@ -65,9 +60,8 @@ export function useClientes() {
   // UPDATE
   // -------------------------------
   const modificarCliente = async (clienteActualizado: Cliente) => {
-    if (!token) return;
     try {
-      const cliente = await updateCliente(token, clienteActualizado);
+      const cliente = await updateCliente(clienteActualizado);
       setClientes((prev) =>
         prev.map((c) => (c.idCliente === cliente.idCliente ? cliente : c))
       );
@@ -88,15 +82,13 @@ export function useClientes() {
   // DELETE
   // -------------------------------
   const eliminarCliente = async (id: number) => {
-    if (!token) return;
-
     const confirmar = window.confirm(
       "⚠️ ¿Estás seguro de eliminar este cliente?"
     );
     if (!confirmar) return;
 
     try {
-      await deleteCliente(token, id);
+      await deleteCliente(id);
       setClientes((prev) => prev.filter((c) => c.idCliente !== id));
       alert("Cliente eliminado correctamente ✅");
     } catch (err: unknown) {

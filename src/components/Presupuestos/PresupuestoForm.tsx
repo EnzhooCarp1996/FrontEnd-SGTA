@@ -1,6 +1,6 @@
 import { usePresupuestoForm } from '../../hooks/Presupuestos/usePresupuestoForm';
-import { ubicacionesPartes } from '../../constants/ubicacionesPresupuesto';
 import { SeccionUbicacion } from './FormComponents/SeccionUbicacion';
+import { ubicacionesPartes } from '../../helpers/utilsPresupuestos';
 import { Cliente, PresupuestoData, Vehiculo } from "../../types";
 import { FormGeneral } from '../Shared/FormGeneral';
 import { FormField } from '../Shared/FormField';
@@ -28,8 +28,15 @@ export const PresupuestoForm: React.FC<PresupuestoFormProps> = ({ presupuesto, v
     removeItem,
     handleValidarYMostrarVistaPrevia,
     handleSubmit,
-    handleCerrarModal
+    handleCerrarModal,
+    handleAgregarComponente,
+    inputManual,
+    setInputManual,
+    ubicacionSeleccionada,
+    setUbicacionSeleccionada
   } = usePresupuestoForm(vehiculos, clientes, presupuesto, onSave);
+
+  
 
   return (
     <>
@@ -94,7 +101,43 @@ export const PresupuestoForm: React.FC<PresupuestoFormProps> = ({ presupuesto, v
             <FormField label="Firma" name="firmaResponsable" value={formData.firmaResponsable} onChange={handleChange} />
           </div>
 
-          <h3 className="text-lg font-medium text-gray-900 border-b border-gray-200 pb-2 mb-1">Reparaciones</h3>
+          <div className="border-b border-gray-200 pb-2 flex flex-col items-start sm:flex-row sm:justify-between max-w-full overflow-hidden sm:items-start">
+            <h3 className="text-lg w-72 font-medium text-gray-900  pb-2 mb-1 mr-9">Reparaciones</h3>
+            <div className=" items-start space-x-2 flex flex-col sm:flex-row sm:items-start">
+              <input
+                name="componenteManual"
+                type="text"
+                className={"ml-2 px-4 py-1 w-64 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent "}
+                placeholder="Ingresar parte manualmente..."
+                value={inputManual}
+                onChange={(e) => setInputManual(e.target.value)}
+              />
+              <select
+                name={"componenteManual"}
+                value={ubicacionSeleccionada}
+                onChange={(e) => setUbicacionSeleccionada(e.target.value)}
+                className="w-44 border rounded px-1 py-1 my-1 "
+
+              >
+                <option value="" disabled>
+                  Seleccione
+                </option>
+                {ubicacionesPartes.map((ubicacion, index) => (
+                  <option key={index} value={ubicacion}>
+                    {ubicacion}
+                  </option>
+                ))}
+
+              </select>
+              <button
+                type="button"
+                onClick={() => handleAgregarComponente(ubicacionSeleccionada)}
+                className={"w-36 bg-blue-600 hover:bg-blue-800 text-white py-1 rounded"}
+              >
+                Nueva Parte
+              </button>
+            </div>
+          </div>
         </div>
 
         {ubicacionesPartes.map(ubicacion => (

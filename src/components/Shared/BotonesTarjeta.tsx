@@ -1,5 +1,5 @@
-import { Edit, Trash2 } from "lucide-react";
 import { usePermisos } from "../../hooks/usePermisos";
+import { Edit, Trash2 } from "lucide-react";
 
 interface BotonesTarjetaProps {
     onEdit?: () => void;

@@ -1,17 +1,17 @@
-import { LucideIcon } from "lucide-react";
 import { BotonesTarjeta } from "./BotonesTarjeta";
+import { LucideIcon } from "lucide-react";
 
 interface CardHeaderProps {
-  icon: LucideIcon;               // Icono principal
-  iconBgClass?: string;           // Fondo del icono, ej. bg-green-100
-  iconColorClass?: string;        // Color del icono, ej. text-green-600
-  title?: string;                  // Título principal
-  subtitle?: string;              // Información secundaria
+  icon: LucideIcon;
+  iconBgClass?: string;
+  iconColorClass?: string;
+  title?: string;
+  subtitle?: string;
   buttons?: {
     onEdit?: () => void;
     onDelete?: () => void;
   };
-  className?: string;             // Clases extra opcionales
+  className?: string;
 }
 
 export const CardHeader: React.FC<CardHeaderProps> = ({

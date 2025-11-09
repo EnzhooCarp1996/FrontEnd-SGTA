@@ -2,7 +2,6 @@ import { BuscadorEntidad } from './BuscadorEntidad';
 import { SelectEntidad } from './SelectEntidad';
 import { LucideIcon } from 'lucide-react';
 
-
 interface Option<T extends string> {
   value: T;
   label: string;
@@ -15,7 +14,6 @@ interface FiltrosEntidadProps<T extends string> {
   onBuscadorChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   buscadorId: string;
   buscadorName: string;
-
   selectValue: T;
   onSelectChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   selectOptions: Option<T>[];

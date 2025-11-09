@@ -1,6 +1,6 @@
 import { LucideIcon } from "lucide-react";
-import { ReactNode } from "react";
 import { HeaderForm } from "./HeaderForm";
+import { ReactNode } from "react";
 
 interface FormGeneralProps {
   icon: LucideIcon;

@@ -26,3 +26,8 @@ export type EstructuraPartes = {
     };
   };
 };
+
+export interface NuevaParteDto {
+  categoria: string;
+  componente: string;
+}

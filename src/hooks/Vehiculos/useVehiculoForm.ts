@@ -1,15 +1,15 @@
-import { useState, useEffect } from "react";
-import { useApiGit } from "../useApiGit";
-import { Vehiculo } from "../../types";
 import { useAuth } from "../../context/Auth/useAuth";
+import { useState, useEffect } from "react";
+import { useMarcasYModelos } from "../useMarcasYModelos";
+import { Vehiculo } from "../../types";
 
 export function useVehiculoForm(
   vehiculo?: Vehiculo,
   onSave?: (vehiculo: Partial<Vehiculo>) => void
 ) {
   const { token } = useAuth();
-  const { marcas, modelos, cargarMarcasYModelos } = useApiGit();
-
+  const { marcas, modelos, cargarMarcasYModelos } = useMarcasYModelos();
+  const [modoManual, setModoManual] = useState(false);
   const [formData, setFormData] = useState({
     patente: vehiculo?.patente || "",
     marca: vehiculo?.marca || "",
@@ -23,8 +23,10 @@ export function useVehiculoForm(
     descripcionTrabajos: vehiculo?.descripcionTrabajos || "",
     idCliente: vehiculo?.idCliente,
   });
-
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+
+  const activarModoManual = () => setModoManual(true);
+  const desactivarModoManual = () => setModoManual(false);
 
   useEffect(() => {
     if (!token) return;
@@ -149,5 +151,8 @@ export function useVehiculoForm(
     modelos,
     handleChange,
     handleSubmit,
+    modoManual,
+    activarModoManual,
+    desactivarModoManual,
   };
 }

@@ -6,30 +6,26 @@ import {
   updateVehiculo,
   deleteVehiculo,
 } from "../../Services/VehiculoService";
-import { useAuth } from "../../context/Auth/useAuth";
 
 export function useVehiculos() {
-  const { token } = useAuth();
   const [vehiculos, setVehiculos] = useState<Vehiculo[]>([]);
   const [error, setError] = useState<string | null>(null);
 
+  // -------------------------------
+  // FETCH INICIAL
+  // -------------------------------
   useEffect(() => {
-    if (!token) return;
-
-    getVehiculos(token)
+    getVehiculos()
       .then((data) => setVehiculos(data))
       .catch((err) => setError(err.message));
-  }, [token]);
+  }, []);
 
   // -------------------------------
   // CREATE
   // -------------------------------
-
   const agregarVehiculo = async (newVehiculo: NewVehiculo) => {
-    if (!token) return;
-
     try {
-      const vehiculoCreado = await createVehiculo(token, newVehiculo);
+      const vehiculoCreado = await createVehiculo(newVehiculo);
       setVehiculos((prev) => [...prev, vehiculoCreado]);
       alert(`🚗 ¡Agregado correctamente!\n ✅Vehiculo:
         ${newVehiculo.marca}
@@ -51,10 +47,8 @@ export function useVehiculos() {
   // UPDATE
   // -------------------------------
   const modificarVehiculo = async (vehiculoActualizado: Vehiculo) => {
-    if (!token) return;
-
     try {
-      const vehiculo = await updateVehiculo(token, vehiculoActualizado);
+      const vehiculo = await updateVehiculo(vehiculoActualizado);
       setVehiculos((prev) =>
         prev.map((v) => (v.idVehiculo === vehiculo.idVehiculo ? vehiculo : v))
       );
@@ -72,16 +66,17 @@ export function useVehiculos() {
     }
   };
 
+  // -------------------------------
+  // DELETE
+  // -------------------------------
   const eliminarVehiculo = async (id: number) => {
-    if (!token) return;
-
     const confirmar = window.confirm(
       "⚠️ ¿Estás seguro de eliminar este vehículo?"
     );
     if (!confirmar) return;
 
     try {
-      await deleteVehiculo(token, id);
+      await deleteVehiculo(id);
       setVehiculos((prev) => prev.filter((v) => v.idVehiculo !== id));
       alert("Vehículo eliminado correctamente ✅");
     } catch (err: unknown) {

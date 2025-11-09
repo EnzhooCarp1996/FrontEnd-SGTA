@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { allMenuItems } from "../../../constants/menuItems";
+import { allMenuItems } from "../../../helpers/menuItems";
 
 interface NavProps {
     role: string;

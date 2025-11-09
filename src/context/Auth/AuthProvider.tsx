@@ -1,94 +1,45 @@
-import { useState, useEffect, ReactNode } from "react";
-import { jwtDecode } from "jwt-decode";
-import { User, JwtPayload } from "../../types";
+import { getToken, logout as sessionLogout } from "../../Services/SessionService";
+import { getUserInfo } from "../../Services/AuthService";
+import { ReactNode, useState, useEffect } from "react";
 import { AuthContext } from "./AuthContext";
-
-// Función para validar el token
-const isTokenValid = (token: string): boolean => {
-  try {
-    const decoded: JwtPayload = jwtDecode(token);
-    return decoded.exp * 1000 > Date.now();
-  } catch {
-    return false;
-  }
-};
+import { User } from "../../types";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
+  const [token, setToken] = useState<string | null>(getToken());
+  const [userInfo, setUserInfo] = useState<User>(getUserInfo());
 
-  const [userInfo, setUserInfo] = useState<User>({ nombreUsuario: "", role: "" });
-
-  const [token, setToken] = useState<string | null>(() => {
-    const savedLocal = localStorage.getItem("token");
-    const savedSession = sessionStorage.getItem("token");
-
-    if (savedLocal && isTokenValid(savedLocal)) return savedLocal;
-    if (savedSession && isTokenValid(savedSession)) return savedSession;
-
-    return null;
-  });
-
-  useEffect(() => {
-    const savedUserLocal = localStorage.getItem("user");
-    const savedUserSession = sessionStorage.getItem("user");
-
-    if (token) {
-      if (savedUserLocal) {
-        setUserInfo(JSON.parse(savedUserLocal));
-      } else if (savedUserSession) {
-        setUserInfo(JSON.parse(savedUserSession));
-      }
-    }
-  }, [token]);
-
-  //  Mantener sincronización entre pestañas
-  useEffect(() => {
-    const handleStorage = () => {
-      const savedLocal = localStorage.getItem("token");
-      const savedSession = sessionStorage.getItem("token");
-      const savedUserLocal = localStorage.getItem("user");
-      const savedUserSession = sessionStorage.getItem("user");
-
-      if (savedLocal && isTokenValid(savedLocal)) {
-        setToken(savedLocal);
-        setUserInfo(savedUserLocal ? JSON.parse(savedUserLocal) : { nombreUsuario: "", rol: "" });
-      } else if (savedSession && isTokenValid(savedSession)) {
-        setToken(savedSession);
-        setUserInfo(savedUserSession ? JSON.parse(savedUserSession) : { nombreUsuario: "", rol: "" });
-      } else {
-        setToken(null);
-        setUserInfo({ nombreUsuario: "", role: "" });
-      }
-    };
-
-    window.addEventListener("storage", handleStorage);
-    return () => window.removeEventListener("storage", handleStorage);
-  }, []);
-
-  const login = (newToken: string, recordar: boolean, newUser?: User) => {
-    if (isTokenValid(newToken)) {
-      if (recordar) {
-        localStorage.setItem("token", newToken);
-        if (newUser) localStorage.setItem("user", JSON.stringify(newUser));
-      } else {
-        sessionStorage.setItem("token", newToken);
-        if (newUser) sessionStorage.setItem("user", JSON.stringify(newUser));
-      }
-      setToken(newToken);
-      if (newUser) setUserInfo(newUser);
+  const login = (
+    newToken: string,
+    recordar: boolean = true,
+    user?: { nombreUsuario: string; role: string }
+  ) => {
+    if (recordar) {
+      localStorage.setItem("token", newToken);
     } else {
-      console.error("Token inválido o expirado");
+      sessionStorage.setItem("token", newToken);
     }
+
+    setToken(newToken);
+    setUserInfo(user || getUserInfo());
   };
 
+
   const logout = () => {
-    localStorage.removeItem("token");
-    sessionStorage.removeItem("token");
-    localStorage.removeItem("refreshToken");
-    localStorage.removeItem("user");
-    sessionStorage.removeItem("user");
+    sessionLogout();
     setToken(null);
     setUserInfo({ nombreUsuario: "", role: "" });
   };
+
+  useEffect(() => {
+    // Sincronización entre pestañas
+    const handleStorage = () => {
+      const t = getToken();
+      setToken(t);
+      setUserInfo(getUserInfo());
+    };
+    window.addEventListener("storage", handleStorage);
+    return () => window.removeEventListener("storage", handleStorage);
+  }, []);
 
   return (
     <AuthContext.Provider

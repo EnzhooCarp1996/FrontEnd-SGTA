@@ -1,13 +1,17 @@
 import { createContext } from "react";
 import { User } from "../../types";
 
-interface AuthContextType {
+interface AuthContextType extends User {
   token: string | null;
-  nombreUsuario: string;
-  role: string;
-  login: (token: string, recordar: boolean, user?: User) => void;
+  login: (
+    token: string,
+    recordar?: boolean,
+    user?: { nombreUsuario: string; role: string }
+  ) => void;
   logout: () => void;
   isAuthenticated: boolean;
 }
 
-export const AuthContext = createContext<AuthContextType | undefined>(undefined);
+export const AuthContext = createContext<AuthContextType | undefined>(
+  undefined
+);

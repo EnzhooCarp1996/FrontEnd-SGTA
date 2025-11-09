@@ -1,5 +1,5 @@
-import { Usuario } from "../../types";
 import { useEffect, useState } from "react";
+import { Usuario } from "../../types";
 
 export function useUsuariosList(
   usuario?: Usuario,

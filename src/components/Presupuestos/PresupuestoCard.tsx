@@ -1,7 +1,7 @@
+import { TarjetaSpan } from "../Clientes/ClientesListComponents/TarjetaSpan";
 import { formatCurrency } from "../../helpers/utilsPresupuestos";
 import { formatDate } from "../../helpers/utilsVehiculos";
 import { Calendar, FileText, User } from "lucide-react";
-import { TarjetaSpan } from "../Clientes/ClientesListComponents/TarjetaSpan";
 import { CardSection } from "../Shared/CardSection";
 import { CardHeader } from "../Shared/CardHeader";
 import { PresupuestoData } from "../../types";

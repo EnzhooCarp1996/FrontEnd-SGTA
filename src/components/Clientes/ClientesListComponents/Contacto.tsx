@@ -1,6 +1,5 @@
 import { Phone } from "lucide-react"
 
-
 export const Contacto = ({ contacto }: { contacto?: string }) => {
     return (
         <>
